@@ -7,11 +7,14 @@
 
 Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`](SCENARIO.md).
 
-## Le parcours expliqué
+## Le parcours expliqué (Espace Sous-traitant, sans compte)
 
-1. **Choisissez votre chantier** : ouvrez *fluxchantier.web.app* et sélectionnez votre site.
-2. **Réservez votre créneau** : date, heure, véhicule.
-3. **Validez, c'est confirmé** : le pass d'accès arrive instantanément sur mobile.
+1. **Choisissez un créneau libre** : ouvrez *fluxchantier.web.app*, le planning de la semaine s'affiche.
+2. **Remplissez la demande** : entreprise, e-mail, véhicule, zone. Le créneau est vérifié en direct, puis « Confirmer la réservation ».
+3. **Recevez la validation** : un e-mail de confirmation, puis la validation par l'équipe chantier.
+
+Les écrans, les couleurs (thème Dumez : `#004589` / `#E30613`), la police Inter et le logo
+viennent du site réel. Le détail est dans [`SCENARIO.md`](SCENARIO.md).
 
 ## Comment c'est fabriqué
 
@@ -19,7 +22,7 @@ Tout est du code, donc modifiable et reproductible. Aucune vidéo ni image de ba
 
 | Fichier | Rôle |
 |---|---|
-| `src/index.html` | Décor, interface simulée, logo. Les **variables de la charte** sont dans `:root`. |
+| `src/index.html` | Décor et reproduction des écrans du site. Les **variables de la charte** sont dans `:root`. |
 | `src/anim.js` | Moteur d'animation : `seek(t)` place chaque élément à l'instant `t` (courbes d'accélération, images clés, caméra 3D, curseur). |
 | `src/timeline.js` | Instants clés partagés par l'image **et** le son (clics, frappes, impacts…). |
 | `scripts/render.mjs` | Capture image par image avec Chromium headless (Playwright), en parallèle. |
@@ -39,11 +42,9 @@ npm run build          # -> out/fluxchantier_motion_15s.mp4
 - Images fixes de contrôle : `npm run stills -- 2.5,7.5,14.6` (enregistrées dans `build/stills/`).
 - Re-rendu partiel : `FROM=12 TO=13.5 node scripts/render.mjs`, puis `SKIP_FRAMES=1 npm run build`.
 
-### Adapter à la charte réelle
+### Mettre à jour depuis le site
 
-Le site n'était pas joignable depuis l'environnement de production. Les couleurs, le logo et
-les écrans sont donc une interprétation. Pour les recaler sur la vraie interface :
-
-- couleurs : variables CSS `:root` dans `src/index.html` ;
-- logo : symbole `#i-mark` et `#logoMark` ;
-- textes et écrans : balisage de `src/index.html` (pages `#pageA`, `#pageB`, `#pageC`).
+- couleurs : variables CSS `:root` de `src/index.html` (noms identiques aux tokens `brand-*` / `accent` du site) ;
+- logos : `src/img/` (camion `Logo_FluxChantier_DUMEZ` recadré, logo Dumez Île-de-France) ;
+- police : `src/fonts/inter-latin-var.woff2` (fichier servi par le site) ;
+- écrans et textes : le balisage de `src/index.html` (`#pageA` pour le planning, `#overlay` pour le formulaire, `#phone` pour les e-mails).

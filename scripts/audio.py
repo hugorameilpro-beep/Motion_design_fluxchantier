@@ -272,9 +272,13 @@ for i, n in enumerate([74, 78, 81, 86]):
 impact(ts, 0.45, crash=False)
 bell(TL["notif"], 81, 0.18, 0.4, 0.9)
 bell(TL["notif"] + 0.11, 88, 0.16, 0.4, 1.1)
-impact(TL["stamp"], 0.55, crash=False)
-t = t_axis(0.12)
-add(sfx, TL["stamp"], rng.standard_normal(len(t)) * np.exp(-t * 40) * 0.5, 0.5)
+# validation by the site team: second e-mail lands, status flips to "Validée"
+impact(TL["stamp"], 0.4, crash=False)
+for i, n in enumerate([81, 85, 88]):
+    bell(TL["stamp"] + i * 0.07, n, 0.15, 0.3 - 0.2 * i, 1.2)
+for ts_sel in TL.get("selects", []):
+    click(ts_sel, 0.25)
+tick(TL.get("okBox", 0) or 0, 0.15)
 riser(11.25, S["outro"][0], 0.32)
 impact(S["outro"][0], 0.6)
 for i, r in enumerate(TL["recap"]):
