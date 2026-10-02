@@ -1,4 +1,4 @@
-# FluxChantier : scénario et script de la vidéo de 15 s
+# FluxChantier : scénario et script de la vidéo (15 s + signature Synapsis)
 
 ## Source : le vrai site
 
@@ -52,7 +52,7 @@ parcours **Créneau → Demande → Validation** et le message **simple, rapide,
 
 **Ton :** énergique mais clair. Le montage suit la musique (128 BPM, une mesure = 1,875 s), sans voix off.
 
-## Structure (8 mesures)
+## Structure (8 mesures + 2 mesures de signature)
 
 | Temps | Scène | Ce qu'on voit |
 |---|---|---|
@@ -64,6 +64,8 @@ parcours **Créneau → Demande → Validation** et le message **simple, rapide,
 | 9,38 – 12,19 | **03 · Recevez la validation** | Le bandeau vert « ✅ Demande envoyée ! » apparaît et le créneau devient « Réservé » dans le planning. Un smartphone entre par le bas avec l'e-mail « Demande reçue ✅ » (🟠 En attente de validation). Le second e-mail arrive : « Votre livraison est VALIDÉE ✅ », le statut passe à 🟢 Validée, et le bouton « 🧭 Accès chauffeur — GPS & consignes » apparaît. |
 | 12,19 – 13,36 | **Récapitulatif** | L'interface recule et se floute. Trois pastilles apparaissent : **1 Créneau → 2 Demande → 3 Validée**. |
 | 13,36 – 15,00 | **Signature** | Les pastilles fusionnent, la pastille du logo apparaît et le camion y entre de nouveau. *fluxchantier.web.app* (le curseur clique dessus), **Simple. Rapide. Sans compte.**, puis *Chantier THE CROSSING · Dumez Île-de-France / VINCI*. |
+
+| 15,00 – 18,75 | **Signature Synapsis** | Fondu vers un fond uni `#0F172A` en 0,45 s. Le symbole Synapsis apparaît au centre : échelle de 0,8 à 1,0 et fondu d'opacité (courbe *ease-out*). Juste après, **SYNAPSIS** (Montserrat ExtraBold, blanc) puis *synapsis-btp.fr* (vert menthe `#12D8A8` tiré du logo) montent légèrement en fondu. Le plan reste à l'écran environ 2,6 s, avec un très léger zoom. |
 
 Pendant les étapes, un indicateur **1 Créneau – 2 Demande – 3 Validation** se remplit en bas à gauche.
 
@@ -117,4 +119,14 @@ La musique est synthétisée (128 BPM, ré majeur). Chaque bruitage est calé su
 - carillon montant à la validation ;
 - impacts sur le « 3 » et sur le logo.
 
+Pendant la signature, la musique se pose sur deux mesures calmes (sol, puis ré), sans percussions,
+avec un accord de cloches à l'apparition du logo et une note à chaque texte.
+
 Niveau de sortie : environ -14 LUFS.
+
+## Signature Synapsis : sources
+
+- **Symbole :** l'image fournie (PNG sur fond blanc), détourée par programme dans
+  `src/img/synapsis-mark.png`. Aucun SVG n'a été fourni : le message contenait encore le texte d'exemple.
+- **Texte :** le logotype fourni étant une image, « SYNAPSIS » est recomposé en Montserrat ExtraBold,
+  une police géométrique proche, en blanc pour la lisibilité sur fond sombre.

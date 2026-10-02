@@ -1,9 +1,9 @@
-# Motion design FluxChantier : guide de la partie publique (15 s)
+# Motion design FluxChantier : guide de la partie publique (15 s + signature Synapsis)
 
 ![Storyboard](out/storyboard.jpg)
 
-**Vidéo finale :** [`out/fluxchantier_motion_15s.mp4`](out/fluxchantier_motion_15s.mp4)
-(1920×1080, 60 i/s, H.264 + AAC, 15,0 s, environ 7,7 Mo)
+**Vidéo finale :** [`out/fluxchantier_motion.mp4`](out/fluxchantier_motion.mp4)
+(1920×1080, 60 i/s, H.264 + AAC, 18,75 s, environ 8,2 Mo) : le guide de 15 s, suivi de 3,75 s de signature Synapsis.
 
 Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`](SCENARIO.md).
 
@@ -34,7 +34,7 @@ Tout est du code, donc modifiable et reproductible. Aucune vidéo ni image de ba
 ```bash
 npm install            # playwright
 pip install numpy
-npm run build          # -> out/fluxchantier_motion_15s.mp4
+npm run build          # -> out/fluxchantier_motion.mp4
 ```
 
 - Aperçu en temps réel dans le navigateur : `npm run preview`, puis ouvrir http://localhost:8080
@@ -45,6 +45,6 @@ npm run build          # -> out/fluxchantier_motion_15s.mp4
 ### Mettre à jour depuis le site
 
 - couleurs : variables CSS `:root` de `src/index.html` (noms identiques aux tokens `brand-*` / `accent` du site) ;
-- logos : `src/img/` (camion `Logo_FluxChantier_DUMEZ` recadré, logo Dumez Île-de-France) ;
+- logos : `src/img/` (camion `Logo_FluxChantier_DUMEZ` recadré, logo Dumez Île-de-France, symbole Synapsis détouré) ;
 - police : `src/fonts/inter-latin-var.woff2` (fichier servi par le site) ;
 - écrans et textes : le balisage de `src/index.html` (`#pageA` pour le planning, `#overlay` pour le formulaire, `#phone` pour les e-mails).

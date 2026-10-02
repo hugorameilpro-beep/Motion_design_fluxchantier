@@ -7,6 +7,9 @@
 <style>
   /* Inter: the exact variable font served by fluxchantier.web.app */
   @font-face { font-family: Inter; font-weight: 100 900; src: url(fonts/inter-latin-var.woff2) format("woff2"); }
+  /* Synapsis signature wordmark */
+  @font-face { font-family: Montserrat; font-weight: 500; src: url(fonts/montserrat-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: Montserrat; font-weight: 800; src: url(fonts/montserrat-latin-800-normal.woff2) format("woff2"); }
 
   /* ---- Brand tokens: theme "dumez" of fluxchantier.web.app (tailwind brand-* / accent) ---- */
   :root {
@@ -290,6 +293,17 @@
   #endSite { position: absolute; top: 856px; width: 1920px; text-align: center; font: 500 21px Inter; letter-spacing: .02em; color: var(--brand-300); }
   #endCursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
   #endRipple { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 3px solid var(--accent); background: rgba(227,6,19,.18); }
+
+  /* ---- Signature: Synapsis end card on the dark theme colour ---- */
+  #sig { position: absolute; inset: 0; background: #0F172A; }
+  #sigGlow { position: absolute; left: 50%; top: 442px; width: 900px; height: 900px; margin: -450px 0 0 -450px; border-radius: 50%;
+             background: radial-gradient(circle, rgba(18,216,168,.16), rgba(167,215,87,.05) 40%, transparent 66%); }
+  #sigBody { position: absolute; inset: 0; transform-origin: 50% 50%; }
+  #sigMark { position: absolute; left: 50%; top: 300px; width: 300px; height: 285px; margin-left: -150px; transform-origin: 50% 50%; }
+  #sigName { position: absolute; top: 632px; width: 1920px; text-align: center; font: 800 78px Montserrat, sans-serif;
+             letter-spacing: .08em; padding-left: .08em; color: #fff; }
+  #sigUrl { position: absolute; top: 738px; width: 1920px; text-align: center; font: 500 34px Montserrat, sans-serif;
+            letter-spacing: .06em; padding-left: .06em; color: #12D8A8; }
 </style>
 </head>
 <body>
@@ -475,6 +489,15 @@
   <div id="wipeC" class="wipe"></div>
   <div id="vignette"></div>
   <div id="grain"></div>
+<!-- S7: Synapsis signature (above the grain so the background is exactly #0F172A) -->
+  <div id="sig">
+    <div id="sigGlow"></div>
+    <div id="sigBody">
+      <img id="sigMark" src="img/synapsis-mark.png" alt="Synapsis">
+      <div id="sigName">SYNAPSIS</div>
+      <div id="sigUrl">synapsis-btp.fr</div>
+    </div>
+  </div>
 </div>
 
 <script src="timeline.js"></script>

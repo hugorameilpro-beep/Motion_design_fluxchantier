@@ -245,6 +245,26 @@
     const outroOn = t > 12.2;
     show($("outro"), outroOn);
     if (outroOn) outro(t, C);
+
+    /* ---------- S7 Synapsis signature ---------- */
+    const sigOn = t > TL.sig.fade[0];
+    show($("sig"), sigOn);
+    if (sigOn) signature(t);
+  }
+
+  /* =================================================================== */
+  function signature(t) {
+    const g = TL.sig;
+    setO($("sig"), E.inOutCubic(P(t, g.fade[0], g.fade[1])));
+    // logo: smooth scale 0.8 -> 1.0 with an opacity fade
+    const [l0, l1] = g.logo;
+    tf($("sigMark"), { s: lerp(0.8, 1, E.outCubic(P(t, l0, l1))), o: E.outCubic(P(t, l0, l0 + 0.5)) });
+    setO($("sigGlow"), 0.9 * E.outCubic(P(t, l0, l1 + 0.3)));
+    // name then URL: light slide-up + fade
+    [["sigName", g.name], ["sigUrl", g.url]].forEach(([id, a]) => {
+      tf($(id), { y: tw(t, a, a + 0.6, 26, 0, E.outCubic), o: E.outCubic(P(t, a, a + 0.5)) });
+    });
+    $("sigBody").style.transform = `scale(${tw(t, l1, TL.duration, 1, 1.02, E.lin)})`;
   }
 
   /* =================================================================== */

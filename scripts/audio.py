@@ -202,12 +202,12 @@ D, A_, B, G = 62, 57, 59, 55  # roots
 chords = {  # MIDI voicings
     "D": [62, 66, 69, 73], "A": [61, 64, 69, 76], "Bm": [62, 66, 71, 74], "G": [62, 67, 71, 74],
 }
-prog = ["D", "A", "Bm", "G", "D", "A", "G", "D"]
+prog = ["D", "A", "Bm", "G", "D", "A", "G", "D", "G", "D"]  # last two bars: Synapsis signature
 roots = {"D": D - 24, "A": A_ - 24, "Bm": B - 24, "G": G - 24}
 
 for b, name in enumerate(prog):
     t0 = b * BAR
-    pad_chord(t0, BAR + 0.15, chords[name], gain=0.075 if b == 0 else 0.095)
+    pad_chord(t0, BAR + 0.15, chords[name], gain=0.075 if b == 0 else 0.07 if b >= 8 else 0.095)
 
 # bass: pumping off-beat eighths, bars 2-7
 for b in range(1, 7):
@@ -288,6 +288,17 @@ impact(TL["logoHit"], 1.0)
 for i, n in enumerate([62, 66, 69, 74, 78]):
     bell(TL["logoHit"] + 0.02 * i, n + 12, 0.08, -0.4 + 0.2 * i, 2.2)
 
+# Synapsis signature: soft landing on the logo, then the name and the URL
+if "sig" in TL:
+    g = TL["sig"]
+    l0 = g["logo"][0]
+    impact(l0, 0.35, crash=False)
+    for i, n in enumerate([67, 71, 74, 79, 83]):
+        bell(l0 + 0.05 * i, n + 12, 0.07, -0.4 + 0.2 * i, 2.6)
+    bell(g["name"], 86, 0.06, -0.2, 1.8)
+    bell(g["url"], 90, 0.05, 0.2, 1.8)
+    bass(l0, 3.0, roots["G"], 0.16)
+
 # ------------------------------------------------------------------ mix
 tt = np.arange(N) / SR
 duck = np.ones(N)
@@ -310,7 +321,7 @@ wet = np.stack([np.fft.irfft(np.fft.rfft(mix[:, c], nfft) * np.fft.rfft(ir[:, c]
 mix = mix + 0.22 * wet
 
 # fade the tail into the last frame
-fade = np.clip((DUR - tt) / 0.5, 0, 1) ** 1.5
+fade = np.clip((DUR - tt) / 0.9, 0, 1) ** 1.5
 mix *= fade[:, None]
 mix[: int(0.005 * SR)] *= np.linspace(0, 1, int(0.005 * SR))[:, None]
 
