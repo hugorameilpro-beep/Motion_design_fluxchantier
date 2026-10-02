@@ -13,8 +13,9 @@ Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`]
 2. **Remplissez la demande** : entreprise, e-mail, véhicule, zone. Le créneau est vérifié en direct, puis « Confirmer la réservation ».
 3. **Recevez la validation** : un e-mail de confirmation, puis la validation par l'équipe chantier.
 
-Les écrans, les couleurs (thème Dumez : `#004589` / `#E30613`), la police Inter et le logo
-viennent du site réel. Le détail est dans [`SCENARIO.md`](SCENARIO.md).
+Le parcours, les écrans, la police Inter et le logo camion viennent du site réel. L'habillage suit la
+charte **Synapsis-BTP** en thème sombre : fonds `#0F172A`, cartes `#1E293B`, actions `#059669` → `#10B981`,
+accents `#34D399` / `#A3E635`. Le détail est dans [`SCENARIO.md`](SCENARIO.md).
 
 ## Comment c'est fabriqué
 
@@ -42,9 +43,9 @@ npm run build          # -> out/fluxchantier_motion.mp4
 - Images fixes de contrôle : `npm run stills -- 2.5,7.5,14.6` (enregistrées dans `build/stills/`).
 - Re-rendu partiel : `FROM=12 TO=13.5 node scripts/render.mjs`, puis `SKIP_FRAMES=1 npm run build`.
 
-### Mettre à jour depuis le site
+### Modifier la charte ou les écrans
 
-- couleurs : variables CSS `:root` de `src/index.html` (noms identiques aux tokens `brand-*` / `accent` du site) ;
-- logos : `src/img/` (camion `Logo_FluxChantier_DUMEZ` recadré, logo Dumez Île-de-France, symbole Synapsis détouré) ;
+- couleurs : variables CSS `:root` de `src/index.html` (`--bg`, `--card`, `--line`, `--grad`, `--mint`, `--lime`, `--title`, `--muted`) ;
+- logos : `src/img/` (camion `Logo_FluxChantier_Synapsis` recadré, symbole Synapsis détouré) ;
 - police : `src/fonts/inter-latin-var.woff2` (fichier servi par le site) ;
 - écrans et textes : le balisage de `src/index.html` (`#pageA` pour le planning, `#overlay` pour le formulaire, `#phone` pour les e-mails).

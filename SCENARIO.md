@@ -7,7 +7,7 @@ Le site est une application Next.js rendue côté client. J'ai donc analysé son
 son manifeste et ses bundles JavaScript (textes, composants, thème), et récupéré ses logos et sa police.
 
 **Ce qu'est la plateforme :** « FluxChantier — Gestion des livraisons », plateforme de planification
-et de réservation des créneaux de livraison du chantier **THE CROSSING** (Dumez Île-de-France / VINCI).
+et de réservation des créneaux de livraison de chantier. La version en ligne inspectée était configurée pour un chantier Dumez Île-de-France / VINCI ; la vidéo reprend le parcours avec la charte Synapsis-BTP (voir plus bas).
 
 **La partie publique, c'est l'« Espace Sous-traitant ».** Il s'ouvre sans compte : seule l'équipe
 chantier (conducteurs, gardien, direction) se connecte. Le parcours réel est le suivant :
@@ -30,19 +30,27 @@ chantier (conducteurs, gardien, direction) se connecte. Le parcours réel est le
    - « Votre livraison est VALIDÉE ✅ », avec le lien « Annuler mon créneau » et la page
      **Accès chauffeur** (guidage GPS Waze / Google Maps, EPI, consignes d'accès, « 📡 Mon approche »).
 
-## Charte graphique relevée (thème « dumez » du site)
+## Charte graphique : Synapsis-BTP (thème sombre SaaS)
 
-| Rôle | Valeur sur le site |
+La vidéo n'utilise plus l'univers VINCI / Dumez. Elle applique la charte officielle de Synapsis-BTP.
+Les écrans gardent la structure et les textes de FluxChantier, avec un habillage sombre :
+
+| Rôle | Couleur |
 |---|---|
-| Bleu de marque (en-tête, titres) | `brand-700` **#004589** (échelle complète `#EEF4FA` → `#002548`) |
-| Accent (boutons d'action) | `accent` **#E30613**, survol `#C00510` |
-| Couleur de thème (PWA) | **#0F172A** |
-| Statuts | 🟠 En attente · 🟢 Validée · ⚪ Terminée · 🔴 Refusée (tons orange, emerald, slate, red de Tailwind) |
-| Police | **Inter** (police variable 100–900 servie par le site, reprise telle quelle) |
-| Logo | Camion de livraison en dégradé bleu → rouge (`Logo_FluxChantier_DUMEZ`), affiché sur une pastille blanche dans l'en-tête, à côté du logo Dumez Île-de-France |
+| Fonds (scène, navigateur, champs) | **#0F172A** (Slate 900) |
+| Cartes, conteneurs, en-tête de l'app | **#1E293B** (Slate 800), contours fins **#334155** |
+| Couleur principale, boutons d'action | **#059669** → **#10B981** (dégradé émeraude) |
+| Éléments actifs, curseur, points clés | **#34D399** (mots-clés, chiffres, focus, case cochée) et **#A3E635** (ondes de clic, balisage de la transition) |
+| Titres | **#F8FAFC** |
+| Textes secondaires, mentions | **#94A3B8** |
+| Statut « En attente » | orange adouci pour fond sombre (`#FDBA74` sur `rgba(251,146,60,.14)`) : couleur de statut conservée pour la lisibilité |
 
-Dans la vidéo, ces couleurs sont reprises telles quelles. Le fond est un bleu nuit tiré de l'échelle
-`brand-800` / `brand-900`, et les transitions utilisent le balisage de chantier rouge et blanc.
+- **Logo :** le camion vert officiel du thème Synapsis du site (`Logo_FluxChantier_Synapsis`, PNG
+  transparent), sur une carte `#1E293B`. Dans l'en-tête de l'app, il est accompagné du symbole Synapsis.
+- **Police :** Inter (celle du site) ; Montserrat pour la signature SYNAPSIS.
+- **Mentions retirées :** le logo Dumez Île-de-France, « Dumez Île-de-France / VINCI » et le nom du
+  chantier « THE CROSSING ». Ils sont remplacés par « Synapsis-BTP • Espace livraisons chantier »
+  dans l'app et les e-mails, et par « Propulsé par Synapsis-BTP » à la fin du guide.
 
 ## Intention
 
@@ -56,14 +64,14 @@ parcours **Créneau → Demande → Validation** et le message **simple, rapide,
 
 | Temps | Scène | Ce qu'on voit |
 |---|---|---|
-| 0,00 – 1,88 | **Ouverture** | Des traînées de vitesse bleues et rouges, comme celles du logo, traversent l'écran. La pastille blanche de l'en-tête apparaît et le camion y entre en dérapant. Onde de choc, puis le mot-symbole « FluxChantier » sort de derrière la pastille. Sous-titre : *Guide express · Espace Sous-traitant*. |
-| 1,88 – 3,75 | **Promesse** | Le logo se range en haut à gauche. *ACCÈS PUBLIC · SANS COMPTE · SANS INSTALLATION*, puis un « 3 » rouge géant qui frappe sur le temps fort, *étapes.*, et *pour réserver votre créneau de livraison.* |
-| 3,36 – 4,20 | **Transition** | Volet bleu Dumez, puis balisage rouge et blanc, puis rouge accent. |
-| 3,75 – 6,56 | **01 · Choisissez un créneau libre** | On tape *fluxchantier.web.app* et l'interface réelle apparaît : en-tête bleu avec logos, « Espace Sous-traitant », « 🔒 Espace Équipe Chantier ». Le planning « Lun. 5 oct. → Ven. 9 oct. » se charge, avec les créneaux occupés en gris « ⚪ Réservé ». La caméra zoome, le curseur survole mardi 08:30 (« Créneau libre — réserver ») et clique. |
-| 6,56 – 9,38 | **02 · Remplissez la demande** | La fenêtre « 🚚 Nouvelle demande de livraison » s'ouvre, avec la date et l'heure du créneau déjà remplies. On saisit *BTP Martin* et *contact@btp-martin.fr*, on choisit *Semi-remorque* et *Cour intérieure*, puis « ✅ Créneau disponible. » s'affiche. On coche les CGU, le bouton rouge s'active, on clique sur « Confirmer la réservation » et il affiche « Enregistrement… ». |
+| 0,00 – 1,88 | **Ouverture** | Des traînées de vitesse émeraude, lime et blanches, comme celles du logo, traversent l'écran. La carte du logo apparaît et le camion y entre en dérapant. Onde de choc, puis le mot-symbole « FluxChantier » sort de derrière la pastille. Sous-titre : *Guide express · Espace Sous-traitant*. |
+| 1,88 – 3,75 | **Promesse** | Le logo se range en haut à gauche. *ACCÈS PUBLIC · SANS COMPTE · SANS INSTALLATION*, puis un « 3 » géant en dégradé émeraude → lime qui frappe sur le temps fort, *étapes.*, et *pour réserver votre créneau de livraison.* |
+| 3,36 – 4,20 | **Transition** | Volet émeraude, puis balisage lime et ardoise, puis dégradé émeraude. |
+| 3,75 – 6,56 | **01 · Choisissez un créneau libre** | On tape *fluxchantier.web.app* et l'interface FluxChantier apparaît en thème sombre : en-tête avec logos, « Espace Sous-traitant », « 🔒 Espace Équipe Chantier ». Le planning « Lun. 5 oct. → Ven. 9 oct. » se charge, avec les créneaux occupés en ardoise « ⚪ Réservé ». La caméra zoome, le curseur survole mardi 08:30 (« Créneau libre — réserver ») et clique. |
+| 6,56 – 9,38 | **02 · Remplissez la demande** | La fenêtre « 🚚 Nouvelle demande de livraison » s'ouvre, avec la date et l'heure du créneau déjà remplies. On saisit *BTP Martin* et *contact@btp-martin.fr*, on choisit *Semi-remorque* et *Cour intérieure*, puis « ✅ Créneau disponible. » s'affiche. On coche les CGU, le bouton émeraude s'active, on clique sur « Confirmer la réservation » et il affiche « Enregistrement… ». |
 | 9,38 – 12,19 | **03 · Recevez la validation** | Le bandeau vert « ✅ Demande envoyée ! » apparaît et le créneau devient « Réservé » dans le planning. Un smartphone entre par le bas avec l'e-mail « Demande reçue ✅ » (🟠 En attente de validation). Le second e-mail arrive : « Votre livraison est VALIDÉE ✅ », le statut passe à 🟢 Validée, et le bouton « 🧭 Accès chauffeur — GPS & consignes » apparaît. |
 | 12,19 – 13,36 | **Récapitulatif** | L'interface recule et se floute. Trois pastilles apparaissent : **1 Créneau → 2 Demande → 3 Validée**. |
-| 13,36 – 15,00 | **Signature** | Les pastilles fusionnent, la pastille du logo apparaît et le camion y entre de nouveau. *fluxchantier.web.app* (le curseur clique dessus), **Simple. Rapide. Sans compte.**, puis *Chantier THE CROSSING · Dumez Île-de-France / VINCI*. |
+| 13,36 – 15,00 | **Signature** | Les pastilles fusionnent, la pastille du logo apparaît et le camion y entre de nouveau. *fluxchantier.web.app* (le curseur clique dessus), **Simple. Rapide. Sans compte.**, puis *Propulsé par Synapsis-BTP*. |
 
 | 15,00 – 18,75 | **Signature Synapsis** | Fondu vers un fond uni `#0F172A` en 0,45 s. Le symbole Synapsis apparaît au centre : échelle de 0,8 à 1,0 et fondu d'opacité (courbe *ease-out*). Juste après, **SYNAPSIS** (Montserrat ExtraBold, blanc) puis *synapsis-btp.fr* (vert menthe `#12D8A8` tiré du logo) montent légèrement en fondu. Le plan reste à l'écran environ 2,6 s, avec un très léger zoom. |
 
@@ -94,7 +102,7 @@ Pendant les étapes, un indicateur **1 Créneau – 2 Demande – 3 Validation**
 ## Fidélité et simplifications
 
 - **Écrans :** l'en-tête, les libellés, les boutons, la grille, le formulaire, les messages et les e-mails
-  reprennent le texte et les styles exacts du site (classes Tailwind traduites en CSS).
+  reprennent la structure et le texte exacts du site, habillés aux couleurs Synapsis-BTP.
 - **Données d'exemple :** le contenu du planning et du formulaire est fictif (*BTP Martin*, créneaux
   occupés, semaine du 5 octobre). Les champs facultatifs du formulaire (provenance, destination,
   matériaux, livreur, référent, gerbeur) ne sont pas montrés, pour tenir en 15 s.

@@ -86,26 +86,26 @@
   const hhmm = (row) => { const m = 420 + row * 30; return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
 
   function build() {
-    // background flux: dotted rails + travelling comets in brand blue / accent red
+    // background flux: dotted rails + travelling comets in emerald / lime
     const bg = $("bgflux");
     const r = rng(7);
     S.bgPaths = [];
     for (let i = 0; i < 7; i++) {
       const y0 = 90 + i * 150 + r() * 60, y1 = y0 + (r() - 0.5) * 420, a = 120 + r() * 160;
       const d = `M-120 ${y0} C 520 ${y0 + a}, 1300 ${y1 - a}, 2040 ${y1}`;
-      svgEl("path", { d, stroke: "rgba(169,198,226,.08)", "stroke-width": 2, "stroke-dasharray": "2 18" }, bg);
-      const c = svgEl("path", { d, stroke: i % 3 === 0 ? "rgba(227,6,19,.6)" : "rgba(122,165,209,.5)", "stroke-width": 3 }, bg);
+      svgEl("path", { d, stroke: "rgba(148,163,184,.08)", "stroke-width": 2, "stroke-dasharray": "2 18" }, bg);
+      const c = svgEl("path", { d, stroke: i % 3 === 0 ? "rgba(163,230,53,.5)" : "rgba(16,185,129,.55)", "stroke-width": 3 }, bg);
       const len = c.getTotalLength();
       S.bgPaths.push({ el: c, len, speed: 260 + r() * 260, phase: r() * len, dash: 140 + r() * 120 });
     }
 
     // intro speed lines, echoing the streaks of the truck mark
     const fx = $("introFlux");
-    const cols = ["#7AA5D1", "#E30613", "#FFFFFF", "#1F6BB0", "#E30613", "#A9C6E2", "#7AA5D1"];
+    const cols = ["#10B981", "#A3E635", "#F8FAFC", "#059669", "#34D399", "#94A3B8", "#10B981"];
     S.introPaths = cols.map((col, i) => {
       const y = 540 + (i - 3) * 30 + (i % 2 ? 6 : -6);
       const d = `M-150 ${y + (i - 3) * 22} C 300 ${y + (i - 3) * 14}, 520 ${y}, 760 ${y}`;
-      const p = svgEl("path", { d, stroke: col, "stroke-width": i % 3 === 0 ? 9 : 6, opacity: col === "#FFFFFF" ? 0.55 : 0.95 }, fx);
+      const p = svgEl("path", { d, stroke: col, "stroke-width": i % 3 === 0 ? 9 : 6, opacity: col === "#F8FAFC" ? 0.5 : 0.95 }, fx);
       return { el: p, len: p.getTotalLength(), i };
     });
 
@@ -345,7 +345,7 @@
       const cf = $("confirm");
       cf.style.opacity = t < C[2] ? 0.5 : 1;   // the real button stays disabled until the CGU box is ticked
       cf.style.transform = `scale(${Math.abs(t - C[3]) < 0.07 ? 0.95 : 1 + wobble(t, C[3] + 0.07, 0.03, 10, 24)})`;
-      cf.style.background = t > 8.7 && t < C[3] + 0.1 ? "var(--accent-600)" : "";
+      cf.style.background = t > 8.7 && t < C[3] + 0.1 ? "linear-gradient(135deg, #047857, #059669)" : "";   // hover
       setO($("confirmLbl"), t < C[3] + 0.04 ? 1 : 0);
       setO($("confirmAlt"), t < C[3] + 0.04 ? 0 : 1);
     }
