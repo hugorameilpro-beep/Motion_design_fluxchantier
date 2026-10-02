@@ -3,7 +3,7 @@
 ![Storyboard](out/storyboard.jpg)
 
 **Vidéo finale :** [`out/fluxchantier_motion_15s.mp4`](out/fluxchantier_motion_15s.mp4)
-(1920×1080, 60 i/s, H.264 + AAC, 15,0 s, environ 7 Mo)
+(1920×1080, 60 i/s, H.264 + AAC, 15,0 s, environ 7,7 Mo)
 
 Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`](SCENARIO.md).
 
