@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>FluxChantier — Motion design 15 s</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* Inter: the exact variable font served by fluxchantier.web.app */
+  @font-face { font-family: Inter; font-weight: 100 900; src: url(fonts/inter-latin-var.woff2) format("woff2"); }
+
+  /* ---- Brand tokens: theme "dumez" of fluxchantier.web.app (tailwind brand-* / accent) ---- */
+  :root {
+    --brand-50:  #EEF4FA;
+    --brand-100: #D5E3F1;
+    --brand-200: #A9C6E2;
+    --brand-300: #7AA5D1;
+    --brand-400: #4A7EB8;
+    --brand-500: #1F6BB0;
+    --brand-600: #0A558F;
+    --brand-700: #004589;
+    --brand-800: #003668;
+    --brand-900: #002548;
+    --accent:    #E30613;
+    --accent-600:#C00510;
+    --ink:       #0F172A;   /* theme-color */
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748B;
+    --slate-400: #94A3B8;
+    --slate-300: #CBD5E1;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50:  #F8FAFC;
+    --emerald-50:  #ECFDF5;
+    --emerald-100: #D1FAE5;
+    --emerald-200: #A7F3D0;
+    --emerald-300: #6EE7B7;
+    --emerald-600: #059669;
+    --emerald-700: #047857;
+    --emerald-800: #065F46;
+    --orange-100: #FFEDD5;
+    --orange-800: #9A3412;
+    --white:     #FFFFFF;
+    --stage-edge:#00142A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--stage-edge); }
+  body { font-family: Inter, "Noto Color Emoji", sans-serif; color: var(--white); -webkit-font-smoothing: antialiased; }
+  body.preview { width: 100vw; height: 100vh; display: grid; place-items: center; }
+
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden;
+           background: radial-gradient(120% 90% at 68% 40%, var(--brand-800) 0%, var(--brand-900) 48%, var(--stage-edge) 100%); }
+  .abs { position: absolute; left: 0; top: 0; }
+  .layer { position: absolute; inset: 0; }
+  .m { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+  .mi { display: block; will-change: transform; }
+  .hl { color: #FF3B47; }   /* accent, lifted one step for legibility on navy */
+  .emo { font-family: "Noto Color Emoji"; font-weight: 400; }
+
+  /* ---- Background ---- */
+  #grid { position: absolute; inset: -80px;
+          background-image:
+            linear-gradient(rgba(169,198,226,.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(169,198,226,.06) 1px, transparent 1px),
+            linear-gradient(rgba(169,198,226,.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(169,198,226,.025) 1px, transparent 1px);
+          background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px; }
+  .glow { position: absolute; width: 900px; height: 900px; border-radius: 50%; filter: blur(40px); }
+  #glowA { background: radial-gradient(circle, rgba(31,107,176,.38), transparent 62%); }
+  #glowB { background: radial-gradient(circle, rgba(227,6,19,.16), transparent 62%); }
+  #bgflux { position: absolute; inset: 0; }
+  #bgflux path { fill: none; stroke-linecap: round; }
+  #grain { position: absolute; inset: -100px; opacity: .06; mix-blend-mode: overlay; pointer-events: none;
+           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+              background: radial-gradient(130% 100% at 50% 50%, transparent 55%, rgba(0,8,20,.6) 100%); }
+
+  /* ---- Logo (official truck mark on the white header pill, wordmark in Inter) ---- */
+  .pill { position: relative; flex: none; background: #fff; border-radius: 34px; overflow: hidden;
+          box-shadow: 0 30px 60px -24px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.05); }
+  .pill img { position: absolute; display: block; }
+  #logo { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 40px; transform-origin: 0 0; }
+  #logoPill { width: 430px; height: 196px; }
+  #logoPill img { left: 36px; top: 23px; width: 358px; height: 150px; }
+  .word { font-weight: 800; font-size: 124px; letter-spacing: -.04em; line-height: 1; white-space: nowrap; }
+  #logoTag { position: absolute; left: 0; width: 1920px; top: 680px; text-align: center; font: 600 29px Inter;
+             letter-spacing: .3em; text-transform: uppercase; color: var(--brand-200); }
+  #logoTag i { font-style: normal; color: var(--accent); }
+  #introFlux path { fill: none; stroke-linecap: round; }
+  #shock { position: absolute; width: 196px; height: 196px; border-radius: 50%; border: 4px solid var(--accent); }
+
+  /* ---- Top-right guide label ---- */
+  #guide { position: absolute; right: 110px; top: 70px; display: flex; align-items: center; gap: 14px;
+           font: 700 19px Inter; letter-spacing: .24em; color: var(--brand-200); text-transform: uppercase; }
+  #guide .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 6px rgba(227,6,19,.22); }
+
+  /* ---- Promise (S2) ---- */
+  #pLabel { position: absolute; top: 330px; width: 1920px; text-align: center; font: 700 29px Inter; letter-spacing: .3em; color: var(--brand-200); }
+  #pLabel i { font-style: normal; color: var(--accent); }
+  #pBig { position: absolute; top: 380px; width: 1920px; display: flex; justify-content: center; align-items: baseline;
+          font-weight: 900; font-size: 280px; letter-spacing: -.055em; line-height: 1.05; }
+  #pThree { display: inline-block; color: var(--accent); transform-origin: 50% 70%; margin-right: .16em; }
+  #pSub { position: absolute; top: 760px; width: 1920px; text-align: center; font: 500 44px Inter; color: var(--brand-200); }
+  #pSub b { color: var(--white); font-weight: 700; }
+  #pLine { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  /* ---- Wipe: Dumez blue, red/white site tape, accent red ---- */
+  .wipe { position: absolute; inset: 0; }
+  #wipeA { background: var(--brand-700); }
+  #wipeB { background: repeating-linear-gradient(-45deg, var(--accent) 0 46px, #fff 46px 92px); }
+  #wipeC { background: var(--accent); }
+
+  /* ---- Steps: left column ---- */
+  .step { position: absolute; left: 110px; top: 250px; width: 640px; }
+  .step .num { font-weight: 900; font-size: 148px; line-height: .9; letter-spacing: -.05em;
+               color: transparent; -webkit-text-stroke: 3px var(--accent); }
+  .step .ttl { margin-top: 34px; font-weight: 800; font-size: 66px; line-height: 1.04; letter-spacing: -.035em; }
+  .step .sub { margin-top: 28px; font: 500 27px/1.45 Inter; color: var(--brand-200); max-width: 600px; }
+  .step .sub b { color: var(--white); font-weight: 700; }
+
+  #stepper { position: absolute; left: 110px; top: 880px; width: 484px; height: 90px; }
+  #stepper .track { position: absolute; left: 22px; right: 22px; top: 21px; height: 4px; border-radius: 2px; background: rgba(169,198,226,.18); }
+  #stepper .fill  { position: absolute; left: 22px; top: 21px; height: 4px; border-radius: 2px; background: var(--accent); width: 0; }
+  #stepper .sd { position: absolute; top: 0; width: 46px; height: 46px; margin-left: -23px; border-radius: 50%;
+                 display: grid; place-items: center; font: 800 18px Inter; color: var(--brand-300);
+                 background: var(--brand-900); border: 3px solid rgba(169,198,226,.25); }
+  #stepper .sd.on { color: #fff; background: var(--accent); border-color: var(--accent); }
+  #stepper .sl { position: absolute; top: 60px; transform: translateX(-50%); font: 600 18px Inter; color: var(--brand-200); white-space: nowrap; }
+
+  /* ---- Browser ---- */
+  #camWrap { position: absolute; left: 800px; top: 175px; width: 1010px; height: 730px; perspective: 2400px; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #browser { position: absolute; inset: 0; border-radius: 20px; overflow: hidden; background: var(--slate-50);
+             box-shadow: 0 60px 120px -30px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.08); color: var(--ink); }
+  .chrome { height: 56px; background: #E8ECF2; display: flex; align-items: center; padding: 0 22px; gap: 9px; border-bottom: 1px solid #D6DCE5; }
+  .chrome .d { width: 14px; height: 14px; border-radius: 50%; }
+  .url { position: absolute; left: 50%; top: 11px; width: 540px; margin-left: -270px; height: 34px; border-radius: 10px; background: #fff;
+         display: flex; align-items: center; gap: 10px; padding: 0 14px; font: 500 17px Inter; color: var(--ink); box-shadow: inset 0 0 0 1px #D6DCE5; }
+  .url .caret { width: 2px; height: 20px; background: var(--ink); }
+
+  /* header = the site's <header class="bg-brand-700 ..."> */
+  .appbar { position: relative; height: 66px; background: var(--brand-700); border-bottom: 1px solid rgba(0,37,72,.4);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 16px; color: #fff;
+            box-shadow: 0 1px 3px rgba(15,23,42,.12); }
+  .appbar .lft { display: flex; align-items: center; gap: 10px; }
+  .appbar .brandpill { display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 10px; padding: 5px 9px; box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+  .appbar .brandpill .tk { height: 30px; width: 72px; }
+  .appbar .brandpill .sep { width: 1px; height: 26px; background: var(--slate-200); }
+  .appbar .brandpill .dz { height: 21px; width: 74px; }
+  .appbar h1 { font: 700 16px Inter; letter-spacing: -.01em; }
+  .appbar .site { font: 400 10.5px Inter; color: var(--brand-200); margin-top: 1px; }
+  .appbar .rgt { display: flex; align-items: center; gap: 7px; }
+  .chipw { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; background: rgba(255,255,255,.1); padding: 4px 10px;
+           font: 500 11px Inter; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); white-space: nowrap; }
+  .btnw { display: inline-flex; align-items: center; gap: 5px; border-radius: 8px; background: rgba(255,255,255,.1); padding: 6px 10px;
+          font: 500 12px Inter; box-shadow: inset 0 0 0 1px rgba(255,255,255,.15); white-space: nowrap; }
+  .btnr { display: inline-flex; align-items: center; gap: 5px; border-radius: 8px; background: var(--accent); padding: 6px 10px;
+          font: 600 12px Inter; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+
+  #viewport { position: absolute; left: 0; right: 0; top: 122px; bottom: 0; overflow: hidden; }
+  .page { position: absolute; inset: 0; padding: 20px 24px; }
+
+  /* page A: public planning ("Espace Sous-traitant") */
+  #banner { position: absolute; left: 24px; right: 24px; top: 18px; height: 46px; border-radius: 12px; background: var(--emerald-50);
+            box-shadow: inset 0 0 0 1px var(--emerald-200); display: flex; align-items: center; gap: 6px; padding: 0 16px;
+            font: 400 13.5px Inter; color: var(--emerald-800); white-space: nowrap; overflow: hidden; }
+  #banner b { font-weight: 700; }
+  #banner .x { margin-left: auto; color: var(--emerald-600); }
+  #secA { position: absolute; left: 24px; right: 24px; top: 20px; }
+  .sechead { display: flex; align-items: center; justify-content: space-between; }
+  .sechead h2 { font: 700 19px Inter; color: var(--brand-700); letter-spacing: -.01em; }
+  .sechead p { font: 400 13.5px Inter; color: var(--slate-500); margin-top: 3px; }
+  .btn-acc { border-radius: 9px; background: var(--accent); color: #fff; padding: 9px 16px; font: 600 14px Inter; box-shadow: 0 1px 2px rgba(0,0,0,.12); white-space: nowrap; }
+  .cal { position: relative; margin-top: 14px; height: 512px; border-radius: 14px; background: #fff; padding: 14px;
+         box-shadow: 0 1px 3px rgba(15,23,42,.06), 0 8px 24px -14px rgba(15,23,42,.2), 0 0 0 1px var(--slate-200); }
+  .calnav { display: flex; align-items: center; gap: 5px; height: 32px; }
+  .calnav .nb { width: 30px; height: 30px; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--slate-200); display: grid; place-items: center; color: var(--brand-700); font: 600 16px Inter; }
+  .calnav .today { height: 30px; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--slate-200); padding: 0 10px; display: grid; place-items: center; color: var(--brand-700); font: 600 12px Inter; }
+  .calnav .rng { margin-left: 8px; font: 600 14px Inter; color: var(--brand-700); }
+  #grid2 { position: absolute; left: 14px; right: 14px; top: 58px; height: 400px; }
+  .tcol { position: absolute; left: 0; top: 40px; width: 54px; }
+  .tcol div { height: 36px; margin-top: -7px; margin-bottom: 7px; padding-right: 8px; text-align: right; font: 10px Inter; color: var(--slate-300); }
+  .tcol div.h { font-weight: 600; color: var(--slate-500); }
+  .dcol { position: absolute; top: 0; width: 176px; border-left: 1px solid var(--slate-100); }
+  .dcol .dh { height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .dcol .dh b { font: 700 13.5px Inter; color: var(--brand-700); }
+  .dcol .dh small { font: 400 10.5px Inter; color: var(--slate-400); }
+  .dcol .cell { height: 36px; border-top: 1px solid var(--slate-100); }
+  .blk { position: absolute; left: 2px; right: 2px; border-radius: 6px; border: 1px solid var(--slate-300); background: var(--slate-200);
+         padding: 4px 7px; display: flex; flex-direction: column; justify-content: center; gap: 1px; overflow: hidden;
+         font: 500 11px Inter; color: var(--slate-600); }
+  .blk b { font-weight: 700; white-space: nowrap; }
+  .blk span { font-size: 10px; opacity: .75; white-space: nowrap; }
+  #hover { position: absolute; border-radius: 4px; background: var(--emerald-50); }
+  #hoverRing { position: absolute; border-radius: 6px; background: var(--emerald-100); box-shadow: inset 0 0 0 2px var(--emerald-300); }
+  #tip { position: absolute; padding: 6px 10px; border-radius: 7px; background: var(--ink); color: #fff; font: 500 12px Inter; white-space: nowrap;
+         box-shadow: 0 8px 20px -6px rgba(0,0,0,.4); }
+  .legend { position: absolute; left: 14px; bottom: 12px; display: flex; gap: 18px; font: 400 12px Inter; color: var(--slate-500); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 14px; border-radius: 4px; }
+
+  /* page B: "🚚 Nouvelle demande de livraison" modal */
+  #overlay { position: absolute; left: 0; right: 0; top: 56px; bottom: 0; background: rgba(15,23,42,.5); }
+  #form { position: absolute; left: 240px; top: 92px; width: 530px; border-radius: 16px; background: #fff; padding: 22px 24px;
+          box-shadow: 0 25px 50px -12px rgba(0,0,0,.35); color: var(--ink); }
+  #form .fh { display: flex; align-items: center; justify-content: space-between; }
+  #form .fh h2 { font: 700 18px Inter; color: var(--brand-700); }
+  #form .fh span { color: var(--slate-400); font-size: 16px; }
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .fgrid .sub2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lab { display: block; font: 500 12px Inter; color: var(--slate-600); margin-bottom: 4px; white-space: nowrap; }
+  .lab .req { color: #EF4444; }
+  .inp { position: relative; height: 38px; border-radius: 8px; border: 1px solid var(--slate-300); display: flex; align-items: center;
+         padding: 0 11px; font: 400 14px Inter; color: var(--ink); white-space: nowrap; overflow: hidden; background: #fff; }
+  .inp.ph { color: var(--slate-400); }
+  .inp.sel::after { content: ""; position: absolute; right: 12px; top: 15px; width: 7px; height: 7px; border-right: 1.6px solid var(--slate-500); border-bottom: 1.6px solid var(--slate-500); transform: rotate(45deg); }
+  .inp.focus { border-color: var(--brand-500); box-shadow: 0 0 0 1px var(--brand-500); }
+  .inp .caret { width: 1.5px; height: 18px; background: var(--ink); margin-left: 1px; }
+  .inp .v { display: inline-block; }
+  #okbox { margin-top: 16px; border-radius: 8px; background: var(--emerald-50); box-shadow: inset 0 0 0 1px var(--emerald-200);
+           padding: 9px 12px; font: 400 13.5px Inter; color: var(--emerald-700); }
+  #cgu { margin-top: 12px; display: flex; gap: 9px; align-items: flex-start; border-radius: 8px; background: var(--slate-50);
+         box-shadow: inset 0 0 0 1px var(--slate-200); padding: 11px 12px; font: 400 13px/1.45 Inter; color: var(--slate-700); }
+  #cgu u { color: var(--brand-700); font-weight: 500; text-decoration-color: var(--brand-300); text-underline-offset: 2px; }
+  #box { position: relative; flex: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 4px; border: 1.5px solid var(--slate-300); background: #fff; }
+  #boxOn { position: absolute; inset: -1.5px; border-radius: 4px; background: var(--accent); display: grid; place-items: center; }
+  .factions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; }
+  .factions .ghost { padding: 9px 16px; border-radius: 8px; font: 500 14px Inter; color: var(--slate-600); }
+  #confirm { position: relative; padding: 9px 16px; border-radius: 8px; background: var(--accent); color: #fff; font: 600 14px Inter;
+             box-shadow: 0 1px 2px rgba(0,0,0,.12); white-space: nowrap; }
+  #confirm .alt { position: absolute; inset: 0; display: grid; place-items: center; }
+
+  /* ---- Cursor ---- */
+  #cursor { position: absolute; left: 0; top: 0; width: 38px; height: 38px; z-index: 50; filter: drop-shadow(0 6px 10px rgba(0,0,0,.35)); }
+  .ripple { position: absolute; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; border: 3px solid var(--accent); background: rgba(227,6,19,.14); z-index: 49; opacity: 0; }
+
+  /* ---- Phone: the confirmation e-mails ---- */
+  #phone { position: absolute; left: 1490px; top: 300px; width: 336px; height: 690px; border-radius: 54px; background: #05080F; padding: 12px;
+           box-shadow: 0 70px 120px -30px rgba(0,0,0,.8), 0 0 0 2px #2A3447 inset, 0 0 0 1px rgba(255,255,255,.06); }
+  #phone .scr { position: relative; width: 100%; height: 100%; border-radius: 43px; overflow: hidden; background: linear-gradient(170deg, #1C3B66 0%, #0B1B33 65%); }
+  #phone .isl { position: absolute; left: 50%; top: 12px; width: 106px; height: 30px; margin-left: -53px; border-radius: 20px; background: #000; z-index: 6; }
+  #phone .clock { position: absolute; top: 60px; width: 100%; text-align: center; font: 700 66px Inter; color: #fff; letter-spacing: -.03em; }
+  #phone .date { position: absolute; top: 144px; width: 100%; text-align: center; font: 500 17px Inter; color: rgba(255,255,255,.75); }
+  .notif { position: absolute; left: 10px; right: 10px; top: 54px; border-radius: 20px; padding: 12px 13px; z-index: 5;
+           background: rgba(255,255,255,.95); color: var(--ink); display: flex; gap: 11px; box-shadow: 0 12px 30px -8px rgba(0,0,0,.5); }
+  .notif .ic { width: 38px; height: 38px; flex: none; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--slate-200); display: grid; place-items: center; overflow: hidden; }
+  .notif .ic img { width: 34px; height: 14px; }
+  .notif .h { font: 600 11.5px Inter; color: var(--slate-500); display: flex; justify-content: space-between; }
+  .notif .t { font: 600 13.5px/1.3 Inter; margin-top: 2px; }
+  #mail { position: absolute; left: 12px; right: 12px; top: 150px; height: 500px; border-radius: 18px; background: #fff; overflow: hidden; color: #0F1E30; }
+  #mail .mh { background: var(--brand-700); color: #fff; padding: 13px 15px; }
+  #mail .mh strong { font: 700 14.5px Inter; }
+  #mail .mh div { font: 400 10.5px Inter; opacity: .85; margin-top: 2px; }
+  #mail .mb { padding: 15px; }
+  #mail h3 { position: relative; height: 24px; font: 700 17px Inter; }
+  #mail h3 > span { position: absolute; left: 0; top: 0; white-space: nowrap; }
+  #mail .intro { position: relative; height: 54px; margin-top: 8px; font: 400 12.5px/1.45 Inter; color: var(--slate-700); }
+  #mail .intro > span { position: absolute; left: 0; top: 0; }
+  #mail .chip { position: relative; display: inline-block; height: 26px; width: 210px; margin-top: 6px; }
+  #mail .chip > span { position: absolute; left: 0; top: 0; padding: 4px 10px; border-radius: 999px; font: 600 12px Inter; white-space: nowrap; }
+  #chipWait { background: var(--orange-100); color: var(--orange-800); box-shadow: inset 0 0 0 1px rgba(234,88,12,.2); }
+  #chipOk { background: var(--emerald-100); color: var(--emerald-800); box-shadow: inset 0 0 0 1px rgba(5,150,105,.2); }
+  #mail table { margin-top: 12px; border-collapse: collapse; font: 400 12.5px Inter; }
+  #mail td { padding: 3px 12px 3px 0; white-space: nowrap; }
+  #mail td:first-child { color: var(--slate-500); }
+  #gps { margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; height: 40px; border-radius: 10px; background: var(--brand-700); color: #fff; font: 600 13px Inter; }
+  #cancelLink { margin-top: 10px; text-align: center; font: 700 12.5px Inter; color: var(--accent); text-decoration: underline; }
+  #flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, rgba(16,185,129,.35), transparent 60%); }
+
+  /* ---- Outro ---- */
+  .node { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: var(--brand-800);
+          border: 3px solid rgba(227,6,19,.65); display: grid; place-items: center; box-shadow: 0 20px 60px -20px rgba(0,0,0,.7); }
+  .node svg { width: 62px; height: 62px; }
+  .node .lb { position: absolute; top: 172px; left: 50%; transform: translateX(-50%); font: 700 30px Inter; letter-spacing: -.02em; color: #fff; white-space: nowrap; }
+  .node .n { position: absolute; top: -14px; right: -14px; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: #fff;
+             font: 800 20px Inter; display: grid; place-items: center; }
+  #recapLine path { fill: none; }
+  #endLogo { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 36px; }
+  #endPill { width: 380px; height: 172px; }
+  #endPill img { left: 32px; top: 21px; width: 311px; height: 130px; }
+  #endLogo .word { font-size: 116px; }
+  #endShock { position: absolute; width: 172px; height: 172px; border-radius: 50%; border: 4px solid var(--accent); }
+  #endUrl { position: absolute; top: 620px; left: 50%; display: flex; align-items: center; gap: 14px; padding: 18px 34px 18px 26px; border-radius: 999px;
+            background: var(--white); color: var(--ink); font: 700 36px Inter; letter-spacing: -.015em; transform-origin: 50% 50%;
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,.6); }
+  #endUrl svg { width: 36px; height: 36px; }
+  #endTag { position: absolute; top: 770px; width: 1920px; display: flex; justify-content: center; gap: 26px; font: 800 42px Inter; letter-spacing: -.025em; }
+  #endTag .m { display: inline-block; }
+  #endSite { position: absolute; top: 856px; width: 1920px; text-align: center; font: 500 21px Inter; letter-spacing: .02em; color: var(--brand-300); }
+  #endCursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+  #endRipple { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 3px solid var(--accent); background: rgba(227,6,19,.18); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><rect x="13" y="13.4" width="4" height="3.6" rx=".8" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-form" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 4.5V3h6v1.5M8.5 10h7M8.5 13.5h7M8.5 17h4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 38 38"><path d="M6 3 L6 31 L13.2 24.6 L18.4 35.4 L23.6 33 L18.6 22.6 L28.4 22.2 Z" fill="#fff" stroke="#0F172A" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div id="stage">
+  <div id="grid"></div>
+  <div id="glowA" class="glow"></div>
+  <div id="glowB" class="glow"></div>
+  <svg id="bgflux" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+
+  <!-- S1: intro — speed lines, the truck drives into the header pill -->
+  <svg id="introFlux" class="abs" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+  <div id="shock"></div>
+  <div id="logo">
+    <div class="pill" id="logoPill"><img id="logoTruck" src="img/truck-crop.png" alt=""></div>
+    <div class="m" style="overflow:hidden"><div class="mi word" id="logoWord">FluxChantier</div></div>
+  </div>
+  <div id="logoTag"><span class="m"><span class="mi">Guide express <i>·</i> Espace Sous-traitant</span></span></div>
+
+  <div id="guide"><span class="dot"></span><span>Guide · Espace Sous-traitant</span></div>
+
+  <!-- S2: promise -->
+  <div id="promise" class="layer">
+    <div id="pLabel"><span class="m"><span class="mi">ACCÈS PUBLIC <i>·</i> SANS COMPTE <i>·</i> SANS INSTALLATION</span></span></div>
+    <div id="pBig"><span id="pThree">3</span><span class="m"><span class="mi" id="pWord">étapes.</span></span></div>
+    <svg id="pLine" width="1920" height="1080"><path id="pLinePath" d="M560 728 C 800 788, 1100 668, 1400 728" stroke="#E30613" stroke-width="10" stroke-linecap="round" fill="none"/></svg>
+    <div id="pSub"><span class="m"><span class="mi">pour réserver votre <b>créneau de livraison</b>.</span></span></div>
+  </div>
+
+  <!-- S3–S5: steps -->
+  <div id="steps" class="layer">
+    <div class="step" id="st1">
+      <span class="m"><span class="mi num">01</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Choisissez</span></span><span class="m"><span class="mi">un <span class="hl">créneau libre</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Ouvrez <b>fluxchantier.web.app</b> :</span></span><span class="m"><span class="mi">le planning de la semaine s'affiche.</span></span></div>
+    </div>
+    <div class="step" id="st2">
+      <span class="m"><span class="mi num">02</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Remplissez</span></span><span class="m"><span class="mi">la <span class="hl">demande</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Entreprise, e-mail, véhicule, zone :</span></span><span class="m"><span class="mi">le créneau est <b>vérifié en direct</b>.</span></span></div>
+    </div>
+    <div class="step" id="st3">
+      <span class="m"><span class="mi num">03</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Recevez</span></span><span class="m"><span class="mi">la <span class="hl">validation</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Confirmation par e-mail, puis</span></span><span class="m"><span class="mi"><b>validation</b> par l'équipe chantier.</span></span></div>
+    </div>
+
+    <div id="stepper">
+      <div class="track"></div><div class="fill" id="stFill"></div>
+      <div class="sd" id="sd1" style="left:22px">1</div>
+      <div class="sd" id="sd2" style="left:242px">2</div>
+      <div class="sd" id="sd3" style="left:462px">3</div>
+      <div class="sl" style="left:22px">Créneau</div>
+      <div class="sl" style="left:242px">Demande</div>
+      <div class="sl" style="left:462px">Validation</div>
+    </div>
+
+    <div id="camWrap"><div id="cam">
+      <div id="browser">
+        <div class="chrome">
+          <span class="d" style="background:#FF5F57"></span><span class="d" style="background:#FEBC2E"></span><span class="d" style="background:#28C840"></span>
+          <div class="url"><svg width="16" height="16" style="color:#16A34A"><use href="#i-lock"/></svg><span id="urlText"></span><span class="caret" id="urlCaret"></span></div>
+        </div>
+        <div class="appbar" id="appbar">
+          <div class="lft">
+            <div class="brandpill"><img class="tk" src="img/truck-crop.png" alt=""><span class="sep"></span><img class="dz" src="img/dumez-idf.png" alt=""></div>
+            <div><h1>FluxChantier</h1><div class="site">Dumez Île-de-France • Chantier THE CROSSING</div></div>
+          </div>
+          <div class="rgt">
+            <span class="chipw"><span class="emo">🚚</span>Espace Sous-traitant</span>
+            <span class="btnw"><span class="emo">🛡️</span>Poste de Garde</span>
+            <span class="btnr"><span class="emo">🔒</span>Espace Équipe Chantier</span>
+          </div>
+        </div>
+        <div id="viewport">
+          <div class="page" id="pageA">
+            <div id="banner"><span class="emo">✅</span><b>Demande envoyée !</b> Un e-mail de confirmation vous a été adressé. L'équipe chantier va l'examiner et la valider.<span class="x">✕</span></div>
+            <div id="secA">
+              <div class="sechead ld">
+                <div><h2><span class="emo">🚚</span> Réserver une livraison</h2><p>Cliquez sur un créneau libre. Les créneaux occupés sont anonymisés.</p></div>
+                <span class="btn-acc">+ Nouvelle demande</span>
+              </div>
+              <div class="cal ld" id="cal">
+                <div class="calnav"><span class="nb">‹</span><span class="today">Aujourd'hui</span><span class="nb">›</span><span class="rng">Lun. 5 oct. → Ven. 9 oct.</span></div>
+                <div id="grid2"></div>
+                <div class="legend"><span><i style="background:#D1FAE5;box-shadow:inset 0 0 0 1px #6EE7B7"></i>Créneau libre</span><span><i style="background:#E2E8F0;box-shadow:inset 0 0 0 1px #CBD5E1"></i>⚪ Réservé / Occupé</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="overlay">
+          <div id="form">
+            <div class="fh"><h2><span class="emo">🚚</span> Nouvelle demande de livraison</h2><span>✕</span></div>
+            <div class="fgrid">
+              <div><span class="lab">Entreprise <span class="req">*</span></span><div class="inp" id="f0"><span class="v tx"></span><span class="caret"></span><span class="phx" style="color:#94A3B8">Nom du fournisseur / sous-traitant</span></div></div>
+              <div><span class="lab">Email du demandeur <span class="req">*</span></span><div class="inp" id="f1"><span class="v tx"></span><span class="caret"></span><span class="phx" style="color:#94A3B8">pour vous recontacter</span></div></div>
+              <div><span class="lab">Type de véhicule <span class="req">*</span></span><div class="inp sel" id="fVeh"><span class="v" id="vehA">Camionnette</span><span class="v" id="vehB" style="position:absolute;left:11px">Semi-remorque</span></div></div>
+              <div><span class="lab">Zone de déchargement <span class="req">*</span></span><div class="inp sel" id="fZone"><span class="v" id="zoneA" style="color:#64748B">— Choisir une zone —</span><span class="v" id="zoneB" style="position:absolute;left:11px">Cour intérieure</span></div></div>
+              <div><span class="lab">Date <span class="req">*</span></span><div class="inp" id="fDate">06/10/2026</div></div>
+              <div class="sub2">
+                <div><span class="lab">Heure début <span class="req">*</span></span><div class="inp sel">08:30</div></div>
+                <div><span class="lab">Durée <span class="req">*</span></span><div class="inp sel">1h (60 min)</div></div>
+              </div>
+            </div>
+            <div id="okbox"><span class="emo">✅</span> Créneau disponible.</div>
+            <label id="cgu"><span id="box"><span id="boxOn"><svg width="12" height="12" style="color:#fff"><use href="#i-check"/></svg></span></span><span>En validant cette demande, j'accepte les <u>Mentions Légales, CGU &amp; Décharge de responsabilité</u> du chantier.</span></label>
+            <div class="factions"><span class="ghost">Annuler</span><span id="confirm"><span id="confirmLbl">Confirmer la réservation</span><span class="alt" id="confirmAlt">Enregistrement…</span></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="ripple" id="ripple"></div>
+      <svg id="cursor" viewBox="0 0 38 38"><use href="#i-cursor"/></svg>
+    </div></div>
+
+    <div id="phone"><div class="scr">
+      <div class="isl"></div>
+      <div class="clock">9:41</div>
+      <div class="date">vendredi 2 octobre</div>
+      <div class="notif" id="notif1"><span class="ic"><img src="img/truck-crop.png" alt=""></span>
+        <div style="flex:1;min-width:0"><div class="h"><span>E-MAIL · FLUXCHANTIER</span><span>maintenant</span></div>
+          <div class="t">Votre demande de livraison a bien été reçue</div></div></div>
+      <div class="notif" id="notif2"><span class="ic"><img src="img/truck-crop.png" alt=""></span>
+        <div style="flex:1;min-width:0"><div class="h"><span>E-MAIL · FLUXCHANTIER</span><span>maintenant</span></div>
+          <div class="t">Votre livraison est VALIDÉE <span class="emo">✅</span></div></div></div>
+      <div id="mail">
+        <div class="mh"><strong>FluxChantier — Livraisons</strong><div>Chantier THE CROSSING · Dumez Île-de-France / VINCI</div></div>
+        <div class="mb">
+          <h3><span id="ttlWait">Demande reçue <span class="emo">✅</span></span><span id="ttlOk"><span class="emo">🟢</span> Validée</span></h3>
+          <div class="intro"><span id="inWait">Votre demande de créneau a été enregistrée. Elle est en attente de validation par la conduite de travaux.</span><span id="inOk">Bonne nouvelle : votre créneau de livraison a été validé.</span></div>
+          <div class="chip"><span id="chipWait"><span class="emo">🟠</span> En attente de validation</span><span id="chipOk"><span class="emo">🟢</span> Validée</span></div>
+          <table>
+            <tr><td>Entreprise</td><td><b>BTP Martin</b></td></tr>
+            <tr><td>Date</td><td>mar. 6 oct. 2026</td></tr>
+            <tr><td>Créneau</td><td>08:30 (60 min)</td></tr>
+            <tr><td>Zone</td><td>Cour intérieure</td></tr>
+            <tr><td>Véhicule</td><td>Semi-remorque</td></tr>
+          </table>
+          <div id="gps"><span class="emo">🧭</span> Accès chauffeur — GPS &amp; consignes</div>
+          <div id="cancelLink">Annuler mon créneau</div>
+        </div>
+        <div id="flash"></div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- S6: outro -->
+  <div id="outro" class="layer">
+    <svg id="recapLine" class="abs" width="1920" height="1080" viewBox="0 0 1920 1080">
+      <path id="rlBase" d="M560 470 L1360 470" stroke="rgba(169,198,226,.2)" stroke-width="6" stroke-linecap="round"/>
+      <path id="rlFlow" d="M560 470 L1360 470" stroke="#E30613" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 22"/>
+    </svg>
+    <div class="node" id="n1"><svg style="color:#fff"><use href="#i-cal"/></svg><span class="n">1</span><span class="lb">Créneau</span></div>
+    <div class="node" id="n2"><svg style="color:#fff"><use href="#i-form"/></svg><span class="n">2</span><span class="lb">Demande</span></div>
+    <div class="node" id="n3"><svg style="color:#34D399"><use href="#i-check"/></svg><span class="n">3</span><span class="lb">Validée</span></div>
+    <div id="endShock"></div>
+    <div id="endLogo">
+      <div class="pill" id="endPill"><img id="endTruck" src="img/truck-crop.png" alt=""></div>
+      <div class="m" style="overflow:hidden"><div class="mi word" id="endWord">FluxChantier</div></div>
+    </div>
+    <div id="endUrl"><svg style="color:#004589"><use href="#i-globe"/></svg>fluxchantier.web.app</div>
+    <div id="endTag">
+      <span class="m"><span class="mi">Simple.</span></span>
+      <span class="m"><span class="mi">Rapide.</span></span>
+      <span class="m"><span class="mi hl">Sans compte.</span></span>
+    </div>
+    <div id="endSite"><span class="m"><span class="mi">Chantier THE CROSSING · Dumez Île-de-France / VINCI</span></span></div>
+    <div id="endRipple"></div>
+    <svg id="endCursor" viewBox="0 0 38 38"><use href="#i-cursor"/></svg>
+  </div>
+
+  <div id="wipeA" class="wipe"></div>
+  <div id="wipeB" class="wipe"></div>
+  <div id="wipeC" class="wipe"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+</div>
+
+<script src="timeline.js"></script>
+<script src="anim.js"></script>
+</body>
+</html>
