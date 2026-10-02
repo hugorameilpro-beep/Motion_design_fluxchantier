@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>FluxChantier — Motion design 15 s</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face { font-family: Archivo; font-weight: 500; src: url(fonts/archivo-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: Archivo; font-weight: 700; src: url(fonts/archivo-latin-700-normal.woff2) format("woff2"); }
+  @font-face { font-family: Archivo; font-weight: 800; src: url(fonts/archivo-latin-800-normal.woff2) format("woff2"); }
+  @font-face { font-family: Archivo; font-weight: 900; src: url(fonts/archivo-latin-900-normal.woff2) format("woff2"); }
+  @font-face { font-family: Inter; font-weight: 400; src: url(fonts/inter-latin-400-normal.woff2) format("woff2"); }
+  @font-face { font-family: Inter; font-weight: 500; src: url(fonts/inter-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: Inter; font-weight: 600; src: url(fonts/inter-latin-600-normal.woff2) format("woff2"); }
+  @font-face { font-family: Inter; font-weight: 700; src: url(fonts/inter-latin-700-normal.woff2) format("woff2"); }
+  @font-face { font-family: Inter; font-weight: 800; src: url(fonts/inter-latin-800-normal.woff2) format("woff2"); }
+  @font-face { font-family: Mono; font-weight: 500; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2"); }
+
+  /* ---- Brand tokens: the only place to edit to match the live charte ---- */
+  :root {
+    --navy-950: #070D18;
+    --navy-900: #0B1424;
+    --navy-800: #111D33;
+    --navy-700: #1B2A45;
+    --yellow:   #FFC20E;
+    --orange:   #FF7A1A;
+    --green:    #1FC16B;
+    --ink:      #0F172A;
+    --slate-600:#475569;
+    --slate-500:#64748B;
+    --slate-400:#94A3B8;
+    --slate-300:#CBD5E1;
+    --line:     #E3E8F0;
+    --app-bg:   #F4F6FA;
+    --white:    #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--navy-950); }
+  body { font-family: Inter, sans-serif; color: var(--white); -webkit-font-smoothing: antialiased; }
+  body.preview { width: 100vw; height: 100vh; display: grid; place-items: center; }
+  body.preview #stage { transform-origin: center; }
+
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden;
+           background: radial-gradient(120% 90% at 70% 40%, var(--navy-800) 0%, var(--navy-900) 45%, var(--navy-950) 100%); }
+  .abs { position: absolute; left: 0; top: 0; }
+  .layer { position: absolute; inset: 0; }
+  .m { display: block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
+  .mi { display: block; will-change: transform; }
+  .y { color: var(--yellow); }
+
+  /* ---- Background ---- */
+  #grid { position: absolute; inset: -80px;
+          background-image:
+            linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+            linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+          background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px; }
+  .glow { position: absolute; width: 900px; height: 900px; border-radius: 50%; filter: blur(40px); }
+  #glowA { background: radial-gradient(circle, rgba(255,194,14,.20), transparent 62%); }
+  #glowB { background: radial-gradient(circle, rgba(255,122,26,.14), transparent 62%); }
+  #bgflux { position: absolute; inset: 0; }
+  #bgflux path { fill: none; stroke-linecap: round; }
+  #grain { position: absolute; inset: -100px; opacity: .07; mix-blend-mode: overlay; pointer-events: none;
+           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+              background: radial-gradient(130% 100% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%); }
+
+  /* ---- Logo ---- */
+  .mark { width: 160px; height: 160px; flex: none; }
+  #logo { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 34px; transform-origin: 0 0; }
+  #logo .word { font-family: Archivo; font-weight: 900; font-size: 128px; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+  #logo .word b { font-weight: 900; }
+  #logo .word span { font-weight: 500; color: var(--yellow); }
+  #logoTag { position: absolute; left: 0; width: 1920px; top: 660px; text-align: center; font: 600 30px Inter;
+             letter-spacing: .34em; text-transform: uppercase; color: var(--slate-300); }
+  #logoTag i { font-style: normal; color: var(--yellow); }
+  #introFlux path { fill: none; stroke-linecap: round; }
+  #shock { position: absolute; width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--yellow); }
+
+  /* ---- Top-right guide label ---- */
+  #guide { position: absolute; right: 110px; top: 66px; display: flex; align-items: center; gap: 14px;
+           font: 700 20px Inter; letter-spacing: .26em; color: var(--slate-300); text-transform: uppercase; }
+  #guide .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 6px rgba(255,194,14,.18); }
+
+  /* ---- Promise (S2) ---- */
+  #promise { text-align: center; }
+  #pLabel { position: absolute; top: 330px; width: 1920px; font: 700 30px Inter; letter-spacing: .32em; color: var(--yellow); }
+  #pBig { position: absolute; top: 380px; width: 1920px; display: flex; justify-content: center; align-items: baseline;
+          font-family: Archivo; font-weight: 900; font-size: 290px; letter-spacing: -.045em; line-height: 1.05; }
+  #pThree { display: inline-block; color: var(--yellow); transform-origin: 50% 70%; margin-right: .18em; }
+  #pSub { position: absolute; top: 752px; width: 1920px; font: 500 44px Inter; color: var(--slate-300); }
+  #pSub b { color: var(--white); font-weight: 700; }
+  #pLine { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  /* ---- Wipe ---- */
+  .wipe { position: absolute; inset: 0; }
+  #wipeA { background: var(--orange); }
+  #wipeB { background: repeating-linear-gradient(-45deg, var(--yellow) 0 46px, var(--navy-950) 46px 92px); }
+  #wipeC { background: var(--yellow); }
+
+  /* ---- Steps: left column ---- */
+  .step { position: absolute; left: 110px; top: 250px; width: 640px; }
+  .step .num { font-family: Archivo; font-weight: 900; font-size: 150px; line-height: .9; letter-spacing: -.04em;
+               color: transparent; -webkit-text-stroke: 3px var(--yellow); }
+  .step .ttl { margin-top: 34px; font-family: Archivo; font-weight: 800; font-size: 72px; line-height: 1.02; letter-spacing: -.03em; }
+  .step .sub { margin-top: 28px; font: 500 28px/1.42 Inter; color: var(--slate-300); max-width: 560px; }
+  .step .sub b { color: var(--white); font-weight: 700; }
+  .step .kick { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px; padding: 8px 16px; border-radius: 999px;
+                background: rgba(255,194,14,.12); color: var(--yellow); font: 700 18px Inter; letter-spacing: .18em; text-transform: uppercase; }
+
+  #stepper { position: absolute; left: 110px; top: 880px; width: 484px; height: 90px; }
+  #stepper .track { position: absolute; left: 22px; right: 22px; top: 21px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.12); }
+  #stepper .fill  { position: absolute; left: 22px; top: 21px; height: 4px; border-radius: 2px; background: var(--yellow); width: 0; }
+  #stepper .sd { position: absolute; top: 0; width: 46px; height: 46px; margin-left: -23px; border-radius: 50%;
+                 display: grid; place-items: center; font: 800 18px Archivo; color: var(--slate-400);
+                 background: var(--navy-800); border: 3px solid rgba(255,255,255,.16); }
+  #stepper .sd.on { color: var(--navy-950); background: var(--yellow); border-color: var(--yellow); }
+  #stepper .sl { position: absolute; top: 60px; transform: translateX(-50%); font: 600 18px Inter; color: var(--slate-400); white-space: nowrap; }
+
+  /* ---- Browser ---- */
+  #camWrap { position: absolute; left: 800px; top: 175px; width: 1010px; height: 730px; perspective: 2400px; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #browser { position: absolute; inset: 0; border-radius: 22px; overflow: hidden; background: var(--app-bg);
+             box-shadow: 0 60px 120px -30px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.08); color: var(--ink); }
+  .chrome { height: 56px; background: #E9EDF3; display: flex; align-items: center; padding: 0 22px; gap: 9px; border-bottom: 1px solid #D9DFE8; }
+  .chrome .d { width: 14px; height: 14px; border-radius: 50%; }
+  .url { position: absolute; left: 50%; top: 11px; width: 540px; margin-left: -270px; height: 34px; border-radius: 10px; background: #fff;
+         display: flex; align-items: center; gap: 10px; padding: 0 14px; font: 500 18px Inter; color: var(--ink); box-shadow: inset 0 0 0 1px #D9DFE8; }
+  .url .caret { width: 2px; height: 20px; background: var(--ink); }
+  .appbar { height: 66px; background: #fff; border-bottom: 1px solid var(--line); display: flex; align-items: center; padding: 0 30px; gap: 12px; }
+  .appbar .mini { width: 34px; height: 34px; }
+  .appbar .wm { font: 900 22px Archivo; letter-spacing: -.02em; }
+  .appbar .wm span { font-weight: 500; color: #E0A400; }
+  .appbar .pub { margin-left: auto; display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px;
+                 background: #E7F8EF; color: #0F8A4A; font: 700 14px Inter; letter-spacing: .04em; }
+  .appbar .pub i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .appbar .help { font: 600 15px Inter; color: var(--slate-500); margin-left: 18px; }
+  #viewport { position: absolute; left: 0; right: 0; top: 122px; bottom: 0; overflow: hidden; }
+  .page { position: absolute; inset: 0; padding: 30px 32px; }
+  .page h2 { font: 800 30px Archivo; letter-spacing: -.02em; color: var(--ink); }
+  .page .lead { font: 500 16px Inter; color: var(--slate-500); margin-top: 6px; }
+
+  .search { margin-top: 20px; height: 54px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line);
+            display: flex; align-items: center; gap: 12px; padding: 0 18px; font: 500 17px Inter; color: var(--slate-400); }
+  .card { position: relative; margin-top: 14px; height: 104px; border-radius: 16px; background: #fff; display: flex; align-items: center; gap: 18px; padding: 0 22px 0 16px;
+          box-shadow: 0 1px 0 rgba(15,23,42,.04), 0 8px 24px -12px rgba(15,23,42,.18); }
+  .card .ring { position: absolute; inset: 0; border-radius: 16px; box-shadow: inset 0 0 0 3px var(--yellow); opacity: 0; }
+  .card .thumb { width: 74px; height: 74px; border-radius: 12px; overflow: hidden; flex: none; }
+  .card .nm { font: 700 20px Inter; color: var(--ink); }
+  .card .ad { font: 500 15px Inter; color: var(--slate-500); margin-top: 5px; display: flex; gap: 14px; }
+  .chip { margin-left: auto; padding: 7px 14px; border-radius: 999px; font: 700 14px Inter; }
+  .chip.ok { background: #E7F8EF; color: #0F8A4A; }
+  .chip.no { background: #EEF1F5; color: var(--slate-500); }
+  .chev { width: 22px; height: 22px; color: var(--slate-400); flex: none; }
+
+  .crumb { font: 600 15px Inter; color: var(--slate-500); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .crumb b { color: var(--ink); }
+  .days { display: flex; gap: 10px; margin-top: 18px; }
+  .day { width: 94px; height: 64px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); text-align: center; padding-top: 9px; }
+  .day small { display: block; font: 600 13px Inter; color: var(--slate-500); text-transform: uppercase; letter-spacing: .06em; }
+  .day b { display: block; font: 800 22px Archivo; color: var(--ink); margin-top: 2px; }
+  .day.sel { background: var(--ink); box-shadow: none; }
+  .day.sel small { color: var(--slate-400); } .day.sel b { color: #fff; }
+  .slots { position: absolute; left: 32px; top: 200px; width: 500px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .slot { position: relative; height: 54px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line);
+          display: grid; place-items: center; font: 700 18px Inter; color: var(--ink); }
+  .slot.full { color: #B4BDCB; background: repeating-linear-gradient(-45deg, #F4F6FA 0 8px, #ECEFF4 8px 16px); box-shadow: none; text-decoration: line-through; }
+  .slot .on { position: absolute; inset: 0; border-radius: 12px; background: var(--yellow); display: grid; place-items: center; color: var(--ink); }
+  .form { position: absolute; right: 32px; top: 200px; width: 400px; height: 380px; border-radius: 18px; background: #fff; padding: 22px 24px;
+          box-shadow: 0 1px 0 rgba(15,23,42,.04), 0 12px 32px -14px rgba(15,23,42,.22); }
+  .form .ft { font: 800 19px Archivo; color: var(--ink); display: flex; align-items: center; gap: 10px; }
+  .form .ft em { font-style: normal; margin-left: auto; padding: 5px 10px; border-radius: 8px; background: #FFF6D9; color: #A56F00; font: 700 14px Inter; }
+  .field { margin-top: 14px; }
+  .field label { display: block; font: 600 13px Inter; color: var(--slate-500); text-transform: uppercase; letter-spacing: .06em; }
+  .field .in { position: relative; margin-top: 6px; height: 46px; border-radius: 11px; box-shadow: inset 0 0 0 1.5px var(--line); display: flex; align-items: center; padding: 0 14px; font: 600 17px Inter; color: var(--ink); }
+  .field .in .caret { width: 2px; height: 20px; background: var(--ink); margin-left: 1px; }
+  .field .in.focus { box-shadow: inset 0 0 0 2px var(--yellow), 0 0 0 4px rgba(255,194,14,.2); }
+  .btn { position: absolute; left: 24px; right: 24px; bottom: 22px; height: 54px; border-radius: 13px; background: var(--ink); color: #fff;
+         display: flex; align-items: center; justify-content: center; gap: 10px; font: 700 18px Inter; overflow: hidden; }
+  .btn .spin { width: 24px; height: 24px; border-radius: 50%; border: 3px solid rgba(255,255,255,.25); border-top-color: var(--yellow); position: absolute; }
+
+  #pageC { display: flex; flex-direction: column; align-items: center; padding-top: 70px; padding-right: 300px; }
+  #pageC h2 { font-size: 38px; margin-top: 26px; }
+  #pageC .lead { font-size: 18px; margin-top: 10px; }
+  .sum { display: flex; gap: 10px; margin-top: 26px; }
+  .sum div { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; background: #fff; font: 700 16px Inter; color: var(--ink);
+             box-shadow: 0 6px 18px -10px rgba(15,23,42,.25); }
+  #check { width: 150px; height: 150px; overflow: visible; }
+
+  /* ---- Cursor ---- */
+  #cursor { position: absolute; left: 0; top: 0; width: 38px; height: 38px; z-index: 50; filter: drop-shadow(0 6px 10px rgba(0,0,0,.35)); }
+  .ripple { position: absolute; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; border: 3px solid var(--yellow); background: rgba(255,194,14,.18); z-index: 49; opacity: 0; }
+
+  /* ---- Phone ---- */
+  #phone { position: absolute; left: 1490px; top: 330px; width: 330px; height: 672px; border-radius: 52px; background: #05080F; padding: 12px;
+           box-shadow: 0 70px 120px -30px rgba(0,0,0,.75), 0 0 0 2px #2A3447 inset, 0 0 0 1px rgba(255,255,255,.06); }
+  #phone .scr { position: relative; width: 100%; height: 100%; border-radius: 41px; overflow: hidden;
+                background: linear-gradient(170deg, #1C2C4A 0%, #0D1628 60%); }
+  #phone .isl { position: absolute; left: 50%; top: 12px; width: 104px; height: 30px; margin-left: -52px; border-radius: 20px; background: #000; z-index: 5; }
+  #phone .clock { position: absolute; top: 58px; width: 100%; text-align: center; font: 700 64px Inter; color: #fff; letter-spacing: -.02em; }
+  #phone .date { position: absolute; top: 140px; width: 100%; text-align: center; font: 600 17px Inter; color: rgba(255,255,255,.7); }
+  #notif { position: absolute; left: 12px; right: 12px; top: 56px; border-radius: 20px; padding: 14px; z-index: 4;
+           background: rgba(255,255,255,.92); color: var(--ink); display: flex; gap: 12px; box-shadow: 0 12px 30px -8px rgba(0,0,0,.5); }
+  #notif .ic { width: 38px; height: 38px; flex: none; border-radius: 10px; }
+  #notif .h { font: 700 13px Inter; color: var(--slate-500); display: flex; justify-content: space-between; }
+  #notif .t { font: 700 15px Inter; margin-top: 3px; line-height: 1.3; }
+  #pass { position: absolute; left: 16px; right: 16px; top: 196px; height: 420px; border-radius: 24px; background: #fff; overflow: hidden; color: var(--ink); }
+  #pass .ph { height: 64px; background: var(--yellow); display: flex; align-items: center; padding: 0 18px; gap: 10px; font: 900 17px Archivo; letter-spacing: .08em; }
+  #pass .ph svg { width: 30px; height: 30px; }
+  #qr { display: block; margin: 20px auto 0; width: 190px; height: 190px; }
+  #pass .pi { text-align: center; font: 700 16px Inter; margin-top: 14px; }
+  #pass .ps { text-align: center; font: 500 13px Inter; color: var(--slate-500); margin-top: 6px; padding: 0 16px; line-height: 1.4; }
+  #stampEl { position: absolute; left: 50%; top: 262px; margin-left: -110px; width: 220px; padding: 10px 0; border-radius: 12px; border: 4px solid var(--green);
+             color: var(--green); background: rgba(255,255,255,.9); font: 900 24px Archivo; letter-spacing: .12em; text-align: center; }
+
+  /* ---- Outro ---- */
+  .node { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: var(--navy-800);
+          border: 3px solid rgba(255,194,14,.55); display: grid; place-items: center; box-shadow: 0 20px 60px -20px rgba(0,0,0,.7); }
+  .node svg { width: 64px; height: 64px; }
+  .node .lb { position: absolute; top: 172px; left: 50%; transform: translateX(-50%); font: 700 30px Archivo; color: #fff; white-space: nowrap; }
+  .node .n { position: absolute; top: -14px; right: -14px; width: 44px; height: 44px; border-radius: 50%; background: var(--yellow); color: var(--navy-950);
+             font: 900 20px Archivo; display: grid; place-items: center; }
+  #recapLine path { fill: none; }
+  #endLogo { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 30px; }
+  #endLogo .mark { width: 150px; height: 150px; }
+  #endLogo .word { font-family: Archivo; font-weight: 900; font-size: 120px; letter-spacing: -.035em; line-height: 1; white-space: nowrap; }
+  #endLogo .word span { font-weight: 500; color: var(--yellow); }
+  #endShock { position: absolute; width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--yellow); }
+  #endUrl { position: absolute; top: 640px; left: 50%; display: flex; align-items: center; gap: 14px; padding: 18px 34px 18px 26px; border-radius: 999px;
+            background: var(--white); color: var(--ink); font: 700 36px Inter; letter-spacing: -.01em; transform-origin: 50% 50%;
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,.6); }
+  #endUrl svg { width: 36px; height: 36px; }
+  #endTag { position: absolute; top: 790px; width: 1920px; display: flex; justify-content: center; gap: 28px; font: 800 40px Archivo; letter-spacing: -.01em; }
+  #endTag .m { display: inline-block; }
+  #endCursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+  #endRipple { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 3px solid var(--yellow); background: rgba(255,194,14,.2); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-mark" viewBox="0 0 160 160">
+      <rect x="0" y="0" width="160" height="160" rx="38" fill="#FFC20E"/>
+      <g fill="none" stroke="#0B1424" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M52 124 V40 H112"/>
+        <path d="M52 80 H96"/>
+        <path d="M98 26 L114 40 L98 54"/>
+        <path d="M84 66 L98 80 L84 94"/>
+      </g>
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="currentColor"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><rect x="13" y="13.4" width="4" height="3.6" rx=".8" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5h11v9h-11zM13.5 9.5h4l3.5 3.5v2.5h-7.5"/><circle cx="7" cy="17.5" r="2" fill="#fff"/><circle cx="17" cy="17.5" r="2" fill="#fff"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 38 38"><path d="M6 3 L6 31 L13.2 24.6 L18.4 35.4 L23.6 33 L18.6 22.6 L28.4 22.2 Z" fill="#fff" stroke="#0B1424" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+    <symbol id="i-map" viewBox="0 0 74 74">
+      <rect width="74" height="74" fill="#E8EEF6"/>
+      <path d="M-5 50 C 20 40, 30 58, 80 30" stroke="#fff" stroke-width="9" fill="none"/>
+      <path d="M20 -5 L 34 80" stroke="#fff" stroke-width="6" fill="none"/>
+      <path d="M-5 18 L 80 26" stroke="#D5DEEA" stroke-width="4" fill="none"/>
+      <circle cx="56" cy="58" r="10" fill="#CFE9D9"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="stage">
+  <!-- Background -->
+  <div id="grid"></div>
+  <div id="glowA" class="glow"></div>
+  <div id="glowB" class="glow"></div>
+  <svg id="bgflux" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+
+  <!-- S1: intro -->
+  <svg id="introFlux" class="abs" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+  <div id="shock"></div>
+  <div id="logo">
+    <svg class="mark" id="logoMark" viewBox="0 0 160 160">
+      <rect x="0" y="0" width="160" height="160" rx="38" fill="#FFC20E"/>
+      <g fill="none" stroke="#0B1424" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
+        <path class="fs" d="M52 124 V40 H112"/>
+        <path class="fs" d="M52 80 H96"/>
+        <path class="fs" d="M98 26 L114 40 L98 54"/>
+        <path class="fs" d="M84 66 L98 80 L84 94"/>
+      </g>
+    </svg>
+    <div class="m" id="logoWordM" style="overflow:hidden"><div class="mi word" id="logoWord"><b>Flux</b><span>Chantier</span></div></div>
+  </div>
+  <div id="logoTag"><span class="m"><span class="mi">Guide express <i>·</i> Partie publique</span></span></div>
+
+  <div id="guide"><span class="dot"></span><span>Guide · Partie publique</span></div>
+
+  <!-- S2: promise -->
+  <div id="promise" class="layer">
+    <div id="pLabel"><span class="m"><span class="mi">ACCÈS PUBLIC · SANS INSTALLATION</span></span></div>
+    <div id="pBig"><span id="pThree">3</span><span class="m" id="pWordM"><span class="mi" id="pWord">étapes.</span></span></div>
+    <svg id="pLine" width="1920" height="1080"><path id="pLinePath" d="M560 722 C 800 782, 1100 662, 1400 722" stroke="#FFC20E" stroke-width="10" stroke-linecap="round" fill="none"/></svg>
+    <div id="pSub"><span class="m"><span class="mi">pour planifier votre venue sur <b>chantier</b>.</span></span></div>
+  </div>
+
+  <!-- S3–S5: steps -->
+  <div id="steps" class="layer">
+    <div class="step" id="st1">
+      <span class="m"><span class="mi num">01</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Choisissez</span></span><span class="m"><span class="mi">votre <span class="y">chantier</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Ouvrez <b>fluxchantier.web.app</b></span></span><span class="m"><span class="mi">et sélectionnez votre site.</span></span></div>
+    </div>
+    <div class="step" id="st2">
+      <span class="m"><span class="mi num">02</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Réservez</span></span><span class="m"><span class="mi">votre <span class="y">créneau</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Date, heure, véhicule :</span></span><span class="m"><span class="mi">tout se fait en <b>quelques clics</b>.</span></span></div>
+    </div>
+    <div class="step" id="st3">
+      <span class="m"><span class="mi num">03</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Validez,</span></span><span class="m"><span class="mi">c'est <span class="y">confirmé</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Votre pass d'accès arrive</span></span><span class="m"><span class="mi"><b>instantanément</b> sur mobile.</span></span></div>
+    </div>
+
+    <div id="stepper">
+      <div class="track"></div><div class="fill" id="stFill"></div>
+      <div class="sd" id="sd1" style="left:22px">1</div>
+      <div class="sd" id="sd2" style="left:242px">2</div>
+      <div class="sd" id="sd3" style="left:462px">3</div>
+      <div class="sl" style="left:22px">Chantier</div>
+      <div class="sl" style="left:242px">Créneau</div>
+      <div class="sl" style="left:462px">Confirmation</div>
+    </div>
+
+    <div id="camWrap"><div id="cam">
+      <div id="browser">
+        <div class="chrome">
+          <span class="d" style="background:#FF5F57"></span><span class="d" style="background:#FEBC2E"></span><span class="d" style="background:#28C840"></span>
+          <div class="url"><svg width="16" height="16" style="color:#16A34A"><use href="#i-lock"/></svg><span id="urlText"></span><span class="caret" id="urlCaret"></span></div>
+        </div>
+        <div class="appbar" id="appbar">
+          <svg class="mini"><use href="#i-mark"/></svg>
+          <div class="wm">Flux<span>Chantier</span></div>
+          <div class="pub"><i></i>Accès public</div>
+          <div class="help">Aide</div>
+        </div>
+        <div id="viewport">
+          <div class="page" id="pageA">
+            <h2 class="ld">Trouvez votre chantier</h2>
+            <div class="lead ld">Sélectionnez le site sur lequel vous intervenez.</div>
+            <div class="search ld"><svg width="22" height="22"><use href="#i-search"/></svg>Rechercher un chantier, une ville…</div>
+            <div class="card ld" id="card1"><div class="ring" id="card1Ring"></div>
+              <svg class="thumb"><use href="#i-map"/><svg x="25" y="18" width="26" height="30" style="color:#FF7A1A"><use href="#i-pin"/></svg></svg>
+              <div><div class="nm">Tour Horizon</div><div class="ad"><span>Lyon 3e</span><span>· Gros œuvre</span></div></div>
+              <span class="chip ok">Ouvert</span><svg class="chev"><use href="#i-chev"/></svg></div>
+            <div class="card ld"><svg class="thumb"><use href="#i-map"/><svg x="30" y="22" width="26" height="30" style="color:#FF7A1A"><use href="#i-pin"/></svg></svg>
+              <div><div class="nm">Écoquartier des Rives</div><div class="ad"><span>Nantes</span><span>· Second œuvre</span></div></div>
+              <span class="chip ok">Ouvert</span><svg class="chev"><use href="#i-chev"/></svg></div>
+            <div class="card ld"><svg class="thumb"><use href="#i-map"/><svg x="18" y="26" width="26" height="30" style="color:#94A3B8"><use href="#i-pin"/></svg></svg>
+              <div><div class="nm">Pont de la Seine</div><div class="ad"><span>Rouen</span><span>· Génie civil</span></div></div>
+              <span class="chip no">Fermé</span><svg class="chev"><use href="#i-chev"/></svg></div>
+          </div>
+
+          <div class="page" id="pageB">
+            <div class="crumb lb"><svg width="18" height="18"><use href="#i-back"/></svg>Chantiers <span>/</span> <b>Tour Horizon · Lyon 3e</b></div>
+            <h2 class="lb">Choisissez un créneau</h2>
+            <div class="days lb">
+              <div class="day"><small>Lun</small><b>5</b></div>
+              <div class="day sel"><small>Mar</small><b>6</b></div>
+              <div class="day"><small>Mer</small><b>7</b></div>
+              <div class="day"><small>Jeu</small><b>8</b></div>
+              <div class="day"><small>Ven</small><b>9</b></div>
+            </div>
+            <div class="slots" id="slots">
+              <div class="slot full">07:00</div><div class="slot">07:30</div><div class="slot full">08:00</div>
+              <div class="slot" id="slotPick">08:30<div class="on" id="slotOn">08:30</div></div><div class="slot">09:00</div><div class="slot">09:30</div>
+              <div class="slot full">10:00</div><div class="slot">10:30</div><div class="slot">11:00</div>
+              <div class="slot">13:30</div><div class="slot full">14:00</div><div class="slot">14:30</div>
+            </div>
+            <div class="form lb" id="form">
+              <div class="ft"><svg width="22" height="22"><use href="#i-truck"/></svg>Votre livraison<em id="formWhen">Mar. 6 · 08:30</em></div>
+              <div class="field"><label>Entreprise</label><div class="in" id="f0"><span class="tx"></span><span class="caret"></span></div></div>
+              <div class="field"><label>Immatriculation</label><div class="in" id="f1"><span class="tx"></span><span class="caret"></span></div></div>
+              <div class="field"><label>Type de véhicule</label><div class="in" id="f2"><span class="tx"></span><span class="caret"></span></div></div>
+              <div class="btn" id="btn"><span id="btnLabel">Confirmer la réservation</span><span class="spin" id="spin"></span></div>
+            </div>
+          </div>
+
+          <div class="page" id="pageC">
+            <svg id="check" viewBox="0 0 150 150">
+              <g id="burst" stroke="#1FC16B" stroke-width="6" stroke-linecap="round"></g>
+              <circle id="checkBg" cx="75" cy="75" r="62" fill="#1FC16B"/>
+              <circle id="checkRing" cx="75" cy="75" r="62" fill="none" stroke="#1FC16B" stroke-width="6"/>
+              <path id="checkPath" d="M46 77 L66 96 L104 56" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h2><span class="m"><span class="mi">Réservation confirmée !</span></span></h2>
+            <div class="lead"><span class="m"><span class="mi">Votre pass d'accès vous a été envoyé.</span></span></div>
+            <div class="sum">
+              <div class="sm"><svg width="20" height="20" style="color:#FF7A1A"><use href="#i-pin"/></svg>Tour Horizon</div>
+              <div class="sm"><svg width="20" height="20"><use href="#i-cal"/></svg>Mar. 6 oct.</div>
+              <div class="sm"><svg width="20" height="20"><use href="#i-clock"/></svg>08:30</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ripple" id="ripple"></div>
+      <svg id="cursor" viewBox="0 0 38 38"><use href="#i-cursor"/></svg>
+    </div></div>
+
+    <div id="phone"><div class="scr">
+      <div class="isl"></div>
+      <div class="clock">8:02</div>
+      <div class="date">mardi 6 octobre</div>
+      <div id="notif">
+        <svg class="ic"><use href="#i-mark"/></svg>
+        <div style="flex:1"><div class="h"><span>FLUXCHANTIER</span><span>maintenant</span></div>
+          <div class="t">Créneau confirmé ✓<br><span style="font-weight:500;color:#475569">Tour Horizon · 08:30</span></div></div>
+      </div>
+      <div id="pass">
+        <div class="ph"><svg><use href="#i-mark"/></svg>PASS D'ACCÈS</div>
+        <svg id="qr" viewBox="0 0 25 25" shape-rendering="crispEdges"></svg>
+        <div class="pi">Tour Horizon · 08:30</div>
+        <div class="ps">Présentez ce code à l'entrée du chantier.</div>
+        <div id="stampEl">ACCÈS VALIDÉ</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- S6: outro -->
+  <div id="outro" class="layer">
+    <svg id="recapLine" class="abs" width="1920" height="1080" viewBox="0 0 1920 1080">
+      <path id="rlBase" d="M560 470 L1360 470" stroke="rgba(255,255,255,.14)" stroke-width="6" stroke-linecap="round"/>
+      <path id="rlFlow" d="M560 470 L1360 470" stroke="#FFC20E" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 22"/>
+    </svg>
+    <div class="node" id="n1"><svg style="color:#FFC20E"><use href="#i-pin"/></svg><span class="n">1</span><span class="lb">Chantier</span></div>
+    <div class="node" id="n2"><svg style="color:#FFC20E"><use href="#i-cal"/></svg><span class="n">2</span><span class="lb">Créneau</span></div>
+    <div class="node" id="n3"><svg style="color:#1FC16B"><use href="#i-check"/></svg><span class="n">3</span><span class="lb">Confirmé</span></div>
+    <div id="endShock"></div>
+    <div id="endLogo">
+      <svg class="mark"><use href="#i-mark"/></svg>
+      <div class="m" style="overflow:hidden"><div class="mi word" id="endWord"><b>Flux</b><span>Chantier</span></div></div>
+    </div>
+    <div id="endUrl"><svg style="color:#FF7A1A"><use href="#i-globe"/></svg>fluxchantier.web.app</div>
+    <div id="endTag">
+      <span class="m"><span class="mi">Simple.</span></span>
+      <span class="m"><span class="mi">Rapide.</span></span>
+      <span class="m"><span class="mi y">Accessible.</span></span>
+    </div>
+    <div id="endRipple"></div>
+    <svg id="endCursor" viewBox="0 0 38 38"><use href="#i-cursor"/></svg>
+  </div>
+
+  <!-- Transition + finishing -->
+  <div id="wipeA" class="wipe"></div>
+  <div id="wipeB" class="wipe"></div>
+  <div id="wipeC" class="wipe"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+</div>
+
+<script src="timeline.js"></script>
+<script src="anim.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "motion_design_fluxchantier",
+  "version": "1.0.0",
+  "description": "Vidéo motion design 15 s : guide de la partie publique de FluxChantier",
+  "scripts": {
+    "audio": "python3 scripts/audio.py",
+    "frames": "node scripts/render.mjs",
+    "stills": "node scripts/render.mjs --stills",
+    "build": "bash scripts/build.sh",
+    "preview": "npx http-server src -p 8080 -c-1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hugorameilpro-beep/Motion_design_fluxchantier.git"
+  },
+  "keywords": [
+    "motion-design",
+    "fluxchantier"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hugorameilpro-beep/Motion_design_fluxchantier/issues"
+  },
+  "homepage": "https://github.com/hugorameilpro-beep/Motion_design_fluxchantier#readme",
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  },
+  "private": true
+}
