@@ -3,7 +3,7 @@
 ![Storyboard](out/storyboard.jpg)
 
 **Vidéo finale :** [`out/fluxchantier_motion.mp4`](out/fluxchantier_motion.mp4)
-(1920×1080, 60 i/s, H.264 + AAC, 18,75 s, environ 8,2 Mo) : le guide de 15 s, suivi de 3,75 s de signature Synapsis.
+(1920×1080, 60 i/s, H.264 + AAC, 18,75 s, environ 6,9 Mo) : le guide de 15 s, suivi de 3,75 s de signature Synapsis.
 
 Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`](SCENARIO.md).
 
