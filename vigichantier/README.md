@@ -3,7 +3,7 @@
 ![Storyboard](out/storyboard.jpg)
 
 **Vidéo :** [`out/vigichantier_motion.mp4`](out/vigichantier_motion.mp4)
-(1920×1080, 60 i/s, H.264 + AAC, 18,75 s) : présentation de VigiChantier en 3 temps
+(1920×1080, 60 i/s, H.264 + AAC, 18,75 s, environ 7,9 Mo) : présentation de VigiChantier en 3 temps
 (surveiller, décider, sécuriser), puis 3,75 s de signature Synapsis.
 
 Scénario, sources, fidélité au site et sound design : [`SCENARIO.md`](SCENARIO.md).
