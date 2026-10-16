@@ -1,6 +1,6 @@
 """Synthesises the 15 s soundtrack (music bed + sound design) from src/timeline.js.
 
-128 BPM, D major. Every SFX time comes from the same timeline as the visuals,
+128 BPM, epic trailer score (scripts/epic_music.py). Every SFX time comes from the same timeline as the visuals,
 so clicks, whooshes and impacts land on the frame they illustrate.
 Output: build/audio.wav (44.1 kHz, 16-bit stereo).
 """
@@ -197,54 +197,14 @@ def swell(t0, d, gain=0.35):
 
 
 # ------------------------------------------------------------------ arrangement
+# Epic trailer-style score (taiko, string ostinato, strings pad, braams), shared by both videos.
+import sys
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+from epic_music import compose  # noqa: E402
+
 S = TL["scenes"]
-D, A_, B, G = 62, 57, 59, 55  # roots
-chords = {  # MIDI voicings
-    "D": [62, 66, 69, 73], "A": [61, 64, 69, 76], "Bm": [62, 66, 71, 74], "G": [62, 67, 71, 74],
-}
-prog = ["D", "A", "Bm", "G", "D", "A", "G", "D", "G", "D"]  # last two bars: Synapsis signature
-roots = {"D": D - 24, "A": A_ - 24, "Bm": B - 24, "G": G - 24}
-
-for b, name in enumerate(prog):
-    t0 = b * BAR
-    pad_chord(t0, BAR + 0.15, chords[name], gain=0.075 if b == 0 else 0.07 if b >= 8 else 0.095)
-
-# bass: pumping off-beat eighths, bars 2-7
-for b in range(1, 7):
-    name = prog[b]
-    for e in range(8):
-        tt = b * BAR + e * BEAT / 2
-        if tt >= 11.25 and e >= 4:
-            break
-        if e % 2 == 1 or b >= 2:
-            bass(tt, BEAT / 2 * 0.95, roots[name] + (12 if e % 4 == 3 else 0), 0.26 if e % 2 else 0.18)
-bass(S["outro"][0], 1.0, roots["D"], 0.3)
-bass(TL["logoHit"], 1.7, roots["D"], 0.34)
-
-# drums
-beat_t = np.arange(0, DUR, BEAT)
-for tt in beat_t:
-    if 1.87 <= tt < 11.24 or 12.18 <= tt < 13.2:
-        kick(tt)
-for tt in np.arange(S["step1"][0], 11.24, BEAT):
-    hat(tt + BEAT / 2)
-    hat(tt + BEAT / 4, 0.08)
-    hat(tt + 3 * BEAT / 4, 0.08)
-for b in range(2, 6):
-    clap(b * BAR + BEAT)
-    clap(b * BAR + 3 * BEAT)
-# snare roll into the outro
-for i, tt in enumerate(np.arange(11.25, 12.18, BEAT / 4)):
-    clap(tt, 0.08 + 0.25 * i / 8)
-kick(TL["logoHit"], 1.1, big=True)
-
-# arp (steps)
-arp_pat = [0, 1, 2, 3, 2, 1, 2, 3]
-for b in range(2, 6):
-    notes = [n + 12 for n in chords[prog[b]]]
-    for s16 in range(16):
-        tt = b * BAR + s16 * BEAT / 4
-        pluck(tt, notes[arp_pat[s16 % 8]], 0.055, pan=0.35 if s16 % 2 else -0.35)
+roots = {"D": 38, "A": 33, "Bm": 35, "G": 31}  # used by the signature sound design below
+music += compose(TL, SR)
 
 # ------------------------------------------------------------------ sound design
 swell(0.0, TL["logoPop"], 0.45)
@@ -326,7 +286,7 @@ mix *= fade[:, None]
 mix[: int(0.005 * SR)] *= np.linspace(0, 1, int(0.005 * SR))[:, None]
 
 mix = np.tanh(mix * 1.1) / np.tanh(1.1)
-mix *= 10 ** (-4.5 / 20) / np.max(np.abs(mix))  # leaves true-peak headroom, ~-14 LUFS
+mix *= 10 ** (-5.5 / 20) / np.max(np.abs(mix))  # leaves true-peak headroom, ~-14 LUFS
 
 os.makedirs(os.path.join(ROOT, "build"), exist_ok=True)
 out = os.path.join(ROOT, "build/audio.wav")

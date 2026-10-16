@@ -119,7 +119,19 @@ Les principes ne changent pas par rapport à la première version :
 - continuité entre le logo d'ouverture, la signature et le logo final ;
 - impacts amortis.
 
-La musique est synthétisée (128 BPM, ré majeur). Chaque bruitage est calé sur `src/timeline.js` :
+La musique est une **composition originale de style « trailer » épique**, entièrement synthétisée
+(`scripts/epic_music.py`, sans sample ni morceau tiers, donc sans droits), à 128 BPM sur la grille de la vidéo :
+- **ouverture** : nappe grave en si mineur, braam de cuivres et taïko sur l'apparition du logo ;
+- **promesse** : taïko sur chaque temps, l'ostinato de cordes entre, montée vers la transition ;
+- **étapes** : progression ré – si mineur – sol – la, rythmique de taïko, ostinato en doubles croches,
+  nappe de cordes, thème héroïque aux violons et tic-tac discret qui garde le côté technologique ;
+- **montée** : roulement de taïko et braam sur le récapitulatif ;
+- **apogée** : braam massif, cymbale et thème tenu sur le logo de fin ;
+- **signature Synapsis** : cordes douces (sol, puis ré), sans percussions.
+
+Les pupitres sont équilibrés par mesure de niveau : les percussions mènent, les cordes et le thème restent audibles.
+
+Chaque bruitage est calé sur `src/timeline.js` :
 - frappe au clavier pour l'URL, l'entreprise et l'e-mail ;
 - clics : créneau, champ, listes déroulantes, case CGU, bouton ;
 - carillon à l'envoi ;
@@ -127,10 +139,9 @@ La musique est synthétisée (128 BPM, ré majeur). Chaque bruitage est calé su
 - carillon montant à la validation ;
 - impacts sur le « 3 » et sur le logo.
 
-Pendant la signature, la musique se pose sur deux mesures calmes (sol, puis ré), sans percussions,
-avec un accord de cloches à l'apparition du logo et une note à chaque texte.
+Pendant la signature, un accord de cloches accompagne l'apparition du logo, puis une note chaque texte.
 
-Niveau de sortie : environ -14 LUFS.
+Niveau de sortie : environ -15 LUFS, crêtes à -1,3 dBFS après encodage.
 
 ## Signature Synapsis : sources
 

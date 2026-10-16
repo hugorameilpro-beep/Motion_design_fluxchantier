@@ -86,7 +86,7 @@ titres `#F8FAFC`, textes secondaires `#94A3B8`.
 
 ## Son
 
-Même base musicale que FluxChantier (128 BPM, ré majeur, synthétisée, sans droits). S'y ajoutent :
+Même musique que FluxChantier : composition originale de style « trailer » épique, synthétisée (`../scripts/epic_music.py`, sans droits), à 128 BPM. Taïko, ostinato de cordes, nappe, thème héroïque, braams sur l'ouverture, le récapitulatif et le logo final. Par-dessus, les bruitages propres à VigiChantier :
 - une ambiance de pluie qui suit l'intensité à l'écran ;
 - des notes sur les quatre tuiles météo ;
 - un bip d'avertissement quand VigiPluie passe en averse ;

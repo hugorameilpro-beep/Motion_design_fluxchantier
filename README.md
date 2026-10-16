@@ -29,7 +29,7 @@ Tout est du code, donc modifiable et reproductible. Aucune vidéo ni image de ba
 | `src/anim.js` | Moteur d'animation : `seek(t)` place chaque élément à l'instant `t` (courbes d'accélération, images clés, caméra 3D, curseur). |
 | `src/timeline.js` | Instants clés partagés par l'image **et** le son (clics, frappes, impacts…). |
 | `scripts/render.mjs` | Capture image par image avec Chromium headless (Playwright), en parallèle. |
-| `scripts/audio.py` | Synthèse de la musique (128 BPM) et des bruitages (numpy). |
+| `scripts/audio.py` | Bruitages et mixage (numpy) ; la musique épique (128 BPM) vient de `scripts/epic_music.py`, partagé avec VigiChantier. |
 | `scripts/build.sh` | Enchaîne tout : son → images → MP4, plus l'affiche et le storyboard. |
 
 ### Régénérer la vidéo
