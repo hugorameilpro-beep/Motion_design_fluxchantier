@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>VigiChantier × Synapsis — Motion design</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face { font-family: Inter; font-weight: 100 900; src: url(fonts/inter-latin-var.woff2) format("woff2"); }
+  @font-face { font-family: Montserrat; font-weight: 500; src: url(fonts/montserrat-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: Montserrat; font-weight: 800; src: url(fonts/montserrat-latin-800-normal.woff2) format("woff2"); }
+
+  /* ---- Synapsis-BTP brand tokens: dark technical SaaS theme ---- */
+  :root {
+    --bg:      #0F172A;  --card:   #1E293B;  --line:  #334155;  --line-2: #475569;
+    --em-600:  #059669;  --em-500: #10B981;  --grad:  linear-gradient(135deg, #059669 0%, #10B981 100%);
+    --mint:    #34D399;  --lime:   #A3E635;
+    --title:   #F8FAFC;  --muted:  #94A3B8;  --muted-2: #64748B;
+    --ok-bg:   rgba(16,185,129,.14);  --ok-line: rgba(52,211,153,.35);
+    /* risk semantics kept from the app (GO / VIGILANCE / NO-GO), tuned for dark */
+    --warn:    #FBBF24;  --warn-bg: rgba(251,191,36,.13);  --warn-line: rgba(251,191,36,.35);
+    --risk:    #F87171;  --risk-bg: rgba(248,113,113,.13); --risk-line: rgba(248,113,113,.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  body { font-family: Inter, "Noto Color Emoji", sans-serif; color: var(--title); -webkit-font-smoothing: antialiased; }
+  body.preview { width: 100vw; height: 100vh; display: grid; place-items: center; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden;
+           background: radial-gradient(110% 85% at 66% 40%, #131E35 0%, var(--bg) 55%, #0C1424 100%); }
+  .abs { position: absolute; left: 0; top: 0; }
+  .layer { position: absolute; inset: 0; }
+  .m { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+  .mi { display: block; will-change: transform; }
+  .hl { color: var(--mint); }
+  .emo { font-family: "Noto Color Emoji"; font-weight: 400; }
+
+  /* ---- Background: blueprint grid, glows and rain streaks ---- */
+  #grid { position: absolute; inset: -80px;
+          background-image: linear-gradient(rgba(148,163,184,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.055) 1px, transparent 1px),
+                            linear-gradient(rgba(148,163,184,.022) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.022) 1px, transparent 1px);
+          background-size: 160px 160px, 160px 160px, 32px 32px, 32px 32px; }
+  .glow { position: absolute; width: 900px; height: 900px; border-radius: 50%; filter: blur(40px); }
+  #glowA { background: radial-gradient(circle, rgba(16,185,129,.20), transparent 62%); }
+  #glowB { background: radial-gradient(circle, rgba(163,230,53,.08), transparent 62%); }
+  #rain { position: absolute; inset: 0; }
+  #rain line { stroke-linecap: round; }
+  #grain { position: absolute; inset: -100px; opacity: .05; mix-blend-mode: overlay; pointer-events: none;
+           background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(130% 100% at 50% 50%, transparent 58%, rgba(2,6,16,.5) 100%); }
+
+  /* ---- Logo: the site's vector mark with the brand gradient ---- */
+  .vmark { display: block; overflow: visible; }
+  #logo { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 44px; transform-origin: 0 0; }
+  #logoMark { width: 330px; height: 205px; }
+  .word { font-weight: 800; font-size: 128px; letter-spacing: -.045em; line-height: 1; white-space: nowrap; color: var(--title); }
+  .word b { font-weight: 800; color: var(--mint); }
+  #logoTag { position: absolute; left: 0; width: 1920px; top: 690px; text-align: center; font: 600 28px Inter; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
+  #logoTag i { font-style: normal; color: var(--mint); }
+  #shock { position: absolute; width: 220px; height: 220px; border-radius: 50%; border: 4px solid var(--mint); }
+
+  #guide { position: absolute; right: 110px; top: 70px; display: flex; align-items: center; gap: 14px; font: 700 19px Inter; letter-spacing: .24em; color: var(--muted); text-transform: uppercase; }
+  #guide .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 6px rgba(52,211,153,.2); }
+
+  /* ---- Promise: the four weather modules ---- */
+  #pLabel { position: absolute; top: 290px; width: 1920px; text-align: center; font: 700 29px Inter; letter-spacing: .3em; color: var(--muted); }
+  #pLabel i { font-style: normal; color: var(--mint); }
+  #tiles { position: absolute; left: 0; top: 370px; width: 1920px; height: 320px; }
+  .tile { position: absolute; top: 0; width: 290px; height: 300px; border-radius: 32px; background: var(--card);
+          box-shadow: 0 30px 60px -24px rgba(0,0,0,.6), inset 0 0 0 1.5px var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+  .tile .ic { font-size: 112px; line-height: 1; }
+  .tile .nm { font: 800 50px Inter; letter-spacing: -.035em; }
+  .tile .md { font: 600 19px Inter; color: var(--mint); letter-spacing: .02em; }
+  #pSub { position: absolute; top: 742px; width: 1920px; text-align: center; font: 500 42px Inter; color: var(--muted); }
+  #pSub b { color: var(--title); font-weight: 700; }
+
+  .wipe { position: absolute; inset: 0; }
+  #wipeA { background: var(--em-600); }
+  #wipeB { background: repeating-linear-gradient(-45deg, var(--lime) 0 46px, var(--bg) 46px 92px); }
+  #wipeC { background: var(--grad); }
+
+  /* ---- Steps: left column ---- */
+  .step { position: absolute; left: 110px; top: 250px; width: 640px; }
+  .step .num { font-weight: 900; font-size: 148px; line-height: .9; letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 3px var(--mint); }
+  .step .ttl { margin-top: 34px; font-weight: 800; font-size: 66px; line-height: 1.04; letter-spacing: -.035em; }
+  .step .sub { margin-top: 28px; font: 500 27px/1.45 Inter; color: var(--muted); max-width: 600px; }
+  .step .sub b { color: var(--title); font-weight: 700; }
+  #stepper { position: absolute; left: 110px; top: 880px; width: 484px; height: 90px; }
+  #stepper .track { position: absolute; left: 22px; right: 22px; top: 21px; height: 4px; border-radius: 2px; background: var(--line); }
+  #stepper .fill  { position: absolute; left: 22px; top: 21px; height: 4px; border-radius: 2px; background: linear-gradient(90deg, #059669, #34D399); width: 0; }
+  #stepper .sd { position: absolute; top: 0; width: 46px; height: 46px; margin-left: -23px; border-radius: 50%; display: grid; place-items: center; font: 800 18px Inter; color: var(--muted); background: var(--card); border: 2px solid var(--line); }
+  #stepper .sd.on { color: #fff; background: var(--grad); border-color: var(--mint); box-shadow: 0 0 0 5px rgba(52,211,153,.16); }
+  #stepper .sl { position: absolute; top: 60px; transform: translateX(-50%); font: 600 18px Inter; color: var(--muted); white-space: nowrap; }
+
+  /* ---- Browser: VigiChantier screens, dark SaaS skin ---- */
+  #camWrap { position: absolute; left: 800px; top: 175px; width: 1010px; height: 730px; perspective: 2400px; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #browser { position: absolute; inset: 0; border-radius: 20px; overflow: hidden; background: var(--bg); box-shadow: 0 60px 120px -30px rgba(0,0,0,.75), 0 0 0 1px var(--line); }
+  .chrome { height: 56px; background: #172033; display: flex; align-items: center; padding: 0 22px; gap: 9px; border-bottom: 1px solid var(--line); }
+  .chrome .d { width: 14px; height: 14px; border-radius: 50%; }
+  .url { position: absolute; left: 50%; top: 11px; width: 540px; margin-left: -270px; height: 34px; border-radius: 10px; background: var(--bg); display: flex; align-items: center; gap: 10px; padding: 0 14px; font: 500 17px Inter; box-shadow: inset 0 0 0 1px var(--line); }
+  .url .caret { width: 2px; height: 20px; background: var(--mint); }
+  #app { position: absolute; left: 0; right: 0; top: 56px; bottom: 0; }
+  .topbar { height: 62px; background: var(--card); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 18px; }
+  .topbar .lft { display: flex; align-items: center; gap: 11px; }
+  .topbar .tile2 { width: 42px; height: 42px; border-radius: 11px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); display: grid; place-items: center; }
+  .topbar .tile2 svg { width: 32px; height: 20px; }
+  .topbar h1 { font: 700 16px Inter; letter-spacing: -.01em; }
+  .topbar .sub { font: 400 11px Inter; color: var(--muted); margin-top: 1px; }
+  .topbar .rgt { display: flex; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; border-radius: 8px; background: var(--bg); padding: 6px 10px; font: 500 12px Inter; color: var(--title); box-shadow: inset 0 0 0 1px var(--line); white-space: nowrap; }
+  .tabs { height: 44px; display: flex; gap: 2px; padding: 0 12px; border-bottom: 1px solid var(--line); background: var(--bg); overflow: hidden; }
+  .tab { position: relative; padding: 13px 13px 0; font: 600 13px Inter; color: var(--muted); white-space: nowrap; }
+  .tab.on { color: var(--mint); }
+  .tab .ul { position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; border-radius: 2px; background: var(--mint); }
+  #view { position: absolute; left: 0; right: 0; top: 106px; bottom: 0; overflow: hidden; background: var(--bg); }
+  .page { position: absolute; left: 0; right: 0; top: 0; padding: 18px 22px; }
+
+  .card { position: relative; border-radius: 16px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line), 0 10px 30px -18px rgba(0,0,0,.6); padding: 16px 18px; }
+  .card h2 { font: 700 15px Inter; display: flex; align-items: center; gap: 6px; }
+  .card .ds { font: 400 11.5px Inter; color: var(--muted); margin-top: 3px; }
+  .badge { position: absolute; right: 14px; top: 14px; border-radius: 999px; padding: 4px 10px; font: 600 10.5px Inter; background: var(--ok-bg); color: var(--mint); box-shadow: inset 0 0 0 1px var(--ok-line); }
+  .mods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .mod { height: 196px; }
+  .kv { display: grid; gap: 10px; margin-top: 16px; }
+  .kv .k { font: 600 10px Inter; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .kv .v { font: 700 21px Inter; margin-top: 4px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .kv .v small { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .foot { position: absolute; left: 18px; right: 14px; bottom: 14px; font: 500 11.5px/1.35 Inter; color: var(--muted); }
+  .foot.ok { color: var(--mint); }  .foot.warn { color: var(--warn); }
+  .status { position: relative; display: flex; align-items: center; gap: 7px; height: 26px; }
+  .status .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .status span.lb { position: absolute; left: 19px; top: 2px; white-space: nowrap; font-size: 17px; }
+  #chartCard { margin-top: 12px; height: 300px; }
+  #chart { position: absolute; left: 18px; top: 62px; width: 928px; height: 220px; overflow: visible; }
+
+  #decision { margin-top: 12px; }
+  .dhead { display: flex; justify-content: space-between; align-items: flex-start; }
+  .dhead .upd { font: 500 11px Inter; color: var(--muted); }
+  .klab { margin-top: 14px; font: 600 10.5px Inter; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; }
+  .tchips { display: flex; gap: 7px; margin-top: 8px; flex-wrap: nowrap; }
+  .tchip { border-radius: 999px; padding: 6px 11px; font: 500 11.5px Inter; white-space: nowrap; background: var(--line); color: var(--title); }
+  .tchip.off { background: transparent; color: var(--muted-2); box-shadow: inset 0 0 0 1px var(--line); }
+  .tasks { margin-top: 14px; display: grid; gap: 9px; }
+  .task { position: relative; border-radius: 12px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); padding: 12px 14px; overflow: hidden; }
+  .task .row { display: flex; justify-content: space-between; align-items: center; }
+  .task .tl { font: 600 13.5px Inter; }
+  .task .nt { font: 400 12px Inter; color: var(--muted); margin-top: 4px; }
+  .task .lk { margin-top: 7px; font: 500 12px Inter; color: var(--muted); text-decoration: underline dotted; text-underline-offset: 3px; }
+  .task .panel { margin-top: 6px; font: 500 12px/1.6 Inter; }
+  .pill { border-radius: 999px; padding: 4px 11px; font: 800 11.5px Inter; letter-spacing: .02em; white-space: nowrap; }
+  .pill.go { background: var(--ok-bg); color: var(--mint); box-shadow: inset 0 0 0 1px var(--ok-line); }
+  .pill.vig { background: var(--warn-bg); color: var(--warn); box-shadow: inset 0 0 0 1px var(--warn-line); }
+  .pill.no { background: var(--risk-bg); color: var(--risk); box-shadow: inset 0 0 0 1px var(--risk-line); }
+
+  /* ronde des ouvrants */
+  .rhead { display: flex; justify-content: space-between; align-items: center; }
+  .rhead h2 { font: 700 18px Inter; }
+  .rhead p { font: 400 12px Inter; color: var(--muted); margin-top: 3px; }
+  .gpill { border-radius: 999px; padding: 6px 13px; font: 700 13px Inter; background: var(--ok-bg); color: var(--mint); box-shadow: inset 0 0 0 1px var(--ok-line); font-variant-numeric: tabular-nums; }
+  .ractions { display: flex; gap: 8px; margin-top: 12px; }
+  .btn { border-radius: 9px; padding: 8px 13px; font: 600 12.5px Inter; white-space: nowrap; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); }
+  .btn.pri { background: var(--grad); box-shadow: none; color: #fff; }
+  #plan { position: relative; margin-top: 12px; height: 392px; border-radius: 14px; background: #111B2E; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; }
+  #plan svg.walls { position: absolute; inset: 0; }
+  .odot { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; border: 2px solid var(--bg); display: grid; place-items: center; font: 800 12px Inter; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+  .odot .g { position: absolute; inset: -2px; border-radius: 50%; background: var(--em-500); display: grid; place-items: center; }
+  .legend { position: absolute; left: 14px; bottom: 11px; display: flex; gap: 16px; font: 500 11.5px Inter; color: var(--muted); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  #succ { position: absolute; left: 50%; top: 150px; width: 470px; margin-left: -235px; border-radius: 20px; background: var(--card); padding: 26px; text-align: center;
+          box-shadow: 0 30px 70px -20px rgba(0,0,0,.8), inset 0 0 0 1.5px var(--ok-line); }
+  #succ .sh { font-size: 56px; line-height: 1; }
+  #succ h3 { font: 800 25px Inter; margin-top: 12px; letter-spacing: -.02em; }
+  #succ p { font: 400 13.5px Inter; color: var(--muted); margin-top: 6px; }
+  #succ .st { display: flex; justify-content: center; gap: 28px; margin-top: 18px; }
+  #succ .st b { display: block; font: 800 26px Inter; color: var(--mint); }
+  #succ .st span { font: 500 11.5px Inter; color: var(--muted); }
+  #succ .btn { display: inline-block; margin-top: 18px; }
+  #scrim { position: absolute; inset: 0; background: rgba(2,6,16,.55); }
+
+  #cursor { position: absolute; left: 0; top: 0; width: 38px; height: 38px; z-index: 50; filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
+  .ripple { position: absolute; width: 60px; height: 60px; margin: -30px 0 0 -30px; border-radius: 50%; border: 3px solid var(--lime); background: rgba(163,230,53,.14); z-index: 49; opacity: 0; }
+
+  /* ---- Phone: push alert, then NFC round ---- */
+  #phone { position: absolute; left: 1490px; top: 300px; width: 336px; height: 690px; border-radius: 54px; background: #05080F; padding: 12px;
+           box-shadow: 0 70px 120px -30px rgba(0,0,0,.8), 0 0 0 2px var(--line) inset, 0 0 0 1px rgba(255,255,255,.05); }
+  #phone .scr { position: relative; width: 100%; height: 100%; border-radius: 43px; overflow: hidden; background: linear-gradient(170deg, #12302A 0%, var(--bg) 60%); }
+  #phone .isl { position: absolute; left: 50%; top: 12px; width: 106px; height: 30px; margin-left: -53px; border-radius: 20px; background: #000; z-index: 6; }
+  #phone .clock { position: absolute; top: 60px; width: 100%; text-align: center; font: 700 66px Inter; letter-spacing: -.03em; }
+  #phone .date { position: absolute; top: 144px; width: 100%; text-align: center; font: 500 17px Inter; color: var(--muted); }
+  .notif { position: absolute; left: 10px; right: 10px; top: 196px; border-radius: 20px; padding: 13px; z-index: 5; background: rgba(30,41,59,.97); display: flex; gap: 11px;
+           box-shadow: 0 12px 30px -8px rgba(0,0,0,.6), inset 0 0 0 1px var(--line); }
+  .notif .ic { width: 38px; height: 38px; flex: none; border-radius: 10px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); display: grid; place-items: center; }
+  .notif .ic svg { width: 30px; height: 19px; }
+  .notif .h { font: 600 11.5px Inter; color: var(--muted); display: flex; justify-content: space-between; }
+  .notif .t { font: 700 14px/1.3 Inter; margin-top: 2px; }
+  .notif .b { font: 400 12.5px/1.4 Inter; color: #CBD5E1; margin-top: 3px; }
+  #scanUI { position: absolute; inset: 0; background: var(--bg); padding: 58px 18px 18px; }
+  #scanUI h4 { font: 700 17px Inter; }
+  #scanUI .s2 { font: 400 12px Inter; color: var(--muted); margin-top: 3px; }
+  #nfc { position: relative; height: 170px; margin-top: 10px; }
+  #nfc .core { position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; font-size: 34px; box-shadow: 0 10px 30px -8px rgba(16,185,129,.7); }
+  #nfc .wave { position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; border: 2px solid var(--mint); }
+  #scanList { position: absolute; left: 18px; right: 18px; top: 268px; bottom: 74px; overflow: hidden; }
+  .srow { position: absolute; left: 0; right: 0; height: 44px; border-radius: 11px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font: 600 12.5px Inter; }
+  .srow .ok { color: var(--mint); font-weight: 800; }
+  #scanCount { position: absolute; left: 18px; right: 18px; bottom: 18px; height: 46px; border-radius: 12px; background: var(--grad); display: grid; place-items: center; font: 800 15px Inter; color: #fff; }
+
+  /* ---- Outro ---- */
+  .node { position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: var(--card); border: 2px solid var(--line); display: grid; place-items: center;
+          box-shadow: 0 20px 60px -20px rgba(0,0,0,.7), 0 0 0 6px rgba(52,211,153,.08); }
+  .node .ic { font-size: 62px; line-height: 1; }
+  .node .lb { position: absolute; top: 172px; left: 50%; transform: translateX(-50%); font: 700 30px Inter; letter-spacing: -.02em; white-space: nowrap; }
+  .node .n { position: absolute; top: -14px; right: -14px; width: 44px; height: 44px; border-radius: 50%; background: var(--grad); color: #fff; font: 800 20px Inter; display: grid; place-items: center; box-shadow: 0 0 0 3px var(--bg); }
+  #recapLine path { fill: none; }
+  #endLogo { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 40px; }
+  #endMark { width: 290px; height: 180px; }
+  #endLogo .word { font-size: 116px; }
+  #endShock { position: absolute; width: 200px; height: 200px; border-radius: 50%; border: 4px solid var(--mint); }
+  #endUrl { position: absolute; top: 620px; left: 50%; display: flex; align-items: center; gap: 14px; padding: 18px 34px 18px 26px; border-radius: 999px; background: var(--card); font: 700 36px Inter; letter-spacing: -.015em;
+            transform-origin: 50% 50%; box-shadow: 0 30px 60px -20px rgba(0,0,0,.6), inset 0 0 0 1.5px var(--line); }
+  #endUrl svg { width: 36px; height: 36px; }
+  #endTag { position: absolute; top: 770px; width: 1920px; display: flex; justify-content: center; gap: 26px; font: 800 42px Inter; letter-spacing: -.025em; }
+  #endTag .m { display: inline-block; }
+  #endSite { position: absolute; top: 856px; width: 1920px; text-align: center; font: 500 21px Inter; letter-spacing: .02em; color: var(--muted); }
+  #endCursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.45)); }
+  #endRipple { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 3px solid var(--lime); background: rgba(163,230,53,.16); }
+
+  /* ---- Signature: Synapsis end card ---- */
+  #sig { position: absolute; inset: 0; background: var(--bg); }
+  #sigGlow { position: absolute; left: 50%; top: 442px; width: 900px; height: 900px; margin: -450px 0 0 -450px; border-radius: 50%; background: radial-gradient(circle, rgba(16,185,129,.16), rgba(163,230,53,.05) 40%, transparent 66%); }
+  #sigBody { position: absolute; inset: 0; transform-origin: 50% 50%; }
+  #sigMark { position: absolute; left: 50%; top: 300px; width: 300px; height: 285px; margin-left: -150px; transform-origin: 50% 50%; }
+  #sigName { position: absolute; top: 632px; width: 1920px; text-align: center; font: 800 78px Montserrat, sans-serif; letter-spacing: .08em; padding-left: .08em; }
+  #sigUrl { position: absolute; top: 738px; width: 1920px; text-align: center; font: 500 34px Montserrat, sans-serif; letter-spacing: .06em; padding-left: .06em; color: var(--mint); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="vgrad" x1="0" y1="0.7" x2="1" y2="0.3">
+      <stop offset="0" stop-color="#0B5546"/><stop offset=".42" stop-color="#14A386"/><stop offset=".74" stop-color="#2EE29E"/><stop offset="1" stop-color="#A3E065"/>
+    </linearGradient>
+    <symbol id="vlogo" viewBox="4 52 248 151"><path fill="url(#vgrad)" fill-rule="evenodd" d="M123.4 57L132 56.06L141 56.73L151 59.61L155 61.57L161 65.51L166 70L171.39 77L174.28 83L176.34 91L176.41 97L175.24 103L172.29 110L168.44 116L154.36 133L153.71 135L154.91 137L156 137.63L157 137.97L159 137.53L160.84 136L176.93 117L182 111.89L191 105.82L196 103.8L201 102.64L207 102.16L214 102.46L218 103.29L223 104.81L229 107.88L235.47 113L241.32 120L246.17 130L247.49 136L247.5 149L247.24 152L246 155.98L243.2 162L239.05 168L235 172.37L230 176.4L225 179.27L221 181.16L213 183.3L200 183.34L192 181.1L185 177.36L181.41 174L180.62 172L180.75 170L181.73 168L199.29 147L199.42 145L198 143L195 142.52L192.84 144L159.73 183L153 189.31L145 194.26L137 197.38L126 199.02L118 198.4L111 196.49L106 194.31L101 191.3L96 187.07L89.68 179L87.71 175L85.56 168L85.61 160L87.73 153L91.82 147L108.33 128L108.31 125L107 123.78L105 123.37L103 124.2L78.29 152L74 156.01L68 160.43L60 164.19L55 165.49L47 166.23L42 165.76L35 164.1L27 160.29L22.54 157L16.64 151L12.72 145L9.72 138L8.33 131L7.98 126L8.38 121L9.63 115L13.59 106L17.68 100L23 94.62L30 89.72L34 87.87L41 85.68L45 85.01L49 84.77L58 85.67L66 88.57L68.09 91L68.19 94L54.4 111L54.09 113L55 114.95L57 115.79L59 115.5L61.05 114L93.81 76L101.56 68L106 64.52L112 60.98L117 58.79Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+    <symbol id="i-cursor" viewBox="0 0 38 38"><path d="M6 3 L6 31 L13.2 24.6 L18.4 35.4 L23.6 33 L18.6 22.6 L28.4 22.2 Z" fill="#fff" stroke="#0F172A" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div id="stage">
+  <div id="grid"></div>
+  <div id="glowA" class="glow"></div>
+  <div id="glowB" class="glow"></div>
+  <svg id="rain" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+
+  <!-- S1: intro — the mark sweeps in from the left, like the app's own splash -->
+  <div id="shock"></div>
+  <div id="logo">
+    <svg class="vmark" id="logoMark" viewBox="4 52 248 151"><defs><clipPath id="sweep"><rect id="sweepRect" x="0" y="40" width="0" height="180"/></clipPath></defs>
+      <g clip-path="url(#sweep)"><use href="#vlogo" x="4" y="52" width="248" height="151"/></g></svg>
+    <div class="m" style="overflow:hidden"><div class="mi word" id="logoWord"><b>Vigi</b>Chantier</div></div>
+  </div>
+  <div id="logoTag"><span class="m"><span class="mi">Prévention météo <i>·</i> Pilotage chantier</span></span></div>
+  <div id="guide"><span class="dot"></span><span>Guide · Tableau de bord</span></div>
+
+  <!-- S2: promise — four weather modules -->
+  <div id="promise" class="layer">
+    <div id="pLabel"><span class="m"><span class="mi">LA MÉTÉO DU CHANTIER <i>·</i> ANTICIPÉE</span></span></div>
+    <div id="tiles">
+      <div class="tile" style="left:300px"><span class="ic emo">☔</span><span class="nm">Pluie</span><span class="md">VigiPluie</span></div>
+      <div class="tile" style="left:630px"><span class="ic emo">☀️</span><span class="nm">Chaleur</span><span class="md">VigiChaleur</span></div>
+      <div class="tile" style="left:960px"><span class="ic emo">🌬️</span><span class="nm">Vent</span><span class="md">VigiVent</span></div>
+      <div class="tile" style="left:1290px"><span class="ic emo">🧊</span><span class="nm">Gel</span><span class="md">VigiGel</span></div>
+    </div>
+    <div id="pSub"><span class="m"><span class="mi">Alertes en <b>temps réel</b>, sur le téléphone de l'équipe.</span></span></div>
+  </div>
+
+  <!-- S3–S5: steps -->
+  <div id="steps" class="layer">
+    <div class="step" id="st1">
+      <span class="m"><span class="mi num">01</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Surveillez</span></span><span class="m"><span class="mi">en <span class="hl">temps réel</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Pluie, chaleur, vent : chaque module</span></span><span class="m"><span class="mi">affiche le <b>risque du moment</b>.</span></span></div>
+    </div>
+    <div class="step" id="st2">
+      <span class="m"><span class="mi num">02</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Décidez</span></span><span class="m"><span class="mi">tâche par <span class="hl">tâche</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">GO, VIGILANCE ou NO-GO,</span></span><span class="m"><span class="mi">heure par heure, sur <b>24 h</b>.</span></span></div>
+    </div>
+    <div class="step" id="st3">
+      <span class="m"><span class="mi num">03</span></span>
+      <div class="ttl"><span class="m"><span class="mi">Alertez,</span></span><span class="m"><span class="mi">puis <span class="hl">sécurisez</span></span></span></div>
+      <div class="sub"><span class="m"><span class="mi">Alerte push à l'équipe, puis ronde</span></span><span class="m"><span class="mi">des ouvrants en <b>NFC / QR</b>.</span></span></div>
+    </div>
+    <div id="stepper">
+      <div class="track"></div><div class="fill" id="stFill"></div>
+      <div class="sd" id="sd1" style="left:22px">1</div><div class="sd" id="sd2" style="left:242px">2</div><div class="sd" id="sd3" style="left:462px">3</div>
+      <div class="sl" style="left:22px">Surveiller</div><div class="sl" style="left:242px">Décider</div><div class="sl" style="left:462px">Sécuriser</div>
+    </div>
+
+    <div id="camWrap"><div id="cam">
+      <div id="browser">
+        <div class="chrome">
+          <span class="d" style="background:#FF5F57"></span><span class="d" style="background:#FEBC2E"></span><span class="d" style="background:#28C840"></span>
+          <div class="url"><svg width="16" height="16" style="color:#34D399"><use href="#i-lock"/></svg><span id="urlText"></span><span class="caret" id="urlCaret"></span></div>
+        </div>
+        <div id="app">
+          <div class="topbar">
+            <div class="lft"><span class="tile2"><svg viewBox="4 52 248 151"><use href="#vlogo" x="4" y="52" width="248" height="151"/></svg></span>
+              <div><h1>VigiChantier</h1><div class="sub">Module de Prévention Météo &amp; Pilotage Chantier</div></div></div>
+            <div class="rgt"><span class="chip"><span class="emo">🎨</span>Thème</span><span class="chip"><span class="emo">🔔</span>Alertes</span><span class="chip"><span class="emo">💡</span>Tutoriel</span><span class="chip">Déconnexion</span></div>
+          </div>
+          <div class="tabs">
+            <span class="tab" id="tabDash"><span class="emo">📊</span> Tableau de bord<span class="ul" id="ulDash"></span></span>
+            <span class="tab"><span class="emo">📢</span> Canal Direct</span>
+            <span class="tab" id="tabRonde"><span class="emo">🚪</span> Ronde Ouvrants<span class="ul" id="ulRonde"></span></span>
+            <span class="tab"><span class="emo">📄</span> Attestation</span>
+            <span class="tab"><span class="emo">⚙️</span> Seuils &amp; Tests d'alertes</span>
+            <span class="tab"><span class="emo">👥</span> Équipe</span>
+          </div>
+          <div id="view">
+            <div class="page" id="pageDash">
+              <div class="mods">
+                <section class="card mod ld" id="cardPluie"><h2><span class="emo">☔</span> VigiPluie</h2><span class="badge">🟢 Actif</span>
+                  <div class="ds">Surveillance temps réel &amp; bilan nocturne.</div>
+                  <div class="kv" style="grid-template-columns:1.5fr 1fr">
+                    <div><div class="k">Statut actuel</div><div class="v status"><span class="dot" id="rDot"></span><span class="lb" id="rOk">Aucun risque</span><span class="lb" id="rKo">Averse imminente</span></div></div>
+                    <div><div class="k">Intensité</div><div class="v" id="rMmh">0.00 <small>mm/h</small></div></div>
+                  </div>
+                  <div class="foot">Dernière vérification : <b style="color:#CBD5E1">13:28</b><br>Dernier changement : <b style="color:#CBD5E1" id="rChg">08:02</b></div>
+                </section>
+                <section class="card mod ld"><h2><span class="emo">☀️</span> VigiChaleur</h2><span class="badge">🟢 Actif</span>
+                  <div class="ds">Prévisions du jour (07h→19h).</div>
+                  <div class="kv" style="grid-template-columns:1fr 1.35fr .7fr">
+                    <div><div class="k">Temp. act.</div><div class="v">24°C</div></div>
+                    <div><div class="k">Pic prévu</div><div class="v">27°C <small>· 13h00</small></div></div>
+                    <div><div class="k">UV max</div><div class="v">6</div></div>
+                  </div>
+                  <div class="foot ok">✅ Pic 27°C &lt; seuil 33°C — pas d'alerte chaleur.</div>
+                </section>
+                <section class="card mod ld" id="cardVent"><h2><span class="emo">🌬️</span> VigiVent</h2><span class="badge">🟢 Actif</span>
+                  <div class="ds">Rafales du jour (08h→18h).</div>
+                  <div class="kv" style="grid-template-columns:1fr 1.4fr">
+                    <div><div class="k">Rafales act.</div><div class="v">31 <small>km/h</small></div></div>
+                    <div><div class="k">Pic du jour</div><div class="v">48 <small>km/h · 14h00</small></div></div>
+                  </div>
+                  <div class="foot warn">⚠️ Pic 48 km/h ≥ seuil 45 km/h — rafales fortes prévues.</div>
+                </section>
+              </div>
+              <section class="card ld" id="chartCard"><h2>Intensité de pluie (mm/h)</h2><div class="ds">Dernières mesures — la ligne pointillée marque le seuil FORT.</div>
+                <svg id="chart" viewBox="0 0 928 220"></svg></section>
+              <section class="card" id="decision">
+                <div class="dhead"><div><h2><span class="emo">🚦</span> Décision par tâche — 24 h à venir</h2><div class="ds">Aide à la décision : verdict par tâche sensible selon la météo prévue heure par heure.</div></div><span class="upd">24 h analysées · maj 13:30</span></div>
+                <div class="klab">Mes tâches actives cette semaine</div>
+                <div class="tchips"><span class="tchip">🏗️ Étanchéité / Toiture-terrasse</span><span class="tchip">🏗️ Manutention CVC / Levage</span><span class="tchip">🪟 Façade vitrée / Menuiseries ext.</span><span class="tchip off">🎨 Peintures ext.</span></div>
+                <div class="tasks">
+                  <div class="task" id="task0"><div class="row"><span class="tl">🏗️ Étanchéité / Toiture-terrasse</span><span class="pill no" id="pill0">🔴 NO-GO</span></div>
+                    <div class="nt">Dépassement de seuil — pluie 3.2 mm/h · vent 48 km/h</div><div class="lk" id="lk0">Voir les créneaux bloquants</div>
+                    <div class="panel" id="panel0"><div style="color:#F87171">🔴 NO-GO : 13h-16h</div><div style="color:#FBBF24">🟠 Vigilance : 12h, 17h</div></div></div>
+                  <div class="task" id="task1"><div class="row"><span class="tl">🏗️ Manutention CVC / Levage (grue mobile)</span><span class="pill vig" id="pill1">🟠 VIGILANCE</span></div>
+                    <div class="nt">Conditions limites — rafales 48 km/h</div></div>
+                  <div class="task" id="task2"><div class="row"><span class="tl">🪟 Façade vitrée / Menuiseries ext.</span><span class="pill no" id="pill2">🔴 NO-GO</span></div>
+                    <div class="nt">Dépassement de seuil — vent 48 km/h · pluie 3.2 mm/h</div></div>
+                </div>
+              </section>
+            </div>
+            <div class="page" id="pageRonde">
+              <div class="rhead"><div><h2><span class="emo">🚪</span> Ronde des ouvrants</h2><p>Vérification des fermetures avant intempéries — plan interactif par niveau.</p></div>
+                <span class="gpill" id="gTxt">Global : 0 / 8</span></div>
+              <div class="ractions"><span class="btn pri"><span class="emo">📡</span> Scanner NFC</span><span class="btn"><span class="emo">📷</span> Scanner QR Code</span><span class="btn"><span class="emo">📑</span> Registre (Assurance)</span><span class="btn"><span class="emo">♻️</span> Nouvelle ronde</span></div>
+              <div id="plan">
+                <svg class="walls" viewBox="0 0 966 392" width="966" height="392">
+                  <g fill="none" stroke="#475569" stroke-width="5" stroke-linejoin="round">
+                    <path d="M70 46 H896 V346 H70 Z"/>
+                    <path d="M330 46 V170 M330 228 V346 M610 46 V138 M610 196 V346 M70 196 H250 M690 230 H896"/>
+                  </g>
+                  <g fill="#1E293B" stroke="#334155" stroke-width="2"><rect x="430" y="150" width="96" height="96" rx="6"/></g>
+                  <g stroke="#334155" stroke-width="2"><path d="M440 166 H516 M440 182 H516 M440 198 H516 M440 214 H516 M440 230 H516"/></g>
+                  <text x="478" y="270" fill="#64748B" font-family="Inter" font-size="13" font-weight="700" text-anchor="middle" letter-spacing="2">CAGE</text>
+                  <text x="882" y="30" fill="#64748B" font-family="Inter" font-size="13" font-weight="700" text-anchor="end" letter-spacing="1.5">NORD ▲</text>
+                  <text x="86" y="30" fill="#94A3B8" font-family="Inter" font-size="13" font-weight="700" letter-spacing="1.5">NIVEAU R+1</text>
+                </svg>
+                <div class="legend"><span><i style="background:#64748B"></i>Non vérifié</span><span><i style="background:#10B981"></i>Sécurisé / fermé</span><span><i style="background:#FBBF24"></i>Anomalie</span></div>
+              </div>
+              <div id="scrim"></div>
+              <div id="succ"><div class="sh emo">🛡️</div><h3>Chantier 100 % Sécurisé !</h3><p>Tous les ouvrants sont fermés et vérifiés.</p>
+                <div class="st"><div><b>8</b><span>ouvrants validés</span></div><div><b>13:41</b><span>heure de complétion</span></div></div>
+                <span class="btn"><span class="emo">📑</span> Registre d'assurance horodaté</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ripple" id="ripple"></div>
+      <svg id="cursor" viewBox="0 0 38 38"><use href="#i-cursor"/></svg>
+    </div></div>
+
+    <div id="phone"><div class="scr">
+      <div class="isl"></div>
+      <div class="clock">13:29</div>
+      <div class="date">vendredi 16 octobre</div>
+      <div class="notif" id="notif"><span class="ic"><svg viewBox="4 52 248 151"><use href="#vlogo" x="4" y="52" width="248" height="151"/></svg></span>
+        <div style="flex:1;min-width:0"><div class="h"><span>VIGICHANTIER</span><span>maintenant</span></div>
+          <div class="t"><span class="emo">☔</span> VigiPluie — Averse imminente</div>
+          <div class="b">3,2 mm/h attendus d'ici 30 min : abritez le matériel et lancez la ronde.</div></div></div>
+      <div id="scanUI">
+        <h4><span class="emo">📡</span> Ronde — Scanner NFC</h4><div class="s2">Approchez le téléphone du tag de chaque ouvrant.</div>
+        <div id="nfc"><span class="wave"></span><span class="wave"></span><span class="wave"></span><span class="core emo">📡</span></div>
+        <div id="scanList"></div>
+        <div id="scanCount">0 / 8 sécurisés</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- S6: outro -->
+  <div id="outro" class="layer">
+    <svg id="recapLine" class="abs" width="1920" height="1080" viewBox="0 0 1920 1080">
+      <path id="rlBase" d="M560 470 L1360 470" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+      <path id="rlFlow" d="M560 470 L1360 470" stroke="#A3E635" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 22"/>
+    </svg>
+    <div class="node" id="n1"><span class="ic emo">📊</span><span class="n">1</span><span class="lb">Surveiller</span></div>
+    <div class="node" id="n2"><span class="ic emo">🚦</span><span class="n">2</span><span class="lb">Décider</span></div>
+    <div class="node" id="n3"><span class="ic emo">🛡️</span><span class="n">3</span><span class="lb">Sécuriser</span></div>
+    <div id="endShock"></div>
+    <div id="endLogo">
+      <svg class="vmark" id="endMark" viewBox="4 52 248 151"><defs><clipPath id="sweep2"><rect id="sweepRect2" x="0" y="40" width="0" height="180"/></clipPath></defs>
+        <g clip-path="url(#sweep2)"><use href="#vlogo" x="4" y="52" width="248" height="151"/></g></svg>
+      <div class="m" style="overflow:hidden"><div class="mi word" id="endWord"><b>Vigi</b>Chantier</div></div>
+    </div>
+    <div id="endUrl"><svg style="color:#34D399"><use href="#i-globe"/></svg>vigichantier.web.app</div>
+    <div id="endTag">
+      <span class="m"><span class="mi">Anticipez.</span></span>
+      <span class="m"><span class="mi">Décidez.</span></span>
+      <span class="m"><span class="mi hl">Sécurisez.</span></span>
+    </div>
+    <div id="endSite"><span class="m"><span class="mi">Alertes push &amp; Telegram · Attestation intempéries PDF · Registre horodaté</span></span></div>
+    <div id="endRipple"></div>
+    <svg id="endCursor" viewBox="0 0 38 38"><use href="#i-cursor"/></svg>
+  </div>
+
+  <div id="wipeA" class="wipe"></div>
+  <div id="wipeB" class="wipe"></div>
+  <div id="wipeC" class="wipe"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+
+  <!-- S7: Synapsis signature -->
+  <div id="sig">
+    <div id="sigGlow"></div>
+    <div id="sigBody">
+      <img id="sigMark" src="img/synapsis-mark.png" alt="Synapsis">
+      <div id="sigName">SYNAPSIS</div>
+      <div id="sigUrl">synapsis-btp.fr</div>
+    </div>
+  </div>
+</div>
+
+<script src="timeline.js"></script>
+<script src="anim.js"></script>
+</body>
+</html>

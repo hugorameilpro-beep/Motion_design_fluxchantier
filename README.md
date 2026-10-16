@@ -7,6 +7,8 @@
 
 Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`](SCENARIO.md).
 
+> **Autre vidéo du dépôt :** [VigiChantier](vigichantier/README.md) (même palette Synapsis), dans le dossier `vigichantier/`.
+
 ## Le parcours expliqué (Espace Sous-traitant, sans compte)
 
 1. **Choisissez un créneau libre** : ouvrez *fluxchantier.web.app*, le planning de la semaine s'affiche.
