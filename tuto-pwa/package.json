@@ -1,0 +1,22 @@
+{
+  "name": "synapsis-tuto-pwa",
+  "version": "1.0.0",
+  "description": "Tutoriels vidéo (motion design) : installer une PWA sur Android et iPhone",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "render": "node scripts/render.mjs",
+    "render:android": "node scripts/render.mjs android",
+    "render:ios": "node scripts/render.mjs ios",
+    "stills": "node scripts/render.mjs --stills"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gsap": "^3.15.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  },
+  "private": true
+}
