@@ -8,6 +8,8 @@
 Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`](SCENARIO.md).
 
 > **Autre vidéo du dépôt :** [VigiChantier](vigichantier/README.md) (même palette Synapsis), dans le dossier `vigichantier/`.
+>
+> **Tutoriels d'installation PWA (Android et iPhone, format vertical) :** voir [`tuto-pwa/`](tuto-pwa/README.md).
 
 ## Le parcours expliqué (Espace Sous-traitant, sans compte)
 

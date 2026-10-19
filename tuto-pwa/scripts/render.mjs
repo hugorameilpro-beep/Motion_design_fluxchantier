@@ -10,7 +10,7 @@ import { serve, ROOT } from "./serve.mjs";
 const FPS = 30;
 const OUT = {
   android: { name: "tuto_android_chrome", thumb: 0.62 },   // thumbnail position (fraction of the video)
-  ios: { name: "tuto_iphone_safari", thumb: 0.5 },
+  ios: { name: "tuto_iphone_safari", thumb: 0.565 },
 };
 const args = process.argv.slice(2);
 const stills = args.includes("--stills") ? args[args.indexOf("--stills") + 1].split(",").map(Number) : null;
@@ -85,7 +85,7 @@ for (const kind of todo) {
   const ti = Math.round(total * thumb);
   ff(["-i", path.join(dir, `f_${String(ti).padStart(5, "0")}.png`), "-vf", "scale=540:-1", o("png")]);
   if (!args.includes("--no-gif")) {
-    ff(["-i", o("mp4"), "-vf", "fps=12,scale=360:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4",
+    ff(["-i", o("mp4"), "-vf", "fps=10,scale=320:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle",
       "-loop", "0", o("gif")]);
   }
   for (const ext of ["mp4", "png", "gif"]) if (fs.existsSync(o(ext))) console.log(`  → output/${name}.${ext} (${(fs.statSync(o(ext)).size / 1e6).toFixed(2)} Mo)`);
