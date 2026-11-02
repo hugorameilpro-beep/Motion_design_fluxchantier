@@ -39,7 +39,7 @@
     const lines = String(str || "").split("\n").filter((l, i, a) => l.length || a.length === 1);
     n.innerHTML = lines.map((l) => {
       let h = esc(l);
-      if (opts.em) h = h.replace(/(^|[\s(])([A-ZÀ-ÖØ-Þ]{3,})(?=$|[\s,.:;!?)])/g, `$1<span class="${opts.em}">$2</span>`);
+      if (opts.em) h = h.replace(/(^|[\s(])([A-ZÀ-ÖØ-Þ]{2,})(?=$|[\s,.:;!?)])/g, `$1<span class="${opts.em}">$2</span>`);
       return `<span class="m"><span class="ln">${h}</span></span>`;
     }).join("");
     if (opts.maxW) n.dataset.maxw = opts.maxW;

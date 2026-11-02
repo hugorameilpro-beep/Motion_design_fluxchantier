@@ -505,5 +505,145 @@
     return t + 5.0;
   }
 
-  window.SCENES = { S0, S1, S2, S3a, S3b, S4, S5, person, machine };
+  /* ========== 2b. What damages your ears: everyday tools on the dB(A) scale (16:9) ========== */
+  /** sourced level of a tool: only entries of sources_bruit that have a value AND a source */
+  function toolLevel(C, tool) {
+    const vals = [], used = [];
+    (tool.sources || []).forEach((id) => {
+      const e = (C.cfg.sources_bruit || []).find((x) => x.id === id && x.source && x.valeur != null);
+      if (e) { [].concat(e.valeur).forEach((v) => vals.push(+v)); used.push(e); }
+    });
+    if (!vals.length) return null;
+    return { min: Math.min(...vals), max: Math.max(...vals), impuls: used.some((e) => e.impulsionnel) };
+  }
+
+  function S2b(C, t) {
+    const { W, H, T, tl, cfg } = C;
+    const showDb = cfg.show_db_values !== false;
+    const s = mkScene(C, "bg-white");
+    const pa = el("div", "abs", s, { left: 0, top: 0, width: W + "px", height: H + "px" });     // phase A: scale + cards
+    const pb = el("div", "abs", s, { left: 0, top: 0, width: W + "px", height: H + "px" });     // phase B: messages
+    gsap.set(pb, { autoAlpha: 0 });
+
+    const ttl = text(pa, T.outils_titre, "t-h1 c-bleu", { maxW: W - 2 * C.PAD, style: { position: "absolute", left: C.PAD + "px", top: "28px" } });
+    const msg1 = text(pa, T.outils_message_1, "t-h1 c-rouge", { maxW: W - 2 * C.PAD, style: { position: "absolute", left: C.PAD + "px", top: "28px" } });
+    gsap.set(msg1.querySelectorAll(".ln"), { yPercent: 115 });
+    const mention = text(s, T.outils_mention, "t-small c-fonce", { maxW: W - 2 * C.PAD, style: { position: "absolute", left: C.PAD + "px", top: "944px", fontWeight: 600, opacity: 0.85 } });
+
+    // the dB(A) scale (qualitative zones; only the 85 dB(A) action value is written)
+    const DB0 = 75, DB1 = 135, gx = 150, gw = 56, gTop = 188, gBot = 900;
+    const yOf = (db) => gBot - (Math.min(DB1, Math.max(DB0, db)) - DB0) / (DB1 - DB0) * (gBot - gTop);
+    const g = box(pa, gx, gTop, gw, gBot - gTop); Object.assign(g.style, { borderRadius: gw / 2 + "px", overflow: "hidden", background: "var(--bleu)" });
+    const red = el("div", "abs", g, { left: 0, top: 0, width: "100%", height: yOf(85) - gTop + "px", background: "var(--rouge)" });
+    const tick = box(pa, gx - 10, yOf(85) - 4, gw + 20, 8); tick.style.background = "var(--fonce)"; tick.style.borderRadius = "4px";
+    const t85 = text(pa, "85", "t-small c-fonce", { style: { position: "absolute", left: "46px", width: "90px", textAlign: "right", top: yOf(85) - 30 + "px", fontWeight: 800 } });
+    const unit = text(pa, "dB(A)", "t-small c-bleu", { style: { position: "absolute", left: gx + gw / 2 - 80 + "px", width: "160px", textAlign: "center", top: gTop - 64 + "px", fontWeight: 800 } });
+
+    // tools: qualitative ones first, then from the least to the most noisy
+    const tools = T.outils.map((o, i) => ({ ...o, i, lv: toolLevel(C, o) }));
+    tools.sort((a, b) => (a.lv ? 1 : 0) - (b.lv ? 1 : 0) || (a.lv && b.lv ? (a.lv.min - b.lv.min) || (a.lv.max - b.lv.max) : 0) || a.i - b.i);
+    const fmt = (lv) => (lv.min === lv.max ? String(lv.min) : T.outils_plage.replace("{min}", lv.min).replace("{max}", lv.max));
+
+    const X0 = 360, X1 = W - 60, Y0 = 128, Y1 = 926, GAP = 16, COLS = 4;
+    const cw = (X1 - X0 - (COLS - 1) * GAP) / COLS, chh = (Y1 - Y0 - GAP) / 2, inner = cw - 30;
+    const placed = [];
+    const items = tools.map((tool, k) => {
+      const over = tool.lv && tool.lv.min > 85;
+      const c = el("div", "card", pa, { left: X0 + (k % COLS) * (cw + GAP) + "px", top: Y0 + Math.floor(k / COLS) * (chh + GAP) + "px", width: cw + "px", height: chh + "px", borderRadius: "30px", padding: "16px 15px" });
+      const top = el("div", "", c, { display: "flex", alignItems: "flex-start", gap: "12px", height: "116px" });
+      const ib = el("div", "", top, { flex: "none" });
+      hexBadge(ib, 100, BLANC, `<g transform="translate(17 24.7) scale(.66)">${P.icons[tool.id] ? P.icons[tool.id](BLEU, ROUGE) : ""}</g>`);
+      let imp = null, sign = null;
+      if (tool.lv && tool.lv.impuls) { imp = el("div", "", top, { flex: "none", marginTop: "12px" }); hexBadge(imp, 64, ROUGE, `<g transform="translate(9 13) scale(.46)">${P.icons.impulse(BLANC)}</g>`, BLANC); }
+      if (over) { sign = el("div", "", top, { marginLeft: "auto", flex: "none" }); sign.innerHTML = P.mandatory(74); }
+      const name = text(c, tool.nom, "t-small c-blanc", { maxW: inner, style: { fontSize: "50px", fontWeight: 800, marginTop: "4px" } });
+      let vs = !tool.lv ? T.outils_bruyant : showDb ? T.outils_valeur.replace("{v}", fmt(tool.lv)) : over ? T.outils_tres_bruyant : T.outils_bruyant;
+      const val = text(c, vs, "t-small c-blanc", { style: { fontWeight: 650, marginTop: "4px", opacity: 0.95 } });   // width checked below
+      const imps = tool.lv && tool.lv.impuls ? text(c, T.outils_coup_sec, "t-small c-blanc", { maxW: inner, style: { fontWeight: 800 } }) : null;
+      // marker on the scale, at the tool's level (only when values are shown)
+      let mk = null;
+      if (tool.lv && showDb) {
+        const y = yOf((tool.lv.min + tool.lv.max) / 2);
+        const stack = placed.filter((p) => Math.abs(p - y) < 72).length; placed.push(y);
+        const mx = stack === 1 ? gx - 12 - 72 : gx + gw + 12 + (stack > 1 ? 40 : 0);      // right, left, then right again
+        mk = el("div", "abs", pa, { left: mx + "px", top: y - 41.6 + "px" });
+        hexBadge(mk, 72, BLANC, `<g transform="translate(13 18.6) scale(.46)">${P.icons[tool.id] ? P.icons[tool.id](BLEU, ROUGE) : ""}</g>`, over ? ROUGE : BLEU);
+      }
+      return { c, ib, imp, sign, name, val, imps, mk, over, tool };
+    });
+    // a value that does not fit on one line breaks before its unit ("≈ 94 à 100" / "dB(A)")
+    items.forEach((o) => {
+      const ln = o.val.querySelector(".ln");
+      if (ln.getBoundingClientRect().width > inner + 1 && / [^ ]+$/.test(ln.textContent)) {
+        const nv = text(o.c, ln.textContent.replace(/ ([^ ]+)$/, "\n$1"), "t-small c-blanc", { style: { fontWeight: 650, marginTop: "4px", opacity: 0.95 } });
+        o.c.insertBefore(nv, o.val); o.val.remove(); o.val = nv;
+      }
+      o.val.dataset.maxw = inner;
+    });
+    fit(C, s);
+    items.forEach((o) => {
+      if (o.c.scrollHeight > o.c.clientHeight + 1) L.report("débordement", o.c, `carte ${o.tool.id} : ${o.c.scrollHeight} px > ${o.c.clientHeight} px`);
+    });
+
+    // phase B: level × time, and the neighbour's noise
+    const lc = el("div", "abs", pb, { left: C.PAD + "px", top: "210px", width: "840px" });
+    const ic = el("div", "", lc, { display: "flex", alignItems: "center", gap: "26px", marginBottom: "46px" });
+    const i1 = el("div", "", ic); hexBadge(i1, 150, BLEU, `<g transform="translate(30 41.6) scale(.9)">${P.icons.level(BLANC, ROUGE)}</g>`);
+    const plus = text(ic, "+", "t-big c-bleu");
+    const i2 = el("div", "", ic); hexBadge(i2, 150, BLEU, `<g transform="translate(30 41.6) scale(.9)">${P.icons.clock(BLANC, ROUGE)}</g>`);
+    const msg2 = text(lc, T.outils_message_2, "t-big c-bleu", { maxW: 840, em: "c-rouge" });
+    const card = el("div", "abs", pb, { left: "1010px", top: "120px", width: W - 1010 - C.PAD + "px", height: "800px", background: "var(--blanc)", border: "8px solid var(--bleu)", borderRadius: "36px", overflow: "hidden" });
+    const ill = svg("svg", { width: W - 1010 - C.PAD - 16, height: 470, viewBox: "0 0 800 470" }, card);
+    ill.style.marginTop = "20px";
+    ill.innerHTML = `<g class="fx"></g><rect x="20" y="440" width="760" height="14" rx="7" fill="${FONCE}"/>
+      <g transform="translate(250 440)">${person({ body: BLEU, ink: FONCE, tool: true, arm: "tool", muffs: true })}</g>
+      <g transform="translate(560 440)"><g transform="scale(-1 1)">${person({ body: BLEU, ink: FONCE })}</g></g>
+      <g class="hit" stroke="${ROUGE}" stroke-width="7" fill="none" stroke-linecap="round" opacity="0">
+        <path d="M508 150 l-8 -7 l-8 7 l-8 -7"/><path d="M510 172 l-9 -6 l-9 6 l-9 -6"/><path d="M508 194 l-8 -7 l-8 7 l-8 -7"/></g>`;
+    const vtx = text(card, T.outils_voisin, "t-big c-fonce center", { maxW: W - 1010 - C.PAD - 70, style: { marginTop: "26px" } });
+    fit(C, pb);
+
+    /* --- timeline --- */
+    linesIn(tl, ttl, t + 0.1);
+    tl.fromTo(g, { scaleY: 0, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.7, ease: EASE }, t + 0.25);
+    fadeUp(tl, tick, t + 0.8, { y: 0 }); fadeUp(tl, t85, t + 0.85, { y: 10 }); fadeUp(tl, unit, t + 0.6, { y: 10 });
+    fadeUp(tl, mention, t + 0.5, { y: 20 });
+    const STEP = 0.82, A0 = t + 0.9;
+    items.forEach((o, k) => {
+      const at = A0 + k * STEP;
+      const R0 = Math.hypot(cw, chh);
+      const hexClip = (r) => "polygon(" + L.hexPoints(cw / 2, chh / 2, r).map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(",") + ")";
+      gsap.set(o.c, { autoAlpha: 0 });
+      tl.set(o.c, { autoAlpha: 1 }, at);
+      tl.fromTo(o.c, { clipPath: hexClip(8) }, { clipPath: hexClip(R0), duration: 0.5, ease: "power2.inOut" }, at);
+      pop(tl, o.ib, at + 0.15, { from: 0.4 });
+      linesIn(tl, o.name, at + 0.2, { stagger: 0.08 });
+      linesIn(tl, o.val, at + 0.35);
+      if (o.imps) { linesIn(tl, o.imps, at + 0.45); pop(tl, o.imp, at + 0.4, { from: 0.3 }); }
+      if (o.mk) tl.fromTo(o.mk, { y: gBot - parseFloat(o.mk.style.top) - 30, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, ease: "power2.out" }, at + 0.1);
+      if (o.over) {
+        tl.set(o.c, { clipPath: "none" }, at + 0.52);
+        tl.fromTo(o.c, { boxShadow: `0 0 0 0px ${cfg.palette.rouge}` }, { boxShadow: `0 0 0 8px ${cfg.palette.rouge}`, duration: 0.3, ease: "power2.out" }, at + 0.55);
+        pop(tl, o.sign, at + 0.55, { from: 0.2 });
+      }
+    });
+    // message 1 replaces the title while the hand tools come in
+    linesOut(tl, ttl, t + 3.3);
+    linesIn(tl, msg1, t + 3.55);
+
+    // phase B
+    const b = A0 + items.length * STEP + 0.35;
+    tl.to(pa, { autoAlpha: 0, y: -30, duration: 0.4, ease: "power2.in" }, b);
+    tl.set(pb, { autoAlpha: 1 }, b + 0.4);
+    pop(tl, i1, b + 0.45, { from: 0.4 }); fadeUp(tl, plus, b + 0.6, { y: 10 }); pop(tl, i2, b + 0.7, { from: 0.4 });
+    linesIn(tl, msg2, b + 0.75, { stagger: 0.14 });
+    tl.fromTo(card, { autoAlpha: 0, x: 40 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: EASE }, b + 1.3);
+    rings(tl, ill.querySelector(".fx"), 320, 420, b + 1.5, b + 4.1, { color: ROUGE, max: 6, period: 0.3, life: 1.1, w: 6, r: 36 });
+    tl.to(ill.querySelector(".hit"), { opacity: 1, duration: 0.25 }, b + 2.0);
+    tl.fromTo(ill.querySelectorAll(".hit path"), { x: 0 }, { x: -6, duration: 0.1, yoyo: true, repeat: 19, ease: "sine.inOut" }, b + 2.0);
+    linesIn(tl, vtx, b + 1.9);
+    return b + 4.1;
+  }
+
+  window.SCENES = { S0, S1, S2, S2b, S3a, S3b, S4, S5, person, machine };
 })();

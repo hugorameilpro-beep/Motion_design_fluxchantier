@@ -59,7 +59,9 @@
       window.POSTER(C);
     } else {
       const S = window.SCENES;
-      const order = [S.S0, S.S1, S.S2, S.S3a, S.S3b, S.S4, S.S5];
+      // 16:9 adds the tools scene after the thresholds
+      const order = V ? [S.S0, S.S1, S.S2, S.S3a, S.S3b, S.S4, S.S5]
+        : [S.S0, S.S1, S.S2, S.S2b, S.S3a, S.S3b, S.S4, S.S5];
       const wipe = L.buildHexWipe(stage, W, H);
       let t = 0, prev = null;
       order.forEach((build, i) => {
