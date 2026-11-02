@@ -6,11 +6,13 @@ courts, lisibles par des compagnons peu francophones.
 
 | Livrable | Format | Fichier |
 |---|---|---|
-| Vidéo téléphone | 1080×1920 (9:16), 30 i/s, H.264, sans son | [`output/securite_bruit_vertical.mp4`](output/securite_bruit_vertical.mp4) |
-| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans son | [`output/securite_bruit_horizontal.mp4`](output/securite_bruit_horizontal.mp4) |
+| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans son, **74,9 s** | [`output/securite_bruit_horizontal.mp4`](output/securite_bruit_horizontal.mp4) |
+| Vidéo téléphone | 1080×1920 (9:16), 30 i/s, H.264, sans son, 57,7 s | [`output/securite_bruit_vertical.mp4`](output/securite_bruit_vertical.mp4) |
 | Affiche | A3 portrait, 3508×4961 px (300 dpi) | [`output/securite_bruit_affiche_A3.png`](output/securite_bruit_affiche_A3.png) |
 
-Les deux vidéos durent **57,7 s**.
+La version **16:9** contient deux scènes de plus : « Ce qui abîme vos oreilles » et le générique animé du logo. La
+vidéo verticale et l'affiche n'ont pas encore ces ajouts : ce sont les versions validées précédemment. Elles
+n'ont pas été régénérées.
 
 <img src="output/securite_bruit_affiche_A3.png" width="320" alt="Affiche A3">
 
@@ -28,6 +30,36 @@ Les deux vidéos durent **57,7 s**.
 
 Les transitions sont des **vagues d'hexagones** bleus : c'est la forme du logo Dumez.
 
+### Ajouts de la version 16:9
+
+**« Ce qui abîme vos oreilles »** (12,7 s, entre les seuils et les conséquences) :
+- La jauge verticale de dB(A) occupe la gauche, avec la zone rouge au-dessus de 85. Huit cartes hexagonales s'affichent à côté, en grille de 4 × 2, environ une toutes les 0,8 s.
+- Les outils sans valeur sourcée viennent d'abord, marqués « Bruyant ». Les autres suivent du moins bruyant au plus bruyant, et chacun monte à son niveau sur la jauge.
+- Au-dessus de 85 dB(A), la carte reçoit un liseré rouge et le mini panneau bleu d'obligation. Le pistolet de scellement porte en plus le picto d'impulsion et la mention « Coup sec ».
+- « Pas seulement les gros engins. » remplace le titre pendant l'arrivée des outils à main.
+- Viennent ensuite « Le niveau ET le temps passé comptent. » et la carte de coactivité : l'ouvrier au marteau-piqueur est protégé, son voisin subit le bruit. Texte : « Le bruit du voisin compte aussi. »
+- Mention fixe en bas de la scène : « Ordres de grandeur. Varie selon l'outil, le matériau et le lieu. »
+
+**Générique du logo** (4,1 s, après le message final) :
+- Des ondes se resserrent et tracent l'hexagone du logo, pointe en haut, en bleu. Le bas passe ensuite au rouge, avec l'espace blanc comme dans le logo.
+- L'hexagone se pose sur celui du logo Dumez, qui apparaît en fondu avec un glissement de 24 px. Le logo n'est ni recoloré ni déformé, et reste plafonné à 1,3 fois sa taille avec sa zone de protection.
+- « Protégez votre audition. », puis l'image finale reste 1 s à l'écran.
+
+Temps de chaque scène en 16:9, affiché aussi à la fin du rendu (transition comprise) :
+
+| Scène | Début | Durée |
+|---|---|---|
+| Ouverture (logo) | 0,0 s | 2,8 s |
+| Accroche | 2,8 s | 4,8 s |
+| Seuils | 7,5 s | 10,4 s |
+| Ce qui abîme vos oreilles | 17,9 s | 12,7 s |
+| Conséquences : oreille | 30,6 s | 7,2 s |
+| Corps et sécurité | 37,8 s | 13,2 s |
+| Bons réflexes | 50,9 s | 14,5 s |
+| Message final | 65,4 s | 5,4 s |
+| Générique (logo) | 70,8 s | 4,1 s |
+| **Total** | | **74,9 s** |
+
 ## Règles de contenu
 
 - **Aucun chiffre inventé.** Seuls figurent les seuils réglementaires du Code du travail (art. R4431-2) repris par l'INRS :
@@ -36,7 +68,7 @@ Les transitions sont des **vagues d'hexagones** bleus : c'est la forme du logo D
   - 87 dB(A) et 140 dB(C) : valeurs limites, atténuation du protecteur comprise.
 
   Ces valeurs portent sur 8 h de travail.
-- **Pas de niveau en dB pour les machines.** Par défaut, la vidéo affiche « Bruyant » ou « Très bruyant ». Un niveau précis n'apparaît que s'il est renseigné dans `sources_bruit` **avec sa source** (voir plus bas).
+- **Niveaux des outils : seulement des valeurs sourcées.** Un chiffre n'apparaît que s'il figure dans `sources_bruit` avec sa `source` et sa `fiabilite` (voir plus bas). Sinon, la carte affiche « Bruyant ». Il s'agit d'ordres de grandeur, et la scène le rappelle. L'accroche (scène 1) reste qualitative : « Bruyant » ou « Très bruyant ».
 
 ## Identité visuelle
 
@@ -95,18 +127,40 @@ Pensez à garder les retours à la ligne courts : 6 mots au maximum par ligne.
 - **`chantier`** : chemin vers un logo de chantier, optionnel. Vide, il n'est pas affiché.
 - **`show_synapsis_credit`** : `true` ajoute la ligne « Réalisé par Synapsis » en dernière scène et sur l'affiche.
 
-## Niveaux de bruit des machines (optionnel)
+## Niveaux de bruit des outils et sources
 
-Par défaut, `"sources_bruit": []`. Pour afficher un niveau mesuré, ajoutez une entrée **avec sa source** :
+Les valeurs viennent **uniquement** de `sources_bruit` dans `config.json` :
 
 ```json
+"show_db_values": true,
 "sources_bruit": [
-  { "id": "marteau_piqueur", "niveau": "…", "source": "Mesure du … sur le chantier de …" },
-  { "id": "engin", "niveau": "…", "source": "…" }
+  { "id": "marteau_piqueur", "valeur": 110, "source": "…", "fiabilite": "moyenne" },
+  { "id": "brise_roche", "valeur": [94, 100], "detail": "…", "source": "…", "fiabilite": "haute" }
 ]
 ```
 
-Le niveau remplace « Très bruyant » ou « Bruyant » sur l'étiquette de la machine, et la source s'affiche en bas de l'écran. Une entrée sans `source` est ignorée.
+Règles d'affichage :
+- `valeur` est un nombre, ou une plage `[min, max]` affichée « ≈ 94 à 100 dB(A) ».
+- Une entrée **sans `source` n'affiche aucun chiffre**.
+- `"impulsionnel": true` ajoute le picto d'impulsion et la mention « Coup sec ».
+- **`show_db_values: false`** masque tous les chiffres d'un coup : les repères de la jauge disparaissent et les cartes affichent « Très bruyant » ou « Bruyant ». Le liseré rouge et le panneau restent, puisqu'ils découlent des valeurs sourcées.
+
+Les cartes sont définies dans `textes.fr.outils`, avec leur nom et leurs `sources`. La carte « Disqueuse, meuleuse » regroupe deux valeurs (94 et 100), d'où la plage.
+
+**Sources utilisées :**
+
+| Outil | Valeur affichée | Source | Fiabilité |
+|---|---|---|---|
+| Marteau-piqueur | ≈ 110 dB(A) | ASP Construction (Québec), échelle de décibels (données approximatives) | moyenne |
+| Pistolet de scellement | ≈ 130 dB(A), impulsionnel | ASP Construction (Québec), échelle de décibels (données approximatives) | moyenne |
+| Perforateur, burineur | ≈ 105 dB(A) | Exercice pédagogique de cours | faible |
+| Scie à sol | ≈ 106 dB(A) | Exercice pédagogique de cours | faible |
+| Disqueuse, meuleuse | ≈ 94 à 100 dB(A) (disqueuse 94, meuleuse 100) | Exercice pédagogique de cours | faible |
+| Brise-roche hydraulique sur pelle | ≈ 94 à 100 dB(A) : 94 en moyenne sur 1 h, 100 derrière la pelle en burinage | INRS, fiche « Techniques de réduction du bruit » n°104 | haute |
+| Compresseur, groupe électrogène | « Bruyant » (aucune valeur sourcée) | — | — |
+| Aiguille vibrante | « Bruyant » (aucune valeur sourcée) | — | — |
+
+Trois valeurs sur sept ont une fiabilité « faible » (exercice de cours). Remplacez-les par des mesures ou des sources publiées dès que possible, ou passez `show_db_values` à `false` en attendant.
 
 ## Installation
 
@@ -141,11 +195,11 @@ Le curseur en bas fait avancer la timeline ; la touche **Espace** lance ou met e
 ## Générer
 
 ```bash
-npm run render              # les deux vidéos + l'affiche
-npm run render:vertical     # vidéo 9:16 seule
-npm run render:horizontal   # vidéo 16:9 seule
-npm run render:affiche      # affiche A3 seule
-npm run stills -- 12,30.5   # quelques images clés dans frames/stills/ (vérification rapide)
+npm run render -- --format horizontal   # vidéo 16:9 seule (le format actuellement demandé)
+npm run render -- --format vertical     # vidéo 9:16 seule
+npm run render -- --format affiche      # affiche A3 seule
+npm run render                          # tous les formats
+npm run stills -- 12,30.5 --format horizontal --scenes   # images clés + temps de chaque scène
 ```
 
 Le rendu est **déterministe**, sans enregistrement d'écran :
