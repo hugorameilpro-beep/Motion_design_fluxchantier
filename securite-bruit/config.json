@@ -1,0 +1,71 @@
+{
+  "langue": "fr",
+
+  "palette": {
+    "bleu": "#004489",
+    "bleu_fonce": "#001F3D",
+    "rouge": "#FA000C",
+    "blanc": "#FFFFFF"
+  },
+
+  "logos": {
+    "entreprise": "assets/logo_dumez.png",
+    "chantier": "",
+    "synapsis": "assets/logo_synapsis.png",
+    "agrandissement_max": 1.3
+  },
+  "show_synapsis_credit": false,
+
+  "sources_bruit": [],
+
+  "textes": {
+    "fr": {
+      "titre": "Casque anti-bruit\nsur chantier",
+      "sous_titre": "Les risques à ne pas prendre",
+
+      "accroche_1": "Le bruit ne fait\npas mal…",
+      "accroche_2": "…tant qu'on ne l'a\npas perdu.",
+      "bruyant": "Bruyant",
+      "tres_bruyant": "Très bruyant",
+
+      "seuils_titre": "Les seuils de bruit",
+      "seuils": [
+        { "valeur": "80 dB(A)", "texte": "Protections\nmises à disposition" },
+        { "valeur": "85 dB(A)", "texte": "Port OBLIGATOIRE" },
+        { "valeur": "87 dB(A)", "texte": "Limite à ne JAMAIS\ndépasser, protection\ncomprise" }
+      ],
+      "seuils_duree": "Valeurs sur 8 h de travail",
+      "seuils_crete": "En crête : 135 / 137 / 140 dB(C)",
+
+      "oreille_titre": "Pour vos oreilles",
+      "oreille_courbe": "Votre audition",
+      "oreille": [
+        { "texte": "Sifflements,\nbourdonnements", "detail": "(acouphènes)" },
+        { "texte": "Fatigue auditive", "detail": "" },
+        { "texte": "Sons douloureux", "detail": "(hyperacousie)" },
+        { "texte": "Perte d'audition\ndéfinitive", "detail": "" }
+      ],
+
+      "corps_titre": "Pour le corps\net la sécurité",
+      "corps": ["Stress", "Fatigue", "Sommeil\nperturbé"],
+      "danger_texte": "On n'entend plus\nl'alarme, l'engin\nqui recule,\nson collègue.",
+      "bonne_orga_titre": "La bonne organisation",
+      "bonne_orga_texte": "Protection adaptée\n+ signaux visibles\n= tout le monde se voit,\ntout le monde se comprend",
+      "message_fort": "Une oreille abîmée\nne se répare pas.",
+
+      "reflexes_titre": "Les bons réflexes",
+      "reflexes": [
+        { "titre": "Choisissez le bon\nprotecteur", "lignes": [],
+          "types": ["Bouchons", "Bouchons à\ncordelette", "Coquilles\nsur casque", "Serre-tête"] },
+        { "titre": "Ajustez-le bien", "lignes": ["Bouchon bien inséré", "Coquilles bien étanches", "Rien entre coquille\net oreille"] },
+        { "titre": "Portez-le\nTOUT le temps", "lignes": ["Pendant toute l'exposition,", "pas seulement par moments"] },
+        { "titre": "Gardez-le propre", "lignes": ["Abîmé ? Remplacez-le."] },
+        { "titre": "Respectez les zones\nbruyantes signalées", "lignes": ["et les temps de pause"] }
+      ],
+
+      "final_1": "Dès 85 dB(A) :\nprotection obligatoire.",
+      "final_2": "Votre audition\nne se remplace pas.",
+      "credit": "Réalisé par Synapsis"
+    }
+  }
+}

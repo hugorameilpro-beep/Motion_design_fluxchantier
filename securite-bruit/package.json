@@ -1,0 +1,21 @@
+{
+  "name": "securite-bruit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vidéo de sensibilisation sécurité « Casque anti-bruit sur chantier » (motion design GSAP, rendu Playwright + ffmpeg)",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "render": "node scripts/render.mjs",
+    "render:vertical": "node scripts/render.mjs vertical",
+    "render:horizontal": "node scripts/render.mjs horizontal",
+    "render:affiche": "node scripts/render.mjs affiche",
+    "stills": "node scripts/render.mjs --stills",
+    "check": "node scripts/check.mjs"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

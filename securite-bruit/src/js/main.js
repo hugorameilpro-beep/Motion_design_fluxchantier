@@ -1,0 +1,125 @@
+/* Entry point: ?format=vertical|horizontal|affiche, ?lang=fr (texts from config.json).
+ * Builds the scenes and ONE paused GSAP timeline exposed as window.tl (the renderer seeks it frame by frame). */
+(function () {
+  const params = new URLSearchParams(location.search);
+  const f = params.get("format");
+  const FORMAT = f === "horizontal" || f === "affiche" ? f : "vertical";
+  const RENDER = params.has("render");
+  const SIZE = { vertical: [1080, 1920], horizontal: [1920, 1080], affiche: [1240, 1754] };
+  gsap.ticker.lagSmoothing(0);
+
+  const loadImg = (src) => new Promise((res) => {
+    if (!src) return res(null);
+    const i = new Image();
+    i.onload = () => res(i); i.onerror = () => { console.warn("Logo introuvable : " + src); res(null); };
+    i.src = "../" + src;
+  });
+  /** logo size: native pixels × at most `agrandissement_max`, never distorted */
+  function logoSize(img, maxScale, pxRatio, maxW) {
+    const s = Math.min(maxScale / pxRatio, maxW / img.naturalWidth);
+    return { src: img.src, w: Math.round(img.naturalWidth * s), h: Math.round(img.naturalHeight * s) };
+  }
+
+  async function boot() {
+    const cfg = await (await fetch("../config.json", { cache: "no-store" })).json();
+    const lang = params.get("lang") || cfg.langue || "fr";
+    const T = Object.assign({}, cfg.textes.fr, cfg.textes[lang] || {});   // missing keys fall back to French
+    document.documentElement.lang = lang;
+    const root = document.documentElement.style;
+    const pal = cfg.palette || {};
+    if (pal.bleu) root.setProperty("--bleu", pal.bleu);
+    if (pal.bleu_fonce) root.setProperty("--fonce", pal.bleu_fonce);
+    if (pal.rouge) root.setProperty("--rouge", pal.rouge);
+    if (pal.blanc) root.setProperty("--blanc", pal.blanc);
+
+    const [W, H] = SIZE[FORMAT];
+    const V = FORMAT === "vertical";
+    document.body.classList.add(FORMAT === "affiche" ? "p" : V ? "v" : "h", RENDER ? "render" : "dev");
+    const stage = document.getElementById("stage");
+    Object.assign(stage.style, { width: W + "px", height: H + "px" });
+
+    await Promise.all([300, 600, 650, 700, 750, 800, 900].map((w) => document.fonts.load(`${w} 64px Inter`, "AÉàçœ ăâîșț")));
+    await document.fonts.ready;
+
+    // the poster is screenshotted at a higher pixel ratio: the logo cap applies to output pixels
+    const pxRatio = FORMAT === "affiche" ? +(params.get("dpr") || 3508 / 1240) : 1;
+    const maxScale = (cfg.logos && cfg.logos.agrandissement_max) || 1.3;
+    const [logoImg, chantierImg] = await Promise.all([loadImg(cfg.logos.entreprise), loadImg(cfg.logos.chantier)]);
+    const C = {
+      cfg, T, V, W, H, stage, sources: [],
+      PAD: V ? 60 : 90,
+      logo: logoImg ? logoSize(logoImg, maxScale, pxRatio, W * 0.7) : { src: "", w: 0, h: 0 },
+      logoChantier: chantierImg ? logoSize(chantierImg, maxScale, pxRatio, W * 0.4) : null,
+    };
+
+    const tl = gsap.timeline({ paused: true });
+    window.tl = tl; C.tl = tl;
+
+    if (FORMAT === "affiche") {
+      window.POSTER(C);
+    } else {
+      const S = window.SCENES;
+      const order = [S.S0, S.S1, S.S2, S.S3a, S.S3b, S.S4, S.S5];
+      const wipe = L.buildHexWipe(stage, W, H);
+      let t = 0, prev = null;
+      order.forEach((build, i) => {
+        const start = i === 0 ? 0 : wipe(tl, t, () => {});
+        const before = stage.querySelectorAll(".scene").length;
+        t = build(C, start);
+        window.__marks = (window.__marks || []).concat([[build.name, +start.toFixed(2), +t.toFixed(2)]]);
+        const sc = stage.querySelectorAll(".scene")[before];
+        if (prev) { tl.set(prev, { autoAlpha: 0 }, start); tl.set(sc, { autoAlpha: 1 }, start); }
+        prev = sc;
+      });
+      stage.appendChild(document.getElementById("hexwipe"));   // keep the wipe above every scene
+    }
+    tl.seek(0);
+    checkTexts(V ? 64 : 48);
+    if (!RENDER) devUI(tl, W, H);
+    return { duration: tl.duration(), format: FORMAT, lang, W, H, report: window.__report, scenes: window.__marks || [] };
+  }
+
+  /** content rules: ≤ 6 words per line, minimum size, nothing wider than its box */
+  function checkTexts(min) {
+    document.querySelectorAll(".tx").forEach((n) => {
+      const fs = parseFloat(getComputedStyle(n).fontSize);
+      if (FORMAT !== "affiche" && fs < min - 0.5) L.report("taille", n, `${fs} px < ${min} px`);
+      const lines = n.classList.contains("wrap") ? [] : [...n.querySelectorAll(".ln")].map((l) => l.textContent);
+      lines.forEach((l) => {
+        const words = l.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+        if (words > 6) L.report("mots", n, `${words} mots : « ${l} »`);
+      });
+    });
+  }
+
+  /* ---------- preview: fit to window + timeline scrubber ---------- */
+  function devUI(tl, W, H) {
+    const bar = document.getElementById("devbar");
+    bar.hidden = false;
+    const stage = document.getElementById("stage");
+    const holder = document.createElement("div");
+    stage.parentNode.insertBefore(holder, stage);
+    holder.appendChild(stage);
+    const fitStage = () => {
+      const s = Math.min((innerHeight - 90) / H, (innerWidth - 40) / W);
+      stage.style.transform = `scale(${s})`;
+      holder.style.width = W * s + "px"; holder.style.height = H * s + "px";
+    };
+    fitStage(); addEventListener("resize", fitStage);
+    const scrub = document.getElementById("scrub"), clock = document.getElementById("clock"), play = document.getElementById("play");
+    scrub.max = tl.duration();
+    const show = () => { scrub.value = tl.time(); clock.textContent = tl.time().toFixed(2) + " s"; };
+    tl.eventCallback("onUpdate", show);
+    scrub.addEventListener("input", () => { tl.pause(); tl.seek(+scrub.value); play.textContent = "▶"; show(); });
+    play.addEventListener("click", () => {
+      if (tl.paused()) { if (tl.progress() >= 1) tl.seek(0); tl.play(); play.textContent = "❚❚"; } else { tl.pause(); play.textContent = "▶"; }
+    });
+    addEventListener("keydown", (e) => { if (e.code === "Space") { e.preventDefault(); play.click(); } });
+    const t0 = params.get("t");
+    if (t0) tl.seek(+t0);
+    show();
+    if (window.__report.length) console.table(window.__report);
+  }
+
+  window.__ready = boot().catch((e) => { document.body.insertAdjacentHTML("beforeend", `<pre style="color:red;position:fixed;top:0;left:0;z-index:999;background:#fff">${e.stack || e}</pre>`); throw e; });
+})();
