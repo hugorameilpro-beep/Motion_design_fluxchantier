@@ -1,4 +1,4 @@
-// `npm run render [vertical|horizontal|affiche] [--lang fr] [--stills 3,9.5]`
+// `npm run render [-- --format horizontal] [--lang fr] [--stills 3,9.5]`  (formats: vertical, horizontal, affiche; comma list allowed)
 // Deterministic render: seek the GSAP timeline frame by frame at 30 fps, screenshot each frame as PNG,
 // then assemble with ffmpeg (H.264, no audio). The A3 poster is a high-resolution screenshot of its own layout.
 import { chromium } from "playwright";
@@ -16,8 +16,23 @@ const stills = opt("--stills") ? opt("--stills").split(",").map(Number) : null;
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"));
 const lang = opt("--lang") || cfg.langue || "fr";
 const suffix = lang === (cfg.langue || "fr") ? "" : "_" + lang;
-const kinds = args.filter((a) => a === "vertical" || a === "horizontal" || a === "affiche");
-const todo = kinds.length ? kinds : ["vertical", "horizontal", "affiche"];
+const FORMATS = ["vertical", "horizontal", "affiche"];
+const kinds = [...args.filter((a) => FORMATS.includes(a)), ...(opt("--format") || "").split(",").filter(Boolean)];
+const bad = kinds.filter((k) => !FORMATS.includes(k));
+if (bad.length) { console.error(`Format inconnu : ${bad.join(", ")} (formats possibles : ${FORMATS.join(", ")})`); process.exit(1); }
+const todo = kinds.length ? [...new Set(kinds)] : FORMATS;
+const LABELS = { S0: "Ouverture (logo)", S1: "Accroche", S2: "Seuils", S2b: "Ce qui abîme vos oreilles", S3a: "Conséquences : oreille",
+  S3b: "Corps et sécurité", S4: "Bons réflexes", S5: "Message final", S6: "Générique (logo)" };
+/** time of each scene: from its start to the start of the next one (transition included) */
+function printScenes(info) {
+  const sc = info.scenes || [];
+  console.log(`  ${"Scène".padEnd(28)} début    durée`);
+  sc.forEach(([id, start], i) => {
+    const end = i + 1 < sc.length ? sc[i + 1][1] : info.duration;
+    console.log(`  ${(LABELS[id] || id).padEnd(28)} ${start.toFixed(2).padStart(5)} s  ${(end - start).toFixed(2).padStart(5)} s`);
+  });
+  console.log(`  ${"Total".padEnd(28)}          ${info.duration.toFixed(2).padStart(5)} s`);
+}
 const workers = Number(process.env.WORKERS || 4);
 
 if (spawnSync("ffmpeg", ["-version"]).status !== 0) {
@@ -79,6 +94,7 @@ for (const format of todo) {
     for (const t of stills) await shoot(page, t, path.join(dir, `${format}_${t.toFixed(2)}.png`));
     await page.close();
     console.log(`${format} : ${stills.length} image(s) dans frames/stills/ (durée ${info.duration.toFixed(2)} s)`);
+    if (args.includes("--scenes")) printScenes(info);
     continue;
   }
   const dir = path.join(ROOT, "frames", format);
@@ -104,6 +120,7 @@ for (const format of todo) {
   ff(["-framerate", String(FPS), "-i", path.join(dir, "f_%05d.png"), "-c:v", "libx264", "-preset", "slow", "-crf", "19",
     "-pix_fmt", "yuv420p", "-profile:v", "high", "-movflags", "+faststart", "-an", out]);
   console.log(`  → output/${path.basename(out)} (${(fs.statSync(out).size / 1e6).toFixed(2)} Mo)`);
+  printScenes(probe.info);
 }
 await browser.close();
 server.close();
