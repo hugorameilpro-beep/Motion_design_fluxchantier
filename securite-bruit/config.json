@@ -16,7 +16,20 @@
   },
   "show_synapsis_credit": false,
 
-  "sources_bruit": [],
+  "show_db_values": true,
+  "sources_bruit": [
+    { "id": "marteau_piqueur", "valeur": 110,
+      "source": "ASP Construction (Québec), échelle de décibels (données approximatives)", "fiabilite": "moyenne" },
+    { "id": "pistolet_scellement", "valeur": 130, "impulsionnel": true,
+      "source": "ASP Construction (Québec), échelle de décibels (données approximatives)", "fiabilite": "moyenne" },
+    { "id": "perforateur", "valeur": 105, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
+    { "id": "scie_sol", "valeur": 106, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
+    { "id": "meuleuse", "valeur": 100, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
+    { "id": "disqueuse", "valeur": 94, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
+    { "id": "brise_roche", "valeur": [94, 100],
+      "detail": "94 dB(A) en moyenne sur 1 h, 100 dB(A) derrière la pelle en burinage",
+      "source": "INRS, fiche « Techniques de réduction du bruit » n°104", "fiabilite": "haute" }
+  ],
 
   "textes": {
     "fr": {
@@ -36,6 +49,27 @@
       ],
       "seuils_duree": "Valeurs sur 8 h de travail",
       "seuils_crete": "En crête : 135 / 137 / 140 dB(C)",
+
+      "outils_titre": "Ce qui abîme vos oreilles",
+      "outils_message_1": "Pas seulement les gros engins.",
+      "outils_message_2": "Le niveau ET\nle temps passé\ncomptent.",
+      "outils_voisin": "Le bruit du voisin\ncompte aussi.",
+      "outils_mention": "Ordres de grandeur. Varie selon l'outil,\nle matériau et le lieu.",
+      "outils_valeur": "≈ {v} dB(A)",
+      "outils_plage": "{min} à {max}",
+      "outils_bruyant": "Bruyant",
+      "outils_tres_bruyant": "Très bruyant",
+      "outils_coup_sec": "Coup sec",
+      "outils": [
+        { "id": "disqueuse_meuleuse", "nom": "Disqueuse,\nmeuleuse", "sources": ["disqueuse", "meuleuse"] },
+        { "id": "perforateur", "nom": "Perforateur,\nburineur", "sources": ["perforateur"] },
+        { "id": "scie_sol", "nom": "Scie à sol", "sources": ["scie_sol"] },
+        { "id": "marteau_piqueur", "nom": "Marteau-\npiqueur", "sources": ["marteau_piqueur"] },
+        { "id": "brise_roche", "nom": "Brise-roche\nsur pelle", "sources": ["brise_roche"] },
+        { "id": "pistolet_scellement", "nom": "Pistolet de\nscellement", "sources": ["pistolet_scellement"] },
+        { "id": "compresseur", "nom": "Compresseur,\ngroupe\nélectrogène", "sources": [] },
+        { "id": "aiguille_vibrante", "nom": "Aiguille\nvibrante", "sources": [] }
+      ],
 
       "oreille_titre": "Pour vos oreilles",
       "oreille_courbe": "Votre audition",
@@ -65,7 +99,8 @@
 
       "final_1": "Dès 85 dB(A) :\nprotection obligatoire.",
       "final_2": "Votre audition\nne se remplace pas.",
-      "credit": "Réalisé par Synapsis"
+      "credit": "Réalisé par Synapsis",
+      "fin_texte": "Protégez votre audition."
     }
   }
 }

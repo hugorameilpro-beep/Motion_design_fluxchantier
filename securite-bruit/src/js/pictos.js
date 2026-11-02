@@ -50,6 +50,27 @@
     sleep: (c) => `<path d="M56 16 A36 36 0 1 0 86 66 A28 28 0 1 1 56 16 Z" ${line(c)}/><path d="M66 18 H82 L66 36 H82" ${line(c, 6)}/>`,
     check: (c) => `<path d="M24 53 L42 71 L78 31" ${line(c, 11)}/>`,
     cross: (c) => `<path d="M28 28 L72 72 M72 28 L28 72" ${line(c, 11)}/>`,
+
+    /* ---- tools (line art, keyed by the tool id of config.json; a = accent: sparks, impacts) ---- */
+    disqueuse_meuleuse: (c, a) => `<g ${line(c, 6)}><rect x="10" y="40" width="50" height="20" rx="10"/><path d="M60 38 H74 V60 H60"/><path d="M68 38 V20 M60 20 H76"/>
+      <circle cx="72" cy="74" r="17"/><path d="M52 70 A21 21 0 0 1 90 64"/></g><g ${line(a || c, 5)}><path d="M86 86 L96 94 M80 92 L84 99 M90 80 L99 82"/></g>`,
+    perforateur: (c, a) => `<g ${line(c, 6)}><path d="M14 30 H66 V52 H14 Z"/><path d="M18 52 L22 82 H40 L36 52"/><path d="M66 41 H94"/><path d="M48 30 V18 H60"/></g>
+      <g ${line(a || c, 5)}><path d="M82 30 L88 24 M82 52 L88 58"/></g>`,
+    scie_sol: (c, a) => `<g ${line(c, 6)}><path d="M26 50 H62 V70 H26 Z"/><path d="M26 50 L10 24 M6 24 H16"/><circle cx="74" cy="66" r="18"/><path d="M54 62 A20 20 0 0 1 94 58"/>
+      <circle cx="32" cy="78" r="6"/><path d="M4 90 H96"/></g><g ${line(a || c, 5)}><path d="M84 86 L94 80 M88 90 L98 92"/></g>`,
+    marteau_piqueur: (c, a) => `<g ${line(c, 6)}><path d="M20 14 H80"/><path d="M38 14 V22 M62 14 V22"/><rect x="38" y="22" width="24" height="40" rx="5"/><path d="M50 62 V84"/><path d="M8 92 H92"/></g>
+      <g ${line(a || c, 5)}><path d="M36 84 L28 76 M64 84 L72 76 M50 92 V98"/></g>`,
+    brise_roche: (c, a) => `<g ${line(c, 6)}><rect x="6" y="72" width="48" height="16" rx="8"/><path d="M12 72 V46 H42 V72"/><path d="M18 52 H34 V62 H18 Z"/>
+      <path d="M42 54 L66 24 L84 40"/><rect x="78" y="40" width="12" height="28" rx="3"/><path d="M84 68 V78"/><path d="M60 92 H98"/></g>
+      <g ${line(a || c, 5)}><path d="M74 86 L68 80 M94 86 L99 80"/></g>`,
+    pistolet_scellement: (c, a) => `<g ${line(c, 6)}><path d="M20 36 H84 V50 H20 Z"/><path d="M28 50 L22 82 H38 L42 50"/><path d="M44 50 Q48 62 56 58"/><path d="M84 43 H92"/></g>
+      <g ${line(a || c, 5)}><path d="M94 30 L99 24 M96 43 H100 M94 56 L99 62"/></g>`,
+    compresseur: (c, a) => `<g ${line(c, 6)}><rect x="10" y="32" width="66" height="44" rx="7"/><path d="M76 42 L90 28 H96"/><circle cx="26" cy="84" r="8"/><circle cx="62" cy="84" r="8"/>
+      <circle cx="30" cy="54" r="10"/><path d="M30 54 L35 49"/></g><path d="M60 40 L50 56 H60 L52 70" ${line(a || c, 5)}/>`,
+    aiguille_vibrante: (c, a) => `<g ${line(c, 6)}><path d="M14 10 C14 40 56 30 58 54"/><rect x="51" y="54" width="14" height="34" rx="7"/><path d="M4 70 Q16 64 28 70 T52 70 M70 70 Q80 64 96 70"/></g>
+      <g ${line(a || c, 5)}><path d="M42 78 L36 84 M74 78 L80 84 M42 90 L36 96 M74 90 L80 96"/></g>`,
+    impulse: (c) => `<path d="M6 62 H34 L42 12 L52 88 L60 62 H94" ${line(c, 8)}/>`,
+    level: (c, a) => `<g fill="${c}"><rect x="10" y="66" width="14" height="20" rx="3"/><rect x="30" y="54" width="14" height="32" rx="3"/><rect x="50" y="40" width="14" height="46" rx="3"/></g><rect x="70" y="22" width="14" height="64" rx="3" fill="${a || c}"/>`,
   };
   const icon = (name, size, c = W, a) => wrap(icons[name](c, a), size);
 
