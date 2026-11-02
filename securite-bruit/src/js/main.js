@@ -59,13 +59,16 @@
       window.POSTER(C);
     } else {
       const S = window.SCENES;
-      // 16:9 adds the tools scene after the thresholds
+      // 16:9 adds the tools scene (after the thresholds) and the closing logo animation
       const order = V ? [S.S0, S.S1, S.S2, S.S3a, S.S3b, S.S4, S.S5]
-        : [S.S0, S.S1, S.S2, S.S2b, S.S3a, S.S3b, S.S4, S.S5];
+        : [S.S0, S.S1, S.S2, S.S2b, S.S3a, S.S3b, S.S4, S.S5, S.S6];
       const wipe = L.buildHexWipe(stage, W, H);
       let t = 0, prev = null;
       order.forEach((build, i) => {
-        const start = i === 0 ? 0 : wipe(tl, t, () => {});
+        // white to white (final message → closing logo): a simple fade instead of the honeycomb wipe
+        const fade = build === S.S6;
+        if (fade) tl.to(prev, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, t);
+        const start = i === 0 ? 0 : fade ? t + 0.4 : wipe(tl, t, () => {});
         const before = stage.querySelectorAll(".scene").length;
         t = build(C, start);
         window.__marks = (window.__marks || []).concat([[build.name, +start.toFixed(2), +t.toFixed(2)]]);

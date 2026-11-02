@@ -645,5 +645,69 @@
     return b + 4.1;
   }
 
-  window.SCENES = { S0, S1, S2, S2b, S3a, S3b, S4, S5, person, machine };
+  /* ========== 6. Closing: sound waves draw the logo hexagon, then the logo ========== */
+  function S6(C, t) {
+    const { W, H, T, tl, cfg } = C;
+    const s = mkScene(C, "bg-white");
+    const blue = cfg.palette.bleu, red = cfg.palette.rouge;
+    const { w: lw, h: lh } = C.logo;
+    const lx = Math.round((W - lw) / 2), ly = Math.round(H * 0.36);
+    // the logo, on white, with its clear space; never scaled beyond the cap (C.logo is already capped)
+    const lc = el("div", "abs", s, { left: lx + "px", top: ly + "px", width: lw + "px", height: lh + "px" });
+    const img = el("img", "", lc); img.src = C.logo.src; img.width = lw; img.height = lh; img.alt = "";
+    const txt = text(s, T.fin_texte, "t-big c-bleu center", { maxW: W - 2 * C.PAD });
+    Object.assign(txt.style, { position: "absolute", left: 0, width: W + "px", top: ly + lh + Math.max(60, Math.round(lh * 0.6)) + "px" });
+    let credit = null;
+    if (cfg.show_synapsis_credit) {
+      credit = el("div", "abs", s, { left: 0, width: W + "px", bottom: "50px", display: "flex", justifyContent: "center", alignItems: "center", gap: "22px" });
+      const ci = el("img", "", credit, { height: "56px" }); ci.src = "../" + cfg.logos.synapsis;
+      text(credit, T.credit, "t-small c-fonce", { style: { fontWeight: 650, opacity: 0.8 } });
+    }
+    fit(C, s);
+
+    // the hexagon of the logo (point up): blue top, white gap, red bottom (proportions measured on the logo)
+    const R = 190, cx0 = W / 2, cy0 = H * 0.42;
+    const fxc = lx + 0.128 * lw, fyc = ly + 0.5 * lh, fR = 0.5 * lh;        // where that hexagon sits in the logo
+    const art = svg("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}` }, s);
+    Object.assign(art.style, { position: "absolute", left: 0, top: 0 });
+    const d = hexD(0, 0, R, 0.1);
+    art.innerHTML = `<defs><clipPath id="hexTop"><rect x="${-R * 2}" y="${-R * 2}" width="${R * 4}" height="${R * 2 + (2 * 0.625 - 1) * R}"/></clipPath>
+        <clipPath id="hexBot"><rect x="${-R * 2}" y="${(2 * 0.725 - 1) * R}" width="${R * 4}" height="${R * 2}"/></clipPath></defs>
+      <g class="rings"></g>
+      <g class="hex"><g class="hs"><path class="ft" d="${d}" fill="${blue}" clip-path="url(#hexTop)"/><path class="fb" d="${d}" fill="${blue}" clip-path="url(#hexBot)"/>
+        <path class="ol" d="${d}" fill="none" stroke="${blue}" stroke-width="12" stroke-linejoin="round"/></g></g>`;
+    const hs = art.querySelector(".hs");
+    gsap.set(hs, { transformOrigin: "50% 50%", scale: 1 });
+    const hex = art.querySelector(".hex"), ol = art.querySelector(".ol"), ft = art.querySelector(".ft"), fb = art.querySelector(".fb");
+    const rg = art.querySelector(".rings");
+    gsap.set([hex, rg], { x: cx0, y: cy0 });
+    gsap.set([ft, fb], { opacity: 0 });
+    gsap.set(lc, { autoAlpha: 0 });
+    const Lo = ol.getTotalLength();
+
+    // 1. waves close in (echo of the hook)
+    for (let i = 0; i < 5; i++) {
+      const c = svg("circle", { cx: 0, cy: 0, r: R, fill: "none", stroke: i % 2 ? red : blue, "stroke-width": 9 }, rg);
+      tl.fromTo(c, { scale: 4.2 - i * 0.35, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1, opacity: 0.9, duration: 0.75, ease: "power2.in" }, t + i * 0.1);
+      tl.to(c, { opacity: 0, duration: 0.2 }, t + i * 0.1 + 0.75);
+    }
+    // 2. they draw the hexagon in blue, it fills, and the bottom turns red as in the logo
+    tl.fromTo(ol, { strokeDasharray: Lo, strokeDashoffset: Lo }, { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, t + 0.55);
+    tl.to([ft, fb], { opacity: 1, duration: 0.3 }, t + 1.15);
+    tl.to(ol, { opacity: 0, duration: 0.25 }, t + 1.3);
+    tl.fromTo(fb, { attr: { fill: blue } }, { attr: { fill: red }, duration: 0.3, ease: "none" }, t + 1.45);
+    // 3. the hexagon takes its place in the logo, and the logo fades in (slides 24 px)
+    const SL = 24;
+    tl.to(hex, { x: fxc, y: fyc + SL, duration: 0.55, ease: "power3.inOut" }, t + 1.75);
+    tl.to(hs, { scale: fR / R, duration: 0.55, ease: "power3.inOut" }, t + 1.75);
+    tl.fromTo(lc, { autoAlpha: 0, y: SL }, { autoAlpha: 1, y: 0, duration: 0.5, ease: EASE }, t + 2.2);
+    tl.to(hex, { y: fyc, duration: 0.5, ease: EASE }, t + 2.2);
+    tl.to(hex, { opacity: 0, duration: 0.3 }, t + 2.4);
+    linesIn(tl, txt, t + 2.5);
+    if (credit) fadeUp(tl, credit, t + 2.7, { y: 16 });
+    tl.to({}, { duration: 0.01 }, t + 3.1 + 1.0);   // hold the last image 1 s
+    return t + 4.1;
+  }
+
+  window.SCENES = { S0, S1, S2, S2b, S3a, S3b, S4, S5, S6, person, machine };
 })();
