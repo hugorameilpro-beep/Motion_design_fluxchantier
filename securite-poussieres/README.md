@@ -1,60 +1,134 @@
 # Poussières sur chantier : le masque dans les zones à risque
 
 Vidéo de sensibilisation sécurité en motion design, **sans son**. Elle est faite pour être projetée lors de
-l'accueil sécurité ou d'une causerie. Le message passe uniquement par l'image et des textes courts, pour des
-compagnons et intérimaires parfois peu francophones.
+l'accueil sécurité ou d'une causerie. Elle est conçue pour des ouvriers qui lisent vite, de loin, et parfois
+pas dans leur langue maternelle : **une idée par écran, peu de mots, chaque texte laissé le temps d'être lu.**
 
 | Livrable | Format | Fichier |
 |---|---|---|
-| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans piste audio, 74,9 s | [`output/securite_poussieres_horizontal.mp4`](output/securite_poussieres_horizontal.mp4) |
+| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans piste audio, 143,3 s | [`output/securite_poussieres_horizontal.mp4`](output/securite_poussieres_horizontal.mp4) |
 
 Il n'existe pour l'instant ni version verticale ni affiche.
 
-Le projet reprend la base technique de [`../securite-bruit/`](../securite-bruit/README.md) :
-- même moteur GSAP, même police Inter embarquée, même palette Dumez ;
-- même motif hexagonal et même rendu image par image ;
-- pictogrammes et scènes propres aux poussières.
+Le projet reprend la base technique de [`../securite-bruit/`](../securite-bruit/README.md) : moteur GSAP, police Inter, palette Dumez, motif hexagonal et rendu image par image.
+
+## Règles de lecture
+
+Elles s'appliquent à toutes les scènes. Le contrôle automatique de lisibilité les vérifie à chaque rendu.
+
+| Règle | Valeur |
+|---|---|
+| Idées par écran | Une seule. Au plus **3 blocs de texte** visibles en même temps, et au plus **10 mots** pour un message principal. |
+| Temps de lecture minimum | Durée pendant laquelle un texte est entièrement visible et immobile : **max(2,5 s ; 0,5 s par mot + 1 s)**. Une étiquette d'icône reste au moins **2 s**. |
+| Ordre d'apparition | Aucun nouveau texte n'apparaît pendant qu'on lit le précédent : les textes arrivent les uns après les autres. |
+| Fin de scène | **0,5 s de pause fixe** avant la transition. |
+| Taille du texte | **72 px** minimum pour les messages principaux, **56 px** pour les secondaires, 48 px partout ailleurs. |
+| Petites mentions | Aucune à l'écran, à part la phrase courte sur l'amiante. Les autres sont reprises plus bas. |
+
+Les durées ne sont pas fixées à la main. Chaque scène est construite texte après texte, et chaque temps de
+lecture est **calculé à partir du nombre de mots** du texte de `config.json`. Une traduction plus longue rallonge
+donc la scène automatiquement, au lieu d'être lue trop vite.
 
 ## Déroulé et temps de chaque scène
 
-Les temps ci-dessous sont aussi affichés à la fin du rendu. Chaque durée inclut la transition vers la scène suivante.
+Les temps sont affichés à la fin du rendu. Chaque durée inclut la transition vers la scène suivante.
 
-| # | Scène | Début | Durée | Contenu |
+| # | Scène | Début | Durée | À l'écran |
 |---|---|---|---|---|
-| 0 | Ouverture | 0,0 s | 2,6 s | Logo Dumez sur fond blanc, titre, puis un hexagone bleu s'ouvre (vague d'hexagones). |
-| 1 | Accroche | 2,6 s | 5,0 s | Chantier sombre : un rayon de lumière balaie l'image et révèle les poussières. « Les poussières les plus dangereuses… » puis, en rouge sur fond blanc, « …sont souvent invisibles. » |
-| 2 | Zones à risque | 7,6 s | 7,8 s | Plan du chantier vu du dessus. Trois zones se balisent (ruban rouge et blanc) et se remplissent de poussière. À chaque entrée : panneau « Masque obligatoire » et niveau (FFP3). Un compagnon s'arrête au panneau, met son masque et entre. « Zone balisée = masque avant d'entrer. » |
-| 3 | Ce qui lève la poussière | 15,5 s | 9,9 s | Huit cartes hexagonales (découpe de béton, carottage, perçage, ponçage, démolition, coupe à sec, ouverture des sacs, balayage et soufflette). « Pas seulement la démolition. » puis « Chaque tâche compte, chaque jour. » Mentions : exemples de tâches ; amiante, règles spécifiques. |
-| 4 | La silice | 25,4 s | 7,8 s | « Béton, mortier, pierre, carrelage : ils contiennent de la silice. » Un grain très fin entre par le nez et descend jusqu'aux alvéoles, montrées en loupe. Mention de la valeur limite légale. |
-| 5 | Conséquences | 33,2 s | 10,6 s | Les poumons se couvrent de zones rouges. Toux, bronchite chronique, silicose, essoufflement définitif. Puis plus grave : insuffisance respiratoire, cancer du poumon, parfois des années après. « Plus on en respire, plus le risque monte. » et « Le tabac aggrave les effets. » Message fort : « Des poumons abîmés ne se réparent pas. » |
-| 6 | Réduire à la source | 43,8 s | 7,8 s | Trois cartes : l'eau, l'aspiration, l'organisation. « Le masque est la dernière barrière, pas la seule. » |
-| 7 | Le bon masque | 51,6 s | 14,0 s | Cinq cartes : choisir (jetable FFP3, demi-masque P3, ventilation assistée), ajuster, mettre AVANT d'entrer, accessoires, hygiène. |
-| 8 | Message final | 65,6 s | 5,0 s | « Zone à poussière : masque obligatoire. » puis « Vos poumons ne se remplacent pas. » Panneau bleu et logo Dumez. |
-| 9 | Générique | 70,6 s | 4,2 s | Des particules convergent et dessinent l'hexagone du logo, pointe en haut, en bleu. Le bas passe au rouge, puis l'hexagone se pose sur celui du logo Dumez, qui apparaît. « Protégez vos poumons. », puis 1 s de maintien. |
-| | **Total** | | **74,9 s** | |
+| 0 | Ouverture | 0,0 s | 2,6 s | Logo Dumez seul, sur fond blanc, puis un hexagone bleu s'ouvre. |
+| 1 | Accroche | 2,6 s | 8,2 s | Un rayon de lumière révèle les poussières. « Les poussières les plus dangereuses… » puis, en rouge sur blanc, « …sont souvent invisibles. » |
+| 2 | Zones à risque | 10,8 s | 9,8 s | Plan avec trois zones balisées et un panneau « Masque » à chaque entrée. Un seul panneau est légendé « Masque obligatoire FFP3 ». Le compagnon marche lentement, met son masque, entre. Puis « Zone balisée = masque avant d'entrer. » |
+| 3 | Ce qui lève la poussière | 20,6 s | 23,0 s | Six cartes : découpe de béton, perçage et burinage, ponçage, démolition, carrelage à sec, balayage à sec. Une étiquette à la fois, environ 2 s chacune ; les icônes restent. Puis « Pas seulement la démolition. » et « Amiante : voir le responsable. » |
+| 4 | La silice | 43,6 s | 7,5 s | Une seule phrase : « Béton, mortier, pierre, carrelage : ils contiennent de la silice. » Un grain descend du nez jusqu'aux alvéoles. |
+| 5 | Conséquences | 51,2 s | 19,2 s | Trois étapes, au moins 3 s chacune, pendant que les poumons rougissent : « Toux, irritations », « Silicose : poumons abîmés pour toujours », « Cancer du poumon, parfois des années après ». Puis « Des poumons abîmés ne se réparent pas. » |
+| 6 | Réduire à la source | 70,4 s | 16,5 s | Trois cartes : « Découper à l'humide », « Outil avec aspirateur », « Alterner les tâches ». Puis, seul, le bandeau « Le masque est la dernière barrière, pas la seule. » |
+| 7 | Le bon masque | 86,9 s | 40,5 s | Cinq cartes d'au moins 4,5 s : le bon masque (FFP3 pour la silice), bien l'ajuster, le mettre avant d'entrer, lunettes et combinaison, ne rien manger ni boire dans la zone. Puis « À retenir » en 3 points. |
+| 8 | Message final | 127,3 s | 9,5 s | « Zone à poussière : masque obligatoire. » puis « Vos poumons ne se remplacent pas. » Panneau et logo Dumez. |
+| 9 | Générique | 136,9 s | 6,4 s | Les poussières dessinent l'hexagone du logo, qui se pose sur le logo Dumez. « Protégez vos poumons. », puis 1 s de maintien. |
+| | **Total** | | **143,3 s** | |
+
+**Pourquoi 143 s et pas 95 s.** Avec les règles ci-dessus, les textes conservés demandent à eux seuls environ 130 s de lecture, à quoi s'ajoutent les transitions et les pauses :
+- le bon masque, cinq cartes et le récapitulatif : environ 40 s ;
+- les tâches : environ 23 s ;
+- les conséquences : environ 19 s.
+
+Comme demandé, les durées suivent les règles et non l'inverse. Pour se rapprocher de 95 s, il faut retirer du texte.
+
+| Coupe possible | Gain |
+|---|---|
+| Récapitulatif « À retenir » | ≈ 12 s |
+| Message final, puisque le générique le suit | ≈ 10 s |
+| Tâches réduites de 6 à 4 cartes | ≈ 5 s |
+| Une seule phrase d'accroche | ≈ 2 s |
+| Bandeau « Le masque est la dernière barrière, pas la seule. » plus court | ≈ 1,5 s |
+
+## Contrôle automatique de lisibilité
+
+Le rendu commence par parcourir toute la timeline à 30 i/s. Pour chaque bloc de texte, ou chaque groupe lu ensemble (titre et ligne d'une même carte), il mesure :
+- le **nombre de mots** ;
+- le **temps pendant lequel le texte est entièrement visible et immobile** : lignes en place, opacité complète, aucune transition en cours ;
+- la **durée minimale requise** par la règle.
+
+Il affiche ensuite un tableau :
+
+```
+  Scène        Texte                                          Mots  Affiché  Requis   État
+  Accroche     Les poussières les plus dangereuses…              5   6.97 s   3.5 s   OK
+  Tâches       Découpe de béton                                  3   2.10 s   2.0 s   OK (étiquette)
+  Masque       Le mettre avant d'entrer Le garder jusqu'à la…    9   5.63 s   5.5 s   OK
+  …
+  Au plus 3 blocs de texte visibles en même temps (maximum 3).
+  Lisibilité : OK.
+```
+
+Le contrôle signale trois cas :
+- un texte **trop court** ;
+- un texte qui **apparaît pendant la lecture** d'un autre ;
+- **plus de 3 blocs** visibles en même temps.
+
+S'il trouve un problème, **le rendu s'arrête** avec un message clair. L'option `--no-strict` permet de rendre quand même.
+
+```bash
+npm run lisibilite                                          # contrôle seul, avec le temps des scènes
+npm run stills -- 0 --format horizontal --lisibilite --images-lecture   # + une image au milieu de chaque lecture (frames/lecture/)
+```
+
+## Textes retirés de la vidéo
+
+Ces textes sont retirés de l'écran pour alléger la lecture. **À reprendre à l'oral pendant la causerie et sur une future affiche** :
+
+- « Valeur limite légale : 0,1 mg/m³ sur 8 h (quartz) ». Le texte reste dans `config.json` (`vlep`) et `show_vlep: true` le réaffiche, mais il allonge la scène sur la silice.
+- « Exemples de tâches. Voir les consignes de votre chantier. »
+- « FFP3 minimum pour la silice (à confirmer par le responsable sécurité) ». À l'écran, il ne reste que « FFP3 pour la silice », à faire valider.
+- « Ordres de grandeur. »
+- Tâches non montrées : **carottage**, **ouverture des sacs de ciment ou de plâtre**, **soufflette**.
+- Conséquences : **bronchite chronique**, **insuffisance respiratoire**, « Plus on en respire, plus le risque monte. » et « Le tabac aggrave les effets. »
+- Réduire à la source : « Pas de courant d'air » et « Ne jamais se placer entre la source de poussière et l'aspiration ».
+- Bien ajuster : « Élastiques derrière la tête, pas aux oreilles » et « Faites un essai d'ajustement ».
+- Hygiène : « Remplacer un masque jetable abîmé, humide ou difficile à respirer, et suivre la notice. »
+- Amiante : la mention complète est « Amiante : règles spécifiques, voir le responsable ». La vidéo garde la version courte, « Amiante : voir le responsable. », lisible en 3 s.
 
 ## Règles de contenu
 
-- **Aucun chiffre inventé.** Le seul chiffre affiché est la valeur limite d'exposition professionnelle (VLEP) de la silice cristalline : **0,1 mg/m³ sur 8 h pour le quartz** (Code du travail). La valeur de 0,05 mg/m³ pour la cristobalite et la tridymite n'est pas affichée.
-- **Pas de pourcentage de filtration, pas de statistiques** de maladies ou de décès.
-- **Amiante** : le sujet n'est pas traité. La scène des tâches mentionne démolition, dépose et ponçage, d'où la mention « Amiante : règles spécifiques, voir le responsable. ». Le drapeau `show_amiante_note` (activé par défaut) la contrôle.
-- **Formulations sensibles** : elles sont regroupées dans `textes.fr.a_valider` et doivent être **validées par le responsable sécurité** avant diffusion. Ce sont :
+- **Aucun chiffre inventé.** La vidéo n'affiche aucune valeur chiffrée. La VLEP est désactivée par défaut, il n'y a pas de pourcentage de filtration, ni de statistiques de maladies ou de décès.
+- **Amiante** : le sujet n'est pas traité, seule la mention courte apparaît (`show_amiante_note`, activé par défaut).
+- **Formulations sensibles à valider par le responsable sécurité**, regroupées dans `textes.fr.a_valider` :
   - le panneau « Masque obligatoire » ;
   - la règle « Zone balisée = masque avant d'entrer » ;
-  - la phrase sur la silice des matériaux ;
-  - la mention « FFP3 minimum pour la silice (à confirmer par le responsable sécurité) ».
+  - la phrase sur la silice ;
+  - « FFP3 pour la silice ».
 
-  Le niveau de masque par zone se trouve dans `protection_par_zone`, qui porte le drapeau `"a_valider": true`.
+  Le niveau par zone se trouve dans `protection_par_zone`, qui porte `"a_valider": true`.
 
 ## Identité visuelle et contrastes
 
-La palette est la même que dans la vidéo sur le bruit, extraite du logo Dumez. **Aucune autre couleur n'est utilisée.**
+La palette est celle du logo Dumez, et **aucune autre couleur** n'est utilisée :
 
 | Rôle | Couleur |
 |---|---|
-| Bleu Dumez (dominant) | `#004489` |
+| Bleu (dominant) | `#004489` |
 | Bleu très foncé (fonds) | `#001F3D` |
-| Rouge Dumez (danger, conséquences, alertes) | `#FA000C` |
+| Rouge (danger, conséquences) | `#FA000C` |
 | Blanc | `#FFFFFF` |
 
 **Contrastes** (norme WCAG) :
@@ -68,99 +142,84 @@ La palette est la même que dans la vidéo sur le bruit, extraite du logo Dumez.
 
 Règles appliquées :
 - Le blanc sur rouge et le rouge sur blanc sont réservés aux textes très gros et gras.
-- **Aucun rouge n'est posé sur le bleu très foncé.** Dans les scènes sombres, le rouge n'apparaît qu'à l'intérieur d'éléments blancs : le panneau de l'accroche, les badges des tâches, la loupe sur les alvéoles.
-- Les scènes qui ont besoin de rouge (plan balisé, poumons, messages forts) sont sur fond blanc.
+- **Aucun rouge n'est posé sur le bleu très foncé.**
 
-**Typographie** : Inter, embarquée dans `assets/fonts/` (licence OFL).
-- Tout texte fait **au moins 48 px**, avec **6 mots au maximum par ligne**. Un texte trop long est réduit automatiquement, sans jamais descendre sous 48 px.
-- Le rendu vérifie la taille, le nombre de mots, la largeur et le débordement des cartes. Il affiche « textes : OK » ou la liste des problèmes.
+**Logo Dumez** :
+- sur fond blanc, avec sa zone de protection ;
+- jamais recoloré ni déformé, et au plus agrandi 1,3 fois (`logos.agrandissement_max`) ;
+- une version HD du fichier améliorerait sa netteté.
 
-**Logo Dumez** (`logos.entreprise`, chemin configurable) :
-- il est affiché en ouverture, dans le message final et dans le générique, toujours sur fond blanc avec sa zone de protection (au moins la hauteur du « H ») ;
-- il n'est ni recoloré ni déformé, et jamais agrandi au-delà de `agrandissement_max` (1,3 fois) ;
-- le fichier actuel fait 421×120 px : une version HD améliorerait sa netteté.
-
-Le crédit « Réalisé par Synapsis » est désactivé (`show_synapsis_credit: false`).
+Le crédit Synapsis est désactivé (`show_synapsis_credit: false`).
 
 ## Modifier les textes, `show_vlep`, ajouter une langue
 
-Tous les textes sont dans [`config.json`](config.json), sous `textes.fr`. Un `\n` force un retour à la ligne.
+Tous les textes sont dans [`config.json`](config.json), sous `textes.fr`. Un `\n` force un retour à la ligne : 6 mots au maximum par ligne.
 
 | Réglage | Effet |
 |---|---|
-| `show_vlep` | `true` (par défaut) affiche « Valeur limite légale : 0,1 mg/m³ sur 8 h (quartz) » dans la scène sur la silice. `false` la masque. |
-| `show_amiante_note` | `true` (par défaut) affiche la mention « Amiante : règles spécifiques… » dans la scène des tâches. |
-| `protection_par_zone` | Niveau de masque par zone (`decoupe`, `poncage`, `demolition`) affiché sous chaque panneau, plus le niveau par défaut repris dans la carte « Choisissez le bon masque » (`{niveau}`). Exemple : `"niveau": "FFP2"`. |
-| `textes.fr.a_valider` | Les formulations à faire valider : panneau, règle de zone, silice, mention FFP3. |
-| `textes.fr.zones` | Noms des trois zones du plan. |
-| `textes.fr.taches` | Les huit tâches. L'`id` choisit le pictogramme. |
-| `textes.fr.masque_cartes` | Les cinq cartes du masque. |
+| `show_vlep` | `false` par défaut. `true` ajoute la valeur limite après la phrase sur la silice, et la scène s'allonge d'autant. |
+| `show_amiante_note` | `true` par défaut : « Amiante : voir le responsable. » en fin de scène 3. |
+| `protection_par_zone` | Niveau de masque par zone, affiché sur le panneau légendé, et niveau par défaut (`{niveau}`) repris dans « FFP3 pour la silice ». |
+| `textes.fr.taches` | Les six tâches. L'`id` choisit le pictogramme. |
+| `textes.fr.etapes` | Les trois étapes des conséquences. |
+| `textes.fr.masque_cartes` | Les cinq cartes du masque : un `titre` et une `ligne`, lus ensemble. |
+| `textes.fr.retenir` | Les trois points de « À retenir ». |
 
-**Ajouter une langue** (anglais, roumain, portugais…) :
-1. Copiez le bloc `"fr": { … }` sous `textes` en le renommant, par exemple `"ro"`, puis traduisez les valeurs, y compris le bloc `a_valider`. Une clé absente reprend le texte français.
-2. Générez la version : `npm run render -- --format horizontal --lang ro`. Le fichier obtenu est `output/securite_poussieres_horizontal_ro.mp4`.
-3. Ou passez `"langue": "ro"` pour en faire la langue par défaut.
+**Ajouter une langue** :
+1. Copiez le bloc `"fr": { … }` sous `textes` en le renommant, par exemple `"ro"`, puis traduisez, y compris le bloc `a_valider`.
+2. Lancez `npm run render -- --format horizontal --lang ro`.
 
-Gardez des lignes courtes : 6 mots au maximum.
+Les durées s'adaptent toutes seules au nombre de mots, et le contrôle de lisibilité vérifie la traduction.
 
 ## Installation, aperçu, génération
 
-Il faut **Node.js 18 ou plus récent** et **ffmpeg**.
-
-```bash
-cd securite-poussieres
-npm install                        # GSAP + Playwright 1.63.0 (aucune dépendance réseau au rendu)
-npx playwright install chromium    # navigateur du rendu, une seule fois
-```
-
-ffmpeg :
+Il faut **Node.js 18 ou plus récent** et **ffmpeg** :
 - Linux : `sudo apt install ffmpeg`
 - macOS : `brew install ffmpeg`
 - Windows : `winget install ffmpeg`
 
 ```bash
-npm run dev                                   # aperçu : http://localhost:5175/src/index.html?format=horizontal
-npm run render -- --format horizontal         # génère output/securite_poussieres_horizontal.mp4
-npm run stills -- 12,30.5 --format horizontal --scenes   # images clés dans frames/stills/ + temps des scènes
+cd securite-poussieres
+npm install                          # GSAP + Playwright 1.63.0 (aucune dépendance réseau au rendu)
+npx playwright install chromium      # navigateur du rendu, une seule fois
+npm run dev                          # aperçu : http://localhost:5175/src/index.html?format=horizontal
+npm run render -- --format horizontal   # contrôle de lisibilité, puis output/securite_poussieres_horizontal.mp4
 ```
 
-L'aperçu propose un curseur de timeline ; la touche Espace lance ou met en pause. Ajoutez à l'adresse :
-- `&t=30` pour ouvrir à 30 s ;
-- `&lang=ro` pour voir une traduction.
-
-Le rendu est **déterministe**, sans enregistrement d'écran :
+Le rendu est **déterministe** :
 1. Playwright ouvre la page en 1920×1080.
 2. Il avance l'unique timeline GSAP (`window.tl`) image par image, à 30 i/s, et capture chaque image en PNG.
-3. ffmpeg assemble les images en MP4 H.264, sans piste audio.
+3. ffmpeg assemble le tout en MP4 H.264, sans piste audio.
 
-Les images temporaires vont dans `frames/`, ignoré par git. La version de Playwright est figée à 1.63.0 pour correspondre au Chromium installé. Si vous mettez Playwright à jour, relancez `npx playwright install chromium`.
+Les images temporaires vont dans `frames/`, ignoré par git.
 
 ## Organisation
 
 | Chemin | Rôle |
 |---|---|
 | `config.json` | Palette, logos, drapeaux, protection par zone et **tous les textes**. |
-| `src/index.html` | Page unique (`?format=horizontal`, `&lang=`). |
-| `src/styles.css` | Variables de couleur (remplies depuis `config.json`) et typographie. |
-| `src/js/lib.js` | Textes masqués multi-lignes, ajustement automatique, motif hexagonal, transitions. |
-| `src/js/pictos.js` | Panneau d'obligation « masque » (style ISO 7010), panneau de danger, pictogrammes au trait. |
-| `src/js/scenes.js` | Les dix scènes et leur animation. |
-| `src/js/main.js` | Chargement, timeline unique `window.tl`, contrôles des textes, aperçu. |
-| `scripts/render.mjs` | Rendu image par image, MP4 et temps des scènes. |
-| `output/` | Vidéo finale (versionnée). |
+| `src/js/lib.js` | Textes, ajustement automatique avec planchers 72 / 56 / 48 px, **règles de lecture** (`words`, `need`, `read`), motif hexagonal. |
+| `src/js/scenes.js` | Les dix scènes, enchaînées texte après texte. |
+| `src/js/main.js` | Timeline unique `window.tl`, contrôles des textes, **contrôle de lisibilité** (`window.__readability`). |
+| `src/js/pictos.js` | Panneau « masque » (style ISO 7010), panneau de danger, pictogrammes au trait. |
+| `scripts/render.mjs` | Tableau de lisibilité, rendu image par image, MP4, temps des scènes. |
 
 ## Sources
 
 À consulter et à faire valider par le responsable sécurité avant diffusion :
 
-- **INRS : silice cristalline.** Dossier « Silice cristalline » sur inrs.fr : présence dans le béton, le mortier, la pierre et le carrelage ; effets (silicose, bronchite chronique, insuffisance respiratoire, cancer bronchique) ; prévention (réduction à la source par l'eau et l'aspiration, organisation).
-- **INRS : protection respiratoire.** Brochure « Les appareils de protection respiratoire. Choix et utilisation » et dossier « Appareils de protection respiratoire » : choix FFP ou P3, ventilation assistée, ajustement et essai d'ajustement, barbe, durée de port, remplacement, notice.
-- **Code du travail : valeurs limites.** Article R4412-149 : VLEP contraignantes sur 8 h, fraction alvéolaire, de **0,1 mg/m³ pour le quartz** et 0,05 mg/m³ pour la cristobalite et la tridymite. Seule la première est affichée.
-- **Prévention BTP.** Documents OPPBTP (preventionbtp.fr) sur les poussières et la silice sur chantier : balisage des zones, travail à l'humide, outils avec aspiration, nettoyage sans balayage à sec ni soufflette, équipements de protection.
+- **INRS : silice cristalline.** Dossier « Silice cristalline » sur inrs.fr :
+  - présence dans le béton, le mortier, la pierre et le carrelage ;
+  - effets : silicose, bronchite chronique, insuffisance respiratoire, cancer bronchique ;
+  - prévention : réduction à la source par l'eau et l'aspiration, organisation.
+- **INRS : protection respiratoire.** Brochure « Les appareils de protection respiratoire. Choix et utilisation » et dossier « Appareils de protection respiratoire » :
+  - choix entre FFP et P3, ventilation assistée ;
+  - ajustement et essai d'ajustement, barbe ;
+  - durée de port, remplacement, notice.
+- **Code du travail : valeurs limites.** Article R4412-149 : VLEP contraignantes sur 8 h, fraction alvéolaire, de 0,1 mg/m³ pour le quartz et de 0,05 mg/m³ pour la cristobalite et la tridymite. Elles ne sont pas affichées par défaut.
+- **Prévention BTP.** Documents OPPBTP (preventionbtp.fr) sur les poussières et la silice :
+  - balisage des zones, travail à l'humide, outils avec aspiration ;
+  - nettoyage sans balayage à sec ni soufflette ;
+  - équipements de protection.
 
-**Choix de formulation de la vidéo à valider** :
-- le niveau FFP3 « minimum pour la silice » ;
-- la règle « zone balisée = masque avant d'entrer » ;
-- la liste des tâches et des matériaux.
-
-Ces éléments dépendent de l'évaluation des risques et des consignes propres à chaque chantier.
+Les points à valider (niveau FFP3, règle de zone, liste des tâches et des matériaux) dépendent de l'évaluation des risques et des consignes de chaque chantier.
