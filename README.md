@@ -12,6 +12,8 @@ Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`]
 > **Tutoriels d'installation PWA (Android et iPhone, format vertical) :** voir [`tuto-pwa/`](tuto-pwa/README.md).
 >
 > **Sensibilisation sécurité « Casque anti-bruit sur chantier » (Dumez, vertical + horizontal + affiche A3) :** voir [`securite-bruit/`](securite-bruit/README.md).
+>
+> **Sensibilisation sécurité « Poussières sur chantier : le masque dans les zones à risque » (Dumez, 16:9) :** voir [`securite-poussieres/`](securite-poussieres/README.md).
 
 ## Le parcours expliqué (Espace Sous-traitant, sans compte)
 
