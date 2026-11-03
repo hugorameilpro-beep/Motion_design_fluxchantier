@@ -73,6 +73,12 @@ async function readability(page) {
   if (r.maxBlocks.n > 3) { bad++; console.log(`  ⚠ ${r.maxBlocks.n} blocs de texte visibles en même temps à ${r.maxBlocks.t.toFixed(2)} s (maximum 3) : ${r.maxBlocks.texts.map((s) => "« " + s.slice(0, 20) + " »").join(", ")}`); }
   else console.log(`  Au plus ${r.maxBlocks.n} blocs de texte visibles en même temps (maximum 3).`);
   console.log(bad ? `  ⚠ ${bad} problème(s) de lisibilité.` : "  Lisibilité : OK.");
+  if (args.includes("--images-lecture")) {      // one frame in the middle of the reading time of each text
+    const dir = path.join(ROOT, "frames", "lecture");
+    fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
+    for (const [i, x] of r.rows.entries()) if (x.mid != null) await shoot(page, x.mid, path.join(dir, `${String(i).padStart(2, "0")}_${x.mid.toFixed(2)}.png`));
+    console.log(`  ${r.rows.length} images de lecture dans frames/lecture/`);
+  }
   return bad;
 }
 const printReport = (info) => {

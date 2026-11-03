@@ -145,7 +145,8 @@
     return {
       step, maxBlocks: crowd,
       rows: units.map((u) => ({ scene: (marks[u.si] || [""])[0], text: u.text, words: u.words, label: u.label, shown: +u.best.toFixed(2), need: u.need,
-        ok: u.best + step * 0.5 >= u.need, overlap: u.overlap ? u.overlap.text : null })),
+        ok: u.best + step * 0.5 >= u.need, overlap: u.overlap ? u.overlap.text : null,
+        mid: u.bestStart != null ? +(u.bestStart + Math.min(u.best, u.need) / 2).toFixed(2) : null })),
     };
   };
 
