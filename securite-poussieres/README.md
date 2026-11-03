@@ -6,7 +6,7 @@ pas dans leur langue maternelle : **une idée par écran, peu de mots, chaque te
 
 | Livrable | Format | Fichier |
 |---|---|---|
-| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans piste audio, 143,3 s | [`output/securite_poussieres_horizontal.mp4`](output/securite_poussieres_horizontal.mp4) |
+| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans piste audio, 135,5 s | [`output/securite_poussieres_horizontal.mp4`](output/securite_poussieres_horizontal.mp4) |
 
 Il n'existe pour l'instant ni version verticale ni affiche.
 
@@ -18,7 +18,7 @@ Elles s'appliquent à toutes les scènes. Le contrôle automatique de lisibilit�
 
 | Règle | Valeur |
 |---|---|
-| Idées par écran | Une seule. Au plus **3 blocs de texte** visibles en même temps, et au plus **10 mots** pour un message principal. |
+| Idées par écran | Une seule. Au plus **3 blocs de texte** visibles en même temps, et au plus **10 mots** pour un message principal. Les étiquettes d'une grille d'icônes (les 6 tâches) ne comptent pas dans cette limite : elles restent toutes affichées jusqu'à la fin de la scène, à la demande. |
 | Temps de lecture minimum | Durée pendant laquelle un texte est entièrement visible et immobile : **max(2,5 s ; 0,5 s par mot + 1 s)**. Une étiquette d'icône reste au moins **2 s**. |
 | Ordre d'apparition | Aucun nouveau texte n'apparaît pendant qu'on lit le précédent : les textes arrivent les uns après les autres. |
 | Fin de scène | **0,5 s de pause fixe** avant la transition. |
@@ -35,22 +35,24 @@ Les temps sont affichés à la fin du rendu. Chaque durée inclut la transition 
 
 | # | Scène | Début | Durée | À l'écran |
 |---|---|---|---|---|
-| 0 | Ouverture | 0,0 s | 2,6 s | Logo Dumez seul, sur fond blanc, puis un hexagone bleu s'ouvre. |
-| 1 | Accroche | 2,6 s | 8,2 s | Un rayon de lumière révèle les poussières. « Les poussières les plus dangereuses… » puis, en rouge sur blanc, « …sont souvent invisibles. » |
-| 2 | Zones à risque | 10,8 s | 9,8 s | Plan avec trois zones balisées et un panneau « Masque » à chaque entrée. Un seul panneau est légendé « Masque obligatoire FFP3 ». Le compagnon marche lentement, met son masque, entre. Puis « Zone balisée = masque avant d'entrer. » |
-| 3 | Ce qui lève la poussière | 20,6 s | 23,0 s | Six cartes : découpe de béton, perçage et burinage, ponçage, démolition, carrelage à sec, balayage à sec. Une étiquette à la fois, environ 2 s chacune ; les icônes restent. Puis « Pas seulement la démolition. » et « Amiante : voir le responsable. » |
-| 4 | La silice | 43,6 s | 7,5 s | Une seule phrase : « Béton, mortier, pierre, carrelage : ils contiennent de la silice. » Un grain descend du nez jusqu'aux alvéoles. |
-| 5 | Conséquences | 51,2 s | 19,2 s | Trois étapes, au moins 3 s chacune, pendant que les poumons rougissent : « Toux, irritations », « Silicose : poumons abîmés pour toujours », « Cancer du poumon, parfois des années après ». Puis « Des poumons abîmés ne se réparent pas. » |
-| 6 | Réduire à la source | 70,4 s | 16,5 s | Trois cartes : « Découper à l'humide », « Outil avec aspirateur », « Alterner les tâches ». Puis, seul, le bandeau « Le masque est la dernière barrière, pas la seule. » |
-| 7 | Le bon masque | 86,9 s | 40,5 s | Cinq cartes d'au moins 4,5 s : le bon masque (FFP3 pour la silice), bien l'ajuster, le mettre avant d'entrer, lunettes et combinaison, ne rien manger ni boire dans la zone. Puis « À retenir » en 3 points. |
-| 8 | Message final | 127,3 s | 9,5 s | « Zone à poussière : masque obligatoire. » puis « Vos poumons ne se remplacent pas. » Panneau et logo Dumez. |
-| 9 | Générique | 136,9 s | 6,4 s | Les poussières dessinent l'hexagone du logo, qui se pose sur le logo Dumez. « Protégez vos poumons. », puis 1 s de maintien. |
-| | **Total** | | **143,3 s** | |
+| 0 | Ouverture | 0,0 s | 2,4 s | Logo Dumez seul, sur fond blanc, puis un hexagone bleu s'ouvre. |
+| 1 | Accroche | 2,4 s | 7,9 s | Un rayon de lumière révèle les poussières. « Les poussières les plus dangereuses… » puis, en rouge sur blanc, « …sont souvent invisibles. » |
+| 2 | Zones à risque | 10,3 s | 9,1 s | Plan avec trois zones balisées. À l'entrée de chacune, un panneau rond bleu avec le pictogramme du masque. Le compagnon (la silhouette de l'accroche, en grand) marche lentement dans le couloir, s'arrête au panneau, met son masque (visible, avec une loupe sur son visage), puis entre. « Zone balisée = masque avant d'entrer. » sous le plan : rien ne passe sur le texte. |
+| 3 | Ce qui lève la poussière | 19,4 s | 18,5 s | Le titre « Pas seulement la démolition. » est en haut dès le début. La première carte arrive après 0,15 s, puis une carte environ toutes les 2,3 s : découpe de béton, perçage et burinage, ponçage, démolition, carrelage à sec, balayage à sec. **Chaque étiquette reste visible jusqu'à la fin** ; la carte active est entourée de blanc. Puis « Amiante : voir le responsable. » |
+| 4 | La silice | 37,9 s | 7,3 s | Une seule phrase : « Béton, mortier, pierre, carrelage : ils contiennent de la silice. » Un grain descend du nez jusqu'aux alvéoles. |
+| 5 | Conséquences | 45,1 s | 18,2 s | Trois étapes, au moins 3 s chacune, qui s'ajoutent les unes sous les autres, sans vide entre elles. Les taches rouges grossissent par étape : quelques petites pour « Toux, irritations », davantage pour « Silicose : poumons abîmés pour toujours », le maximum pour « Cancer du poumon, parfois des années après ». Un hexagone rouge couvre l'écran en 0,3 s : « Des poumons abîmés ne se réparent pas. » |
+| 6 | Réduire à la source | 63,4 s | 16,0 s | Trois cartes : « Découper à l'humide », « Outil avec aspirateur », « Alterner les tâches ». Puis les cartes sortent ensemble et le bandeau « Le masque est la dernière barrière, pas la seule. » **les remplace**, seul et en grand, avec le panneau du masque. Aucune carte grisée. |
+| 7 | Le bon masque | 79,4 s | 40,2 s | Cinq cartes d'au moins 4,5 s : le bon masque (FFP3 pour la silice), bien l'ajuster, le mettre avant d'entrer, lunettes et combinaison, ne rien manger ni boire dans la zone. Puis « À retenir » en 3 points. Les points de pagination sortent en fondu avec la dernière carte. |
+| 8 | Message final | 119,6 s | 9,4 s | Composition centrée dans les deux sens : grand panneau (440 px), textes en 100 px, logo Dumez en dessous (1,3x au maximum). « Zone à poussière : masque obligatoire. » puis « Vos poumons ne se remplacent pas. » |
+| 9 | Générique | 129,0 s | 6,5 s | De grosses particules opaques, bleues et rouges, convergent et dessinent l'hexagone du logo à **sa taille et sa position exactes**. Elles sont mesurées dans le fichier du logo : contour, puis bleu, puis bas rouge. Le logo apparaît ensuite dessus, sans saut. « Protégez vos poumons. », puis 1 s de maintien. |
+| | **Total** | | **135,5 s** | |
 
-**Pourquoi 143 s et pas 95 s.** Avec les règles ci-dessus, les textes conservés demandent à eux seuls environ 130 s de lecture, à quoi s'ajoutent les transitions et les pauses :
+**Transitions** : la même partout. Un seul hexagone bleu, pointe en haut, grandit depuis le centre jusqu'à couvrir tout l'écran, puis une ouverture hexagonale révèle la scène suivante (0,8 s). Il n'y a ni cellules éparses, ni tracé isolé, ni bande blanche. Les textes apparaissent par un simple fondu, sans ligne coupée.
+
+**Pourquoi 135 s et pas 95 s.** Avec les règles ci-dessus, les textes conservés demandent à eux seuls environ 125 s de lecture, à quoi s'ajoutent les transitions et les pauses :
 - le bon masque, cinq cartes et le récapitulatif : environ 40 s ;
-- les tâches : environ 23 s ;
-- les conséquences : environ 19 s.
+- les tâches : environ 18 s ;
+- les conséquences : environ 18 s.
 
 Comme demandé, les durées suivent les règles et non l'inverse. Pour se rapprocher de 95 s, il faut retirer du texte.
 
@@ -83,8 +85,10 @@ Il affiche ensuite un tableau :
 
 Le contrôle signale trois cas :
 - un texte **trop court** ;
-- un texte qui **apparaît pendant la lecture** d'un autre ;
-- **plus de 3 blocs** visibles en même temps.
+- un texte qui **apparaît pendant la lecture** d'un autre (sauf sous un titre qui reste affiché toute la scène, comme en scène 3) ;
+- **plus de 3 blocs** visibles en même temps (hors étiquettes d'icônes).
+
+Un texte est « entièrement visible » quand son opacité est complète, qu'il n'est ni recouvert ni en mouvement, et que la transition est terminée.
 
 S'il trouve un problème, **le rendu s'arrête** avec un message clair. L'option `--no-strict` permet de rendre quand même.
 
@@ -159,7 +163,7 @@ Tous les textes sont dans [`config.json`](config.json), sous `textes.fr`. Un `\n
 |---|---|
 | `show_vlep` | `false` par défaut. `true` ajoute la valeur limite après la phrase sur la silice, et la scène s'allonge d'autant. |
 | `show_amiante_note` | `true` par défaut : « Amiante : voir le responsable. » en fin de scène 3. |
-| `protection_par_zone` | Niveau de masque par zone, affiché sur le panneau légendé, et niveau par défaut (`{niveau}`) repris dans « FFP3 pour la silice ». |
+| `protection_par_zone` | Niveau par défaut (`{niveau}`) repris dans « FFP3 pour la silice ». Les niveaux par zone restent dans le fichier, mais les panneaux du plan n'ont plus de légende (pictogramme seul). |
 | `textes.fr.taches` | Les six tâches. L'`id` choisit le pictogramme. |
 | `textes.fr.etapes` | Les trois étapes des conséquences. |
 | `textes.fr.masque_cartes` | Les cinq cartes du masque : un `titre` et une `ligne`, lus ensemble. |
