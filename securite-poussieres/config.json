@@ -1,0 +1,121 @@
+{
+  "langue": "fr",
+
+  "palette": {
+    "bleu": "#004489",
+    "bleu_fonce": "#001F3D",
+    "rouge": "#FA000C",
+    "blanc": "#FFFFFF"
+  },
+
+  "logos": {
+    "entreprise": "assets/logo_dumez.png",
+    "chantier": "",
+    "synapsis": "assets/logo_synapsis.png",
+    "agrandissement_max": 1.3
+  },
+  "show_synapsis_credit": false,
+
+  "show_vlep": true,
+  "show_amiante_note": true,
+
+  "protection_par_zone": {
+    "a_valider": true,
+    "defaut": "FFP3",
+    "zones": [
+      { "id": "decoupe", "niveau": "FFP3" },
+      { "id": "poncage", "niveau": "FFP3" },
+      { "id": "demolition", "niveau": "FFP3" }
+    ]
+  },
+
+  "textes": {
+    "fr": {
+      "titre": "Poussières sur chantier",
+      "sous_titre": "Le masque dans\nles zones à risque",
+
+      "accroche_1": "Les poussières\nles plus dangereuses…",
+      "accroche_2": "…sont souvent\ninvisibles.",
+
+      "zones_titre": "Les zones à risque",
+      "zones": [
+        { "id": "decoupe", "nom": "Découpe" },
+        { "id": "poncage", "nom": "Ponçage" },
+        { "id": "demolition", "nom": "Démolition" }
+      ],
+
+      "taches_titre": "Ce qui lève la poussière",
+      "taches_message_1": "Pas seulement la démolition.",
+      "taches_message_2": "Chaque tâche compte,\nchaque jour.",
+      "taches_mention": "Exemples de tâches. Voir les\nconsignes de votre chantier.",
+      "amiante_note": "Amiante : règles spécifiques,\nvoir le responsable.",
+      "taches": [
+        { "id": "decoupe_beton", "nom": "Découpe, sciage\nde béton" },
+        { "id": "carottage", "nom": "Carottage" },
+        { "id": "percage", "nom": "Perçage,\nburinage" },
+        { "id": "poncage", "nom": "Ponçage\nde plâtre,\nd'enduit" },
+        { "id": "demolition", "nom": "Démolition,\ndépose\nde cloisons" },
+        { "id": "coupe_carrelage", "nom": "Coupe à sec :\ncarrelage,\npierre" },
+        { "id": "sacs", "nom": "Ouvrir les sacs\nde ciment,\nde plâtre" },
+        { "id": "balayage", "nom": "Balayage à sec,\nsoufflette" }
+      ],
+
+      "silice_titre": "La silice, c'est quoi ?",
+      "silice_materiaux": ["Béton", "Mortier", "Pierre", "Carrelage"],
+      "silice_chemin": "Très fine, elle descend\njusqu'au fond des poumons.",
+      "vlep": "Valeur limite légale :\n0,1 mg/m³ sur 8 h (quartz)",
+
+      "poumons_titre": "Pour vos poumons",
+      "poumons": [
+        "Toux, irritations",
+        "Bronchite chronique",
+        "Silicose : des cicatrices\nqui ne partent plus",
+        "Du mal à respirer,\npour toujours"
+      ],
+      "grave_titre": "Plus grave",
+      "grave": [
+        "Insuffisance\nrespiratoire",
+        "Cancer du poumon\n(cancer bronchique)"
+      ],
+      "grave_delai": "Parfois des années après.",
+      "dose_message": "Plus on en respire,\nplus le risque monte.",
+      "tabac_message": "Le tabac aggrave\nles effets.",
+      "message_fort": "Des poumons abîmés\nne se réparent pas.",
+
+      "source_titre": "D'abord, réduire la\npoussière à la source",
+      "source_cartes": [
+        { "id": "eau", "titre": "L'eau", "lignes": ["Découpe à l'humide"] },
+        { "id": "aspiration", "titre": "L'aspiration", "lignes": ["Outil relié\nà un aspirateur"] },
+        { "id": "organisation", "titre": "L'organisation", "lignes": ["Alterner les tâches", "Pas de courant d'air", "Jamais entre la source\net l'aspiration"] }
+      ],
+      "source_message": "Le masque est la dernière\nbarrière, pas la seule.",
+
+      "masque_titre": "Le bon masque, bien porté",
+      "masque_cartes": [
+        { "id": "choisir", "titre": "Choisissez\nle bon masque",
+          "types": [
+            { "id": "ffp_jetable", "nom": "Jetable\n{niveau}" },
+            { "id": "demi_masque", "nom": "Demi-masque\nP3" },
+            { "id": "ventilation", "nom": "Ventilation\nassistée" }
+          ],
+          "lignes": [] },
+        { "id": "ajuster", "titre": "Ajustez-le", "lignes": ["Barrette nasale serrée", "Élastiques derrière la tête,\npas aux oreilles", "Visage rasé :\nmeilleure étanchéité", "Faites un essai\nd'ajustement"] },
+        { "id": "avant", "titre": "Mettez-le AVANT\nd'entrer dans la zone", "lignes": ["Gardez-le\njusqu'à la sortie."] },
+        { "id": "accessoires", "titre": "Les accessoires", "lignes": ["Lunettes couvrantes", "Combinaison jetable\nà capuche", "pour les travaux\nles plus exposants"] },
+        { "id": "hygiene", "titre": "L'hygiène", "lignes": ["Ne pas boire, manger\nni fumer dans la zone", "Masque abîmé, humide,\ndur à respirer :\nremplacez-le", "Suivez la notice."] }
+      ],
+
+      "final_1": "Zone à poussière :\nmasque obligatoire.",
+      "final_2": "Vos poumons\nne se remplacent pas.",
+      "credit": "Réalisé par Synapsis",
+      "fin_texte": "Protégez vos poumons.",
+
+      "a_valider": {
+        "panneau": "Masque\nobligatoire",
+        "zones_message": "Zone balisée =\nmasque avant d'entrer.",
+        "silice": "Béton, mortier, pierre,\ncarrelage : ils contiennent\nde la silice.",
+        "choix_mention": "{niveau} minimum pour la silice\n(à confirmer par le responsable sécurité)"
+      }
+    }
+  }
+}
