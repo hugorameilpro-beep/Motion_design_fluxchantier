@@ -23,7 +23,7 @@
 html, body { background: #0b0f14; }
 body { font-family: "Inter", system-ui, sans-serif; color: var(--fonce); -webkit-font-smoothing: antialiased; overflow: hidden; }
 body.v { --h1: 100px; --big: 96px; --body: 76px; --small: 64px; }
-body.h { --h1: 84px;  --big: 80px; --body: 62px; --small: 50px; }
+body.h { --h1: 88px;  --big: 84px; --body: 64px; --small: 56px; }   /* reading rules: main ≥ 72 px, secondary ≥ 56 px */
 body.p { --h1: 92px;  --big: 64px; --body: 40px; --small: 30px; }
 
 #stage { position: relative; overflow: hidden; background: var(--blanc); transform-origin: 0 0; }

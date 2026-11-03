@@ -43,9 +43,33 @@
       return `<span class="m"><span class="ln">${h}</span></span>`;
     }).join("");
     if (opts.maxW) n.dataset.maxw = opts.maxW;
-    if (opts.min) n.dataset.min = opts.min;
+    // size floors of the reading rules: 72 px for main messages, 56 px for secondary texts, 48 px anywhere
+    n.dataset.min = opts.min || (/\bt-(h1|big)\b/.test(cls) ? 72 : /\bt-(body|small)\b/.test(cls) ? 56 : 48);
+    if (opts.label) n.dataset.kind = "label";        // icon label: shown at least 2 s
+    if (opts.group) n.dataset.group = opts.group;    // texts read together as one block (words added up)
     if (opts.style) Object.assign(n.style, opts.style);
     return n;
+  }
+
+  /* ---------- reading rules ---------- */
+  /** words of a text (tokens holding a letter or a digit: "=" or "…" are not words) */
+  /** plain text of a block, lines joined by spaces */
+  const plain = (n) => { const ls = [...n.querySelectorAll(".ln")]; return (ls.length ? ls.map((l) => l.textContent).join(" ") : n.textContent).replace(/\s+/g, " ").trim(); };
+  const words = (str) => String(str || "").split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+  /** minimum time a text stays fully visible and still: max(2.5 s ; 0.5 s per word + 1 s); icon labels 2 s */
+  const need = (str, label) => (label ? 2 : Math.max(2.5, 0.5 * words(str) + 1));
+  const PAUSE = 0.5;     // fixed pause at the end of every scene, before the transition
+  /** quick reveal of a block (lines slide in); returns the time it is fully visible and still */
+  function show(tl, n, t, o = {}) {
+    const ls = n.querySelectorAll(".ln"), d = o.d || 0.3, st = o.stagger ?? 0.06;
+    tl.fromTo(ls, { yPercent: 115 }, { yPercent: 0, duration: d, ease: EASE, stagger: st }, t);
+    return t + d + (ls.length - 1) * st;
+  }
+  /** show a block and keep it for its reading time (at least o.hold); returns the end of the reading */
+  function read(tl, n, t, o = {}) {
+    const full = show(tl, n, t, o);
+    const txt = o.text != null ? o.text : plain(n);
+    return full + Math.max(o.hold || 0, need(txt, n.dataset.kind === "label"));
   }
 
   /**
@@ -153,5 +177,5 @@
     tl.fromTo(n, { scale: 1 }, { scale: o.s || 1.06, duration: d, ease: "sine.inOut", yoyo: true, repeat: reps * 2 + 1, transformOrigin: o.origin || "50% 50%" }, t);
   }
 
-  window.L = { el, svg, box, esc, text, fitAll, report, hexPoints, roundedPath, hexD, hexBadge, linesIn, linesOut, pop, fadeUp, buildHexWipe, pulse, EASE, EASE_IO };
+  window.L = { el, svg, box, esc, text, fitAll, report, hexPoints, roundedPath, hexD, hexBadge, linesIn, linesOut, pop, fadeUp, buildHexWipe, pulse, EASE, EASE_IO, plain, words, need, show, read, PAUSE };
 })();

@@ -1,4 +1,4 @@
-// `npm run render -- --format horizontal [--lang fr] [--stills 3,9.5 [--scenes]]`
+// `npm run render -- --format horizontal [--lang fr] [--no-strict] [--stills 3,9.5 [--scenes] [--lisibilite]]`
 // Deterministic render: seek the GSAP timeline frame by frame at 30 fps, screenshot each frame as PNG,
 // then assemble with ffmpeg (H.264, no audio). This video only exists in 16:9 for now.
 import { chromium } from "playwright";
@@ -55,6 +55,26 @@ async function openPage(format, scale = 1, vp) {
   const info = await page.evaluate(() => window.__ready);
   return { page, info };
 }
+const LIS = { S0: "Ouverture", S1: "Accroche", S2: "Zones", S3: "Tâches", S4: "Silice", S5: "Conséquences", S6: "Source", S7: "Masque", S8: "Final", S9: "Générique" };
+/** readability table: words, time fully visible and still, minimum required; returns the number of problems */
+async function readability(page) {
+  const r = await page.evaluate(() => window.__readability(1 / 30));
+  const cut = (s, n) => (s.length > n ? s.slice(0, n - 1) + "…" : s).padEnd(n);
+  console.log("\n  Lisibilité (règle : max(2,5 s ; 0,5 s/mot + 1 s), étiquette d'icône 2 s)");
+  console.log(`  ${"Scène".padEnd(13)}${"Texte".padEnd(46)}${"Mots".padStart(5)}${"Affiché".padStart(9)}${"Requis".padStart(8)}   État`);
+  let bad = 0;
+  for (const x of r.rows) {
+    const issues = [];
+    if (!x.ok) issues.push("TROP COURT");
+    if (x.overlap) issues.push(`apparaît pendant « ${x.overlap.slice(0, 28)}… »`);
+    bad += issues.length ? 1 : 0;
+    console.log(`  ${cut(LIS[x.scene] || x.scene, 13)}${cut(x.text, 46)}${String(x.words).padStart(5)}${(x.shown.toFixed(2) + " s").padStart(9)}${(x.need.toFixed(1) + " s").padStart(8)}   ${issues.length ? "⚠ " + issues.join(" ; ") : "OK" + (x.label ? " (étiquette)" : "")}`);
+  }
+  if (r.maxBlocks.n > 3) { bad++; console.log(`  ⚠ ${r.maxBlocks.n} blocs de texte visibles en même temps à ${r.maxBlocks.t.toFixed(2)} s (maximum 3) : ${r.maxBlocks.texts.map((s) => "« " + s.slice(0, 20) + " »").join(", ")}`); }
+  else console.log(`  Au plus ${r.maxBlocks.n} blocs de texte visibles en même temps (maximum 3).`);
+  console.log(bad ? `  ⚠ ${bad} problème(s) de lisibilité.` : "  Lisibilité : OK.");
+  return bad;
+}
 const printReport = (info) => {
   if (!info.report.length) return console.log("  textes : OK (taille, 6 mots par ligne, largeur)");
   for (const r of info.report) console.warn(`  ⚠ ${r.kind} — ${r.msg} — « ${r.text} »`);
@@ -78,9 +98,10 @@ for (const format of todo) {
     const { page, info } = await openPage(format, 1, vp);
     printReport(info);
     for (const t of stills) await shoot(page, t, path.join(dir, `${format}_${t.toFixed(2)}.png`));
-    await page.close();
     console.log(`${format} : ${stills.length} image(s) dans frames/stills/ (durée ${info.duration.toFixed(2)} s)`);
     if (args.includes("--scenes")) printScenes(info);
+    if (args.includes("--lisibilite")) await readability(page);
+    await page.close();
     continue;
   }
   const dir = path.join(ROOT, "frames", format);
@@ -88,6 +109,12 @@ for (const format of todo) {
   fs.mkdirSync(dir, { recursive: true });
   const probe = await openPage(format, 1, vp);
   printReport(probe.info);
+  printScenes(probe.info);
+  const badRead = await readability(probe.page);
+  if (badRead && !args.includes("--no-strict")) {
+    console.error("\nRendu interrompu : corrigez les textes signalés (ou relancez avec --no-strict pour rendre quand même).");
+    process.exit(2);
+  }
   const total = Math.ceil(probe.info.duration * FPS);
   await probe.page.close();
   console.log(`${format} : ${probe.info.duration.toFixed(2)} s → ${total} images`);
