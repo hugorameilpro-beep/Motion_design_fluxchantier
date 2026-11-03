@@ -46,6 +46,7 @@
     // size floors of the reading rules: 72 px for main messages, 56 px for secondary texts, 48 px anywhere
     n.dataset.min = opts.min || (/\bt-(h1|big)\b/.test(cls) ? 72 : /\bt-(body|small)\b/.test(cls) ? 56 : 48);
     if (opts.label) n.dataset.kind = "label";        // icon label: shown at least 2 s
+    if (opts.title) n.dataset.kind = "title";        // heading kept for the whole scene
     if (opts.group) n.dataset.group = opts.group;    // texts read together as one block (words added up)
     if (opts.style) Object.assign(n.style, opts.style);
     return n;
@@ -61,10 +62,13 @@
   const PAUSE = 0.5;     // fixed pause at the end of every scene, before the transition
   /** quick reveal of a block (lines slide in); returns the time it is fully visible and still */
   function show(tl, n, t, o = {}) {
+    // a plain fade: no line is ever seen cut in half by its mask while it comes in
     const ls = n.querySelectorAll(".ln"), d = o.d || 0.3, st = o.stagger ?? 0.06;
-    tl.fromTo(ls, { yPercent: 115 }, { yPercent: 0, duration: d, ease: EASE, stagger: st }, t);
+    tl.fromTo(ls, { opacity: 0 }, { opacity: 1, duration: d, ease: "power1.out", stagger: st }, t);
     return t + d + (ls.length - 1) * st;
   }
+  /** fade a block out */
+  function hide(tl, n, t, d = 0.3) { tl.to(n.querySelectorAll(".ln"), { opacity: 0, duration: d, ease: "power1.in" }, t); }
   /** show a block and keep it for its reading time (at least o.hold); returns the end of the reading */
   function read(tl, n, t, o = {}) {
     const full = show(tl, n, t, o);
@@ -145,37 +149,38 @@
    * the scenes swap underneath (swap(t)), then the cells shrink away. Returns the swap time.
    */
   function buildHexWipe(stage, W, H) {
+    // One blue hexagon (the logo motif, point up) grows from the centre until it covers the whole frame,
+    // the scenes swap underneath, then a hexagonal opening grows from the centre and reveals the next scene.
+    // No scattered cells: the screen is either covered by one shape or uncovered by one shape.
     const layer = el("div", "", stage); layer.id = "hexwipe";
-    const R = Math.max(W, H) / 9;
-    const w = Math.sqrt(3) * R;
     const s = svg("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}` }, layer);
-    const cells = [];
-    for (let row = -1; row * 1.5 * R < H + R; row++) {
-      for (let col = -1; col * w < W + w; col++) {
-        const cx = col * w + (row % 2 ? w / 2 : 0), cy = row * 1.5 * R;
-        const g = svg("g", { transform: `translate(${cx} ${cy})` }, s);
-        svg("path", { d: hexD(0, 0, R * 1.02, 0.1), fill: "var(--bleu)" }, g);
-        cells.push({ g, dist: Math.hypot(cx - W / 2, cy - H / 2) / Math.hypot(W / 2, H / 2) });
-      }
-    }
-    gsap.set(cells.map((c) => c.g), { scale: 0, transformOrigin: "50% 50%" });
+    const R = (Math.hypot(W, H) / 2) / (Math.sqrt(3) / 2) * 1.06;   // large enough to contain the corners
+    let n = 0;
     return function wipe(tl, t, swap) {
-      const IN = 0.38, OUT = 0.45, SPREAD = 0.22;   // a little faster than in securite-bruit: 0.62 s to full cover
-      cells.forEach((c) => {
-        tl.fromTo(c.g, { scale: 0 }, { scale: 1.08, duration: IN, ease: "power2.in" }, t + c.dist * SPREAD);
-        tl.to(c.g, { scale: 0, duration: OUT, ease: "power2.out" }, t + IN + SPREAD + 0.05 + c.dist * SPREAD);
-      });
-      const mid = t + IN + SPREAD + 0.02;
+      const IN = 0.36, OUT = 0.42, k = n++;
+      s.insertAdjacentHTML("beforeend", `<g class="wc${k}" transform="translate(${W / 2} ${H / 2})"><g class="ws"><path d="${hexD(0, 0, R, 0.04)}" fill="var(--bleu)"/></g></g>
+        <mask id="wm${k}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fff"/>
+          <g transform="translate(${W / 2} ${H / 2})"><g class="wh"><path d="${hexD(0, 0, R, 0.04)}" fill="#000"/></g></g></mask>
+        <rect class="wr${k}" width="${W}" height="${H}" fill="var(--bleu)" mask="url(#wm${k})"/>`);
+      const cover = s.querySelector(`.wc${k}`), grow = cover.querySelector(".ws");
+      const rest = s.querySelector(`.wr${k}`), hole = s.querySelector(`#wm${k} .wh`);
+      gsap.set([cover, rest], { autoAlpha: 0 });
+      gsap.set([grow, hole], { scale: 0, transformOrigin: "50% 50%" });
+      tl.set(cover, { autoAlpha: 1 }, t);
+      tl.fromTo(grow, { scale: 0 }, { scale: 1, duration: IN, ease: "power2.in" }, t);
+      const mid = t + IN;
+      tl.set(cover, { autoAlpha: 0 }, mid); tl.set(rest, { autoAlpha: 1 }, mid);
+      tl.fromTo(hole, { scale: 0 }, { scale: 1, duration: OUT, ease: "power2.out" }, mid + 0.02);
+      tl.set(rest, { autoAlpha: 0 }, mid + 0.02 + OUT);
       swap(mid);
       return mid;
     };
   }
-
   /** gentle infinite-looking pulse, built from a finite repeat so the timeline stays seekable */
   function pulse(tl, n, t, until, o = {}) {
     const d = o.d || 0.5, reps = Math.max(0, Math.floor((until - t) / (2 * d)) - 1);
     tl.fromTo(n, { scale: 1 }, { scale: o.s || 1.06, duration: d, ease: "sine.inOut", yoyo: true, repeat: reps * 2 + 1, transformOrigin: o.origin || "50% 50%" }, t);
   }
 
-  window.L = { el, svg, box, esc, text, fitAll, report, hexPoints, roundedPath, hexD, hexBadge, linesIn, linesOut, pop, fadeUp, buildHexWipe, pulse, EASE, EASE_IO, plain, words, need, show, read, PAUSE };
+  window.L = { el, svg, box, esc, text, fitAll, report, hexPoints, roundedPath, hexD, hexBadge, linesIn, linesOut, pop, fadeUp, buildHexWipe, pulse, EASE, EASE_IO, plain, words, need, show, hide, read, PAUSE };
 })();

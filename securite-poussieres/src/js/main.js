@@ -14,10 +14,34 @@
     i.onload = () => res(i); i.onerror = () => { console.warn("Logo introuvable : " + src); res(null); };
     i.src = "../" + src;
   });
-  /** logo size: native pixels × at most `agrandissement_max`, never distorted */
+  /** logo size: native pixels × at most `agrandissement_max`, never distorted; plus where its hexagon is */
   function logoSize(img, maxScale, maxW) {
     const s = Math.min(maxScale, maxW / img.naturalWidth);
-    return { src: img.src, w: Math.round(img.naturalWidth * s), h: Math.round(img.naturalHeight * s) };
+    return { src: img.src, w: Math.round(img.naturalWidth * s), h: Math.round(img.naturalHeight * s), scale: s, hex: logoHex(img) };
+  }
+  /**
+   * Finds the hexagon of the logo in the image file itself (so a new HD file keeps working): the first blob of
+   * opaque columns from the left, its top and bottom, and the transparent gap between the blue and the red parts.
+   * Values are in the file's pixels. Falls back to the proportions measured on the Dumez logo.
+   */
+  function logoHex(img) {
+    const W = img.naturalWidth, H = img.naturalHeight;
+    const fb = { x0: 0, x1: W * 0.254, y0: 0, y1: H, gap0: H * 0.617, gap1: H * 0.725, measured: false };
+    try {
+      const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+      const cx = cv.getContext("2d"); cx.drawImage(img, 0, 0);
+      const a = cx.getImageData(0, 0, W, H).data, op = (x, y) => a[(y * W + x) * 4 + 3] > 128;
+      const colHas = (x) => { for (let y = 0; y < H; y++) if (op(x, y)) return true; return false; };
+      let x0 = 0; while (x0 < W && !colHas(x0)) x0++;
+      let x1 = x0; while (x1 + 1 < W && colHas(x1 + 1)) x1++;
+      const rowHas = (y) => { for (let x = x0; x <= x1; x++) if (op(x, y)) return true; return false; };
+      let y0 = 0; while (y0 < H && !rowHas(y0)) y0++;
+      let y1 = H - 1; while (y1 > y0 && !rowHas(y1)) y1--;
+      let gap0 = null, gap1 = null;
+      for (let y = y0; y <= y1; y++) if (!rowHas(y)) { if (gap0 == null) gap0 = y; gap1 = y + 1; }
+      if (x1 - x0 < 10 || y1 - y0 < 10) return fb;
+      return { x0, x1: x1 + 1, y0, y1: y1 + 1, gap0: gap0 ?? (y0 + y1) * 0.6, gap1: gap1 ?? (y0 + y1) * 0.7, measured: true };
+    } catch (e) { return fb; }
   }
 
   async function boot() {
@@ -58,10 +82,7 @@
     const wipe = L.buildHexWipe(stage, W, H);
     let t = 0, prev = null;
     order.forEach((build, i) => {
-      // white to white (final message → closing logo): a simple fade instead of the honeycomb wipe
-      const fade = build === S.S9;
-      if (fade) tl.to(prev, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, t);
-      const start = i === 0 ? 0 : fade ? t + 0.4 : wipe(tl, t, () => {});
+      const start = i === 0 ? 0 : wipe(tl, t, () => {});      // the same hexagon transition everywhere
       const before = stage.querySelectorAll(".scene").length;
       t = build(C, start);
       window.__marks = (window.__marks || []).concat([[build.name, +start.toFixed(2), +t.toFixed(2)]]);
@@ -95,6 +116,7 @@
       u.text = u.nodes.map(L.plain).join(" ");
       u.words = L.words(u.text);
       u.label = u.nodes.every((n) => n.dataset.kind === "label");
+      u.title = u.nodes.every((n) => n.dataset.kind === "title");
       u.need = L.need(u.text, u.label);
       Object.assign(u, { best: 0, run: 0, runStart: 0, bestStart: null, appear: null, rect: null });
     });
@@ -111,6 +133,9 @@
       let full = op > 0.97, any = false;
       n.querySelectorAll(".ln").forEach((l) => {
         const tr = getComputedStyle(l).transform, m = new DOMMatrixReadOnly(tr === "none" ? undefined : tr);
+        const lo = +getComputedStyle(l).opacity;
+        if (lo < 0.97) full = false;
+        if (lo < 0.05) return;
         if (Math.abs(m.f) < 0.5) any = true; else { full = false; if (Math.abs(m.f) < (l.offsetHeight || 1)) any = true; }
       });
       return !any ? 0 : full ? 2 : 1;
@@ -122,10 +147,10 @@
       let visible = [];
       units.forEach((u) => {
         const mk = marks[u.si] || [0, 0, D];
-        const inScene = t >= mk[1] + (u.si ? 0.55 : 0) && t < mk[2];
+        const inScene = t >= mk[1] + (u.si ? 0.45 : 0) && t < mk[2];   // the opening of the transition ends 0.44 s after the swap
         const st = inScene ? Math.min(...u.nodes.map(state)) : 0;
         const anyVis = inScene && u.nodes.some((n) => state(n) > 0);
-        if (anyVis) { visible.push(u); if (u.appear == null) u.appear = t; }
+        if (anyVis) { if (!u.label) visible.push(u); if (u.appear == null) u.appear = t; }   // icon labels of a grid do not count in the 3-block limit
         const r = st === 2 ? rectOf(u) : null;
         if (st === 2 && r === u.rect) {
           if (!u.run) u.runStart = t - step;
@@ -139,7 +164,8 @@
     tl.seek(0);
     // a new text must not appear while an earlier one of the same scene is still being read
     units.forEach((u) => {
-      u.overlap = units.find((o) => o !== u && o.si === u.si && o.bestStart != null && u.appear != null &&
+      // a heading (data-kind="title") stays on screen for the whole scene: texts may come while it is shown
+      u.overlap = units.find((o) => o !== u && o.si === u.si && !o.title && o.bestStart != null && u.appear != null &&
         o.bestStart < u.appear && u.appear < o.bestStart + o.need - step * 1.5);
     });
     return {
