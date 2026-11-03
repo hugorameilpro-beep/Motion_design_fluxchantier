@@ -65,23 +65,20 @@
         <path d="M-38 -282 H50" stroke="${ink}" stroke-width="9" stroke-linecap="round"/></g>`;
   }
 
+  /* Reading rules (see README): one idea per screen, at most 3 text blocks at once, every text stays fully
+   * visible and still for max(2.5 s ; 0.5 s per word + 1 s) (icon label: 2 s), texts come one after the
+   * other, and every scene ends on a fixed 0.5 s pause. Times below are computed from the texts themselves. */
+  const { show, read, PAUSE } = L;
+  const hide = (tl, n, t) => tl.to(n.querySelectorAll(".ln"), { yPercent: -115, duration: 0.22, ease: "power2.in", stagger: 0.03 }, t);
+
   /* ========== 0. Opening: Dumez logo on white ========== */
   function S0(C, t) {
-    const { W, T, tl } = C;
+    const { W, H, tl } = C;
     const s = mkScene(C, "bg-white"); gsap.set(s, { autoAlpha: 1 });
-    const { w: lw, h: lh } = C.logo;
-    const ly = 300;
-    const lc = el("div", "abs", s, { left: (W - lw) / 2 + "px", top: ly + "px" });
+    const { w: lw, h: lh } = C.logo;                                        // clear space: the whole white frame
+    const lc = el("div", "abs", s, { left: (W - lw) / 2 + "px", top: (H - lh) / 2 + "px" });
     const img = el("img", "", lc); img.src = C.logo.src; img.width = lw; img.height = lh; img.alt = "";
-    const pad = Math.max(48, Math.round(lh * 0.42));                       // clear space ≥ height of the "H" of DUMEZ
-    const ttl = text(s, T.titre, "t-h1 c-bleu center", { maxW: W - 2 * C.PAD });
-    abs(ttl, 0, ly + lh + pad + 40, { width: W + "px" });
-    const sub = text(s, T.sous_titre, "t-body c-fonce center", { maxW: W - 2 * C.PAD });
-    fit(C, s);
-    abs(sub, 0, ttl.offsetTop + ttl.offsetHeight + 16, { width: W + "px", fontWeight: 650 });
     tl.fromTo(lc, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: EASE }, t + 0.05);
-    linesIn(tl, ttl, t + 0.5);
-    linesIn(tl, sub, t + 0.8);
     return t + 2.0;
   }
 
@@ -91,37 +88,36 @@
     const s = mkScene(C, "bg-dark");
     const art = svg("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}` }, s);
     abs(art, 0, 0);
-    const lamp = [1560, 70];
+    const lamp = [1600, 70];
     art.innerHTML = `<defs>
         <linearGradient id="beamG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".30"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></linearGradient>
-        <clipPath id="beamClip" clipPathUnits="userSpaceOnUse"><path class="beamC" d="M${lamp[0]} ${lamp[1]} L860 ${H} L1500 ${H} Z"/></clipPath></defs>
+        <clipPath id="beamClip" clipPathUnits="userSpaceOnUse"><path class="beamC" d="M${lamp[0]} ${lamp[1]} L940 ${H} L1560 ${H} Z"/></clipPath></defs>
       <g stroke="${BLEU}" stroke-width="14" fill="none" stroke-linecap="round">
-        <path d="M940 1080 V420 M1080 1080 V420 M1220 1080 V420 M1360 1080 V420 M940 420 H1360 M940 600 H1360 M940 780 H1360"/>
-        <path d="M1660 1080 V150 M1700 1080 V150 M1660 200 L1700 250 L1660 300 L1700 350 L1660 400 L1700 450 L1660 500 L1700 550 L1660 600 L1700 650 L1660 700 L1700 750"/>
-        <path d="M1360 170 H1900"/></g>
+        <path d="M1040 1080 V420 M1170 1080 V420 M1300 1080 V420 M1430 1080 V420 M1040 420 H1430 M1040 600 H1430 M1040 780 H1430"/>
+        <path d="M1700 1080 V150 M1740 1080 V150 M1700 200 L1740 250 L1700 300 L1740 350 L1700 400 L1740 450 L1700 500 L1740 550 L1700 600 L1740 650 L1700 700 L1740 750"/>
+        <path d="M1420 170 H1920"/></g>
       <rect x="0" y="1030" width="${W}" height="60" fill="${BLEU}" opacity=".6"/>
-      <g transform="translate(1180 1030)">${person({ body: BLEU, ink: BLANC })}</g>
-      <rect x="1290" y="980" width="150" height="50" rx="4" fill="${BLEU}"/>
-      <g class="beam"><path class="beamP" d="M${lamp[0]} ${lamp[1]} L860 ${H} L1500 ${H} Z" fill="url(#beamG)"/></g>
+      <g transform="translate(1250 1030)">${person({ body: BLEU, ink: BLANC })}</g>
+      <rect x="1360" y="980" width="150" height="50" rx="4" fill="${BLEU}"/>
+      <g class="beam"><path class="beamP" d="M${lamp[0]} ${lamp[1]} L940 ${H} L1560 ${H} Z" fill="url(#beamG)"/></g>
       <rect x="${lamp[0] - 46}" y="${lamp[1] - 30}" width="92" height="44" rx="10" fill="${BLANC}"/>
       <g class="motes" clip-path="url(#beamClip)"></g>`;
+    const col = el("div", "abs", s, { left: C.PAD + "px", top: "300px", width: "900px" });
+    const l1 = text(col, T.accroche_1, "t-big c-blanc", { maxW: 900 });
+    const panel = el("div", "", col, { display: "inline-block", background: "var(--blanc)", borderRadius: "28px", padding: "22px 36px 28px", marginTop: "48px" });
+    const l2 = text(panel, T.accroche_2, "t-big c-rouge", { maxW: 820 });
+    fit(C, s);
+    const r1 = read(tl, l1, t + 0.3);
+    tl.fromTo(panel, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.25, ease: EASE }, r1 - 0.2);
+    const r2 = read(tl, l2, r1 + 0.05);
+    const end = r2 + PAUSE;
+    // the beam slowly sweeps over the whole scene, revealing more particles (ambient, stops for the pause)
     const motes = art.querySelector(".motes");
-    dust(tl, motes, 170, [760, 120, 1000, 960], t, t + 4.6, { seed: 11, rmin: 2, rmax: 6, amp: 50 });
-    // the beam slowly sweeps, revealing more particles
-    const beamP = art.querySelector(".beamP"), beamC = art.querySelector(".beamC");
-    tl.fromTo([beamP, beamC], { rotation: 10, svgOrigin: lamp.join(" ") }, { rotation: -8, svgOrigin: lamp.join(" "), duration: 4.6, ease: "sine.inOut" }, t);
+    dust(tl, motes, 170, [800, 120, 1050, 960], t, end - PAUSE, { seed: 11, rmin: 2, rmax: 6, amp: 50 });
+    tl.fromTo([art.querySelector(".beamP"), art.querySelector(".beamC")], { rotation: 10, svgOrigin: lamp.join(" ") }, { rotation: -8, svgOrigin: lamp.join(" "), duration: end - PAUSE - t, ease: "sine.inOut" }, t);
     tl.fromTo(art.querySelector(".beam"), { opacity: 0 }, { opacity: 1, duration: 0.6 }, t + 0.1);
     tl.fromTo(motes, { opacity: 0 }, { opacity: 1, duration: 1.0 }, t + 0.3);
-
-    const col = el("div", "abs", s, { left: C.PAD + "px", top: "230px", width: "720px" });
-    const l1 = text(col, T.accroche_1, "t-big c-blanc", { maxW: 720 });
-    const panel = el("div", "", col, { display: "inline-block", background: "var(--blanc)", borderRadius: "28px", padding: "22px 36px 28px", marginTop: "48px" });
-    const l2 = text(panel, T.accroche_2, "t-big c-rouge", { maxW: 650 });
-    fit(C, s);
-    linesIn(tl, l1, t + 0.35, { d: 0.65 });
-    tl.fromTo(panel, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.5, ease: EASE }, t + 1.9);
-    linesIn(tl, l2, t + 2.1);
-    return t + 4.4;
+    return end;
   }
 
   /* ========== 2. Zones at risk: site plan, taped zones, mask sign at each entrance ========== */
@@ -129,14 +125,12 @@
     const { W, T, tl } = C;
     const A = T.a_valider || {};
     const s = mkScene(C, "bg-white");
-    const ttl = text(s, T.zones_titre, "t-h1 c-bleu", { maxW: W - 2 * C.PAD }); abs(ttl, C.PAD, 30);
-    const PX = C.PAD, PY = 140, PW = W - 2 * C.PAD, PH = 720;
+    const PX = C.PAD, PY = 40, PW = W - 2 * C.PAD, PH = 720;
     const plan = svg("svg", { width: PW, height: PH, viewBox: `0 0 ${PW} ${PH}` }, s); abs(plan, PX, PY);
-    // rooms: top row, corridor, bottom row; each zone has a door on the corridor side
     const Z = [
-      { id: "decoupe", x: 30, y: 30, w: 540, h: 230, door: 220, side: "b" },
-      { id: "poncage", x: 640, y: 470, w: 470, h: 220, door: 770, side: "t" },
-      { id: "demolition", x: 1160, y: 30, w: 520, h: 230, door: 1230, side: "b" },
+      { id: "decoupe", x: 30, y: 30, w: 540, h: 230, door: 220 },
+      { id: "poncage", x: 640, y: 470, w: 470, h: 220, door: 770 },
+      { id: "demolition", x: 1160, y: 30, w: 520, h: 230, door: 1230 },
     ];
     let g = `<rect x="8" y="8" width="${PW - 16}" height="${PH - 16}" rx="14" fill="none" stroke="${BLEU}" stroke-width="14"/>
       <path d="M8 270 H${PW - 8} M8 460 H${PW - 8} M600 8 V270 M1130 8 V270 M600 460 V${PH - 8} M1140 460 V${PH - 8}" stroke="${BLEU}" stroke-width="8" opacity=".55"/>
@@ -149,94 +143,77 @@
         <path d="${d}" fill="none" stroke="${ROUGE}" stroke-width="15" stroke-dasharray="26 26"/></g></g>`;
     });
     plan.innerHTML = g + `<g class="pion"></g>`;
+    const TARGET = 1;   // the zone the worker goes into: the only sign with a written label
     const items = Z.map((z, i) => {
-      const zd = plan.querySelector(`.zd${i}`);
-      const motes = dust(tl, zd, 46, [z.x + 20, z.y + 20, z.w - 40, z.h - 40], t + 0.8, t + 7.4, { seed: 30 + i, color: BLEU, rmin: 2.5, rmax: 6, omin: 0.25, omax: 0.6, amp: 26 });
-      const nm = text(s, (T.zones.find((x) => x.id === z.id) || {}).nom || z.id, "t-small c-fonce", { style: { fontWeight: 800 } });
-      abs(nm, PX + z.x + 26, PY + z.y + 18);
-      // sign at the entrance, in the corridor
       const sg = el("div", "abs", s, { left: PX + z.door + 16 + "px", top: PY + 282 + "px", display: "flex", alignItems: "center", gap: "14px" });
       const sc = el("div", "", sg); sc.innerHTML = P.mandatory(150);
-      const lab = text(sg, (A.panneau || "") + (level(C, z.id) ? "\n" + level(C, z.id) : ""), "t-small c-fonce", { maxW: 300, style: { fontWeight: 800, lineHeight: 1.05 } });
-      return { z, zone: plan.querySelector(`.zone${i}`), mp: plan.querySelector(`.zmp${i}`), zd, nm, sg, sc, lab };
+      const lab = i === TARGET ? text(sg, (A.panneau || "") + (level(C, z.id) ? "\n" + level(C, z.id) : ""), "t-small c-fonce", { maxW: 330, style: { fontWeight: 800, lineHeight: 1.05 } }) : null;
+      return { z, mp: plan.querySelector(`.zmp${i}`), zd: plan.querySelector(`.zd${i}`), sc, lab };
     });
-    // the worker (hexagon token) walks to a zone, puts the mask on, and goes in
     const pion = plan.querySelector(".pion");
-    const tok = (name) => `<g><path d="${hexD(0, 0, 46, 0.12)}" fill="${BLEU}" stroke="${BLANC}" stroke-width="5"/>
-      <g transform="translate(-30 -30) scale(.6)">${P.icons[name](BLANC, BLANC)}</g></g>`;
+    const tok = (name) => `<g><path d="${hexD(0, 0, 46, 0.12)}" fill="${BLEU}" stroke="${BLANC}" stroke-width="5"/><g transform="translate(-30 -30) scale(.6)">${P.icons[name](BLANC, BLANC)}</g></g>`;
     pion.innerHTML = `<g class="p0">${tok("visage")}</g><g class="p1" opacity="0">${tok("ajuster")}</g>`;
     const msg = text(s, A.zones_message, "t-big c-bleu center", { maxW: W - 2 * C.PAD });
-    abs(msg, 0, 878, { width: W + "px" });
+    abs(msg, 0, 820, { width: W + "px" });
     fit(C, s);
 
-    linesIn(tl, ttl, t + 0.1);
-    tl.fromTo(plan, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, t + 0.15);
+    tl.fromTo(plan, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, t + 0.1);
     items.forEach((o, i) => {
-      const at = t + 0.8 + i * 0.7;
-      const Lz = 2 * (o.z.w + o.z.h);
-      tl.fromTo(o.mp, { strokeDasharray: Lz, strokeDashoffset: Lz }, { strokeDashoffset: 0, duration: 0.6, ease: "power1.inOut" }, at);
-      tl.fromTo(o.zd, { opacity: 0 }, { opacity: 1, duration: 0.6 }, at + 0.2);
-      fadeUp(tl, o.nm, at + 0.25, { y: 12 });
-      pop(tl, o.sc, at + 0.45, { from: 0.3 });
-      linesIn(tl, o.lab, at + 0.55, { stagger: 0.08 });
-      pulse(tl, o.sc, at + 1.2, t + 7.2, { s: 1.06, d: 0.45 });
+      const at = t + 0.3 + i * 0.45, Lz = 2 * (o.z.w + o.z.h);
+      tl.fromTo(o.mp, { strokeDasharray: Lz, strokeDashoffset: Lz }, { strokeDashoffset: 0, duration: 0.5, ease: "power1.inOut" }, at);
+      tl.fromTo(o.zd, { opacity: 0 }, { opacity: 1, duration: 0.5 }, at + 0.2);
+      pop(tl, o.sc, at + 0.4, { from: 0.3 });
     });
-    const zt = Z[1], door = [zt.door - 40, 365];
+    const target = items[TARGET], zt = target.z;
+    const r1 = read(tl, target.lab, t + 1.9);                               // "Masque obligatoire FFP3"
+    // the worker walks slowly to the sign, puts the mask on, then goes in
     tl.set(pion, { x: 60, y: 365 }, t);
-    tl.fromTo(pion, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, t + 2.9);
-    tl.to(pion, { x: door[0], duration: 1.5, ease: "power1.inOut" }, t + 3.0);
-    tl.to(pion.querySelector(".p1"), { opacity: 1, duration: 0.25 }, t + 4.6);
-    tl.to(pion.querySelector(".p0"), { opacity: 0, duration: 0.25 }, t + 4.6);
-    tl.fromTo(pion, { scale: 1 }, { scale: 1.2, duration: 0.18, yoyo: true, repeat: 1, transformOrigin: "50% 50%" }, t + 4.6);
-    tl.to(pion, { x: zt.door, y: zt.y + 110, duration: 0.8, ease: "power1.inOut" }, t + 5.05);
-    linesIn(tl, msg, t + 5.0, { stagger: 0.14 });
-    return t + 7.2;
+    tl.fromTo(pion, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, t + 0.5);
+    tl.to(pion, { x: zt.door - 40, duration: r1 - 0.5 - (t + 0.7), ease: "power1.inOut" }, t + 0.7);
+    tl.to(pion.querySelector(".p1"), { opacity: 1, duration: 0.3 }, r1 - 0.4);
+    tl.to(pion.querySelector(".p0"), { opacity: 0, duration: 0.3 }, r1 - 0.4);
+    tl.fromTo(pion, { scale: 1 }, { scale: 1.2, duration: 0.18, yoyo: true, repeat: 1, transformOrigin: "50% 50%" }, r1 - 0.4);
+    tl.to(pion, { x: zt.door, y: zt.y + 110, duration: 1.4, ease: "power1.inOut" }, r1 + 0.2);
+    const r2 = read(tl, msg, r1, { hold: 3 });                              // "Zone balisée = masque avant d'entrer."
+    const end = r2 + PAUSE;
+    items.forEach((o, i) => dust(tl, o.zd, 46, [o.z.x + 20, o.z.y + 20, o.z.w - 40, o.z.h - 40], t + 0.5, end - PAUSE, { seed: 30 + i, color: BLEU, rmin: 2.5, rmax: 6, omin: 0.25, omax: 0.6, amp: 26 }));
+    return end;
   }
 
-  /* ========== 3. What raises dust: 8 task cards ========== */
+  /* ========== 3. What raises dust: 6 task cards, one label at a time ========== */
   function S3(C, t) {
-    const { W, H, T, tl, cfg } = C;
+    const { W, T, tl, cfg } = C;
     const s = mkScene(C, "bg-dark");
-    const ttl = text(s, T.taches_titre, "t-h1 c-blanc", { maxW: W - 2 * C.PAD }); abs(ttl, C.PAD, 26);
-    const m1 = text(s, T.taches_message_1, "t-h1 c-blanc", { maxW: W - 2 * C.PAD }); abs(m1, C.PAD, 26);
-    gsap.set(m1.querySelectorAll(".ln"), { yPercent: 115 });
-    const X0 = C.PAD, X1 = W - C.PAD, Y0 = 136, Y1 = 900, GAP = 20, COLS = 4;
-    const cw = (X1 - X0 - (COLS - 1) * GAP) / COLS, chh = (Y1 - Y0 - GAP) / 2, inner = cw - 28;
+    const X0 = C.PAD, X1 = W - C.PAD, Y0 = 150, Y1 = 890, GAP = 24, COLS = 3;
+    const cw = (X1 - X0 - (COLS - 1) * GAP) / COLS, chh = (Y1 - Y0 - GAP) / 2;
     const cards = T.taches.map((tk, k) => {
-      const c = el("div", "card", s, { left: X0 + (k % COLS) * (cw + GAP) + "px", top: Y0 + Math.floor(k / COLS) * (chh + GAP) + "px", width: cw + "px", height: chh + "px", borderRadius: "30px", padding: "16px 14px" });
-      const ib = el("div", "", c); hexBadge(ib, 120, BLANC, P.inHex(tk.id, 120, BLEU, ROUGE, 0.66));
-      const nm = text(c, tk.nom, "t-small c-blanc", { maxW: inner, style: { fontSize: "52px", fontWeight: 800, marginTop: "10px" } });
+      const c = el("div", "card", s, { left: X0 + (k % COLS) * (cw + GAP) + "px", top: Y0 + Math.floor(k / COLS) * (chh + GAP) + "px", width: cw + "px", height: chh + "px", borderRadius: "34px", padding: "24px 24px", display: "flex", alignItems: "center", gap: "26px" });
+      const ib = el("div", "", c, { flex: "none" }); hexBadge(ib, 170, BLANC, P.inHex(tk.id, 170, BLEU, ROUGE, 0.66));
+      const nm = text(c, tk.nom, "t-body c-blanc", { maxW: cw - 48 - 170 - 26, label: true, style: { fontWeight: 800 } });
       return { c, ib, nm };
     });
-    const ment = text(s, T.taches_mention, "t-small c-blanc", { maxW: 900 }); abs(ment, C.PAD, 930, { fontWeight: 600, opacity: 0.9 });
-    let am = null;
-    if (cfg.show_amiante_note) { am = text(s, T.amiante_note, "t-small c-blanc", { maxW: 820 }); abs(am, W - C.PAD - 820, 930, { width: "820px", textAlign: "right", fontWeight: 700 }); }
-    const panel = el("div", "abs", s, { left: "50%", top: "50%", background: "var(--blanc)", borderRadius: "36px", padding: "40px 70px 48px" });
-    const m2 = text(panel, T.taches_message_2, "t-big c-bleu center", { maxW: 1400 });
+    const m1 = text(s, T.taches_message, "t-h1 c-blanc", { maxW: W - 2 * C.PAD }); abs(m1, C.PAD, 30);
+    const am = cfg.show_amiante_note ? text(s, T.amiante_note, "t-body c-blanc", { maxW: W - 2 * C.PAD }) : null;
+    if (am) abs(am, C.PAD, 930, { fontWeight: 800 });
     fit(C, s);
-    gsap.set(panel, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
     cards.forEach((o) => { if (o.c.scrollHeight > o.c.clientHeight + 1) L.report("débordement", o.c, `carte : ${o.c.scrollHeight} px > ${o.c.clientHeight} px`); });
 
-    linesIn(tl, ttl, t + 0.1);
-    fadeUp(tl, ment, t + 0.5, { y: 16 }); if (am) fadeUp(tl, am, t + 0.6, { y: 16 });
-    const STEP = 0.76, A0 = t + 0.7;
+    let c = t + 0.2;
     cards.forEach((o, k) => {
-      const at = A0 + k * STEP;
-      hexReveal(tl, o.c, cw, chh, at, 0.5);
-      pop(tl, o.ib, at + 0.15, { from: 0.4 });
-      linesIn(tl, o.nm, at + 0.25, { stagger: 0.08 });
-      tl.fromTo(o.ib.querySelectorAll("circle"), { y: 0 }, { y: -5, duration: 0.5, yoyo: true, repeat: 9, ease: "sine.inOut", stagger: 0.07 }, at + 0.5);
+      const rv = k ? c - 0.35 : c;                       // the next card opens while the previous label ends
+      hexReveal(tl, o.c, cw, chh, rv, 0.35);
+      pop(tl, o.ib, rv + 0.05, { from: 0.4, d: 0.35 });
+      if (k) hide(tl, cards[k - 1].nm, c);               // one label at a time: the icons stay
+      c = read(tl, o.nm, c + (k ? 0.15 : 0.3));
     });
-    linesOut(tl, ttl, t + 3.1);
-    linesIn(tl, m1, t + 3.35);
-    const b = A0 + cards.length * STEP + 0.3;
-    tl.to(cards.map((o) => o.c), { opacity: 0.22, duration: 0.4 }, b);
-    tl.fromTo(panel, { autoAlpha: 0, scale: 0.9 }, { autoAlpha: 1, scale: 1, duration: 0.5, ease: EASE }, b + 0.1);
-    linesIn(tl, m2, b + 0.3, { stagger: 0.15 });
-    return b + 2.2;
+    let r = read(tl, m1, c);                             // "Pas seulement la démolition."
+    if (am) r = read(tl, am, r);                         // "Amiante : voir le responsable."
+    const end = r + PAUSE;
+    cards.forEach((o, k) => tl.fromTo(o.ib.querySelectorAll("circle"), { y: 0 }, { y: -5, duration: 0.5, yoyo: true, repeat: Math.max(1, Math.floor((end - PAUSE - t - 1) / 0.5) - 1), ease: "sine.inOut", stagger: 0.07 }, t + 0.6));
+    return end;
   }
 
-  /* ========== 4. Silica: what it is, and the way into the lungs ========== */
+  /* ========== 4. Silica: one sentence, and the particle going down into the lungs ========== */
   function lungsSVG(o = {}) {   // front view, viewBox 0 0 640 600
     const st = o.stroke || BLEU, fl = o.fill || BLEU;
     return `<path class="lg" d="M300 120 C250 110 205 150 180 220 C150 300 130 400 140 480 C150 540 200 560 250 540 C290 524 300 490 300 440 Z"
@@ -250,56 +227,39 @@
     const { W, H, T, tl, cfg } = C;
     const A = T.a_valider || {};
     const s = mkScene(C, "bg-dark");
-    const ttl = text(s, T.silice_titre, "t-h1 c-blanc", { maxW: W - 2 * C.PAD }); abs(ttl, C.PAD, 30);
-    const col = el("div", "abs", s, { left: C.PAD + "px", top: "160px", width: "930px" });
-    const st = text(col, A.silice, "t-big c-blanc", { maxW: 900 });
-    const mats = el("div", "", col, { display: "flex", gap: "6px", marginTop: "44px" });
-    const MI = ["beton", "mortier", "pierre", "carrelage"];
-    const mt = T.silice_materiaux.map((m, i) => {
-      const c = el("div", "", mats, { display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", width: "228px" });
-      const hb = el("div", "", c); hexBadge(hb, 120, BLANC, P.inHex(MI[i % 4], 120, BLEU, BLEU, 0.62));
-      const lb = text(c, m, "t-small c-blanc center", { maxW: 228, style: { fontWeight: 750 } });
-      return { hb, lb };
-    });
-    const ch = text(col, T.silice_chemin, "t-body c-blanc", { maxW: 840, style: { marginTop: "44px", fontWeight: 650 } });
-    let vl = null;
-    if (cfg.show_vlep) { vl = text(s, T.vlep, "t-small c-blanc", { maxW: 840 }); abs(vl, C.PAD, 940, { fontWeight: 600, opacity: 0.85 }); }
-
-    // illustration: profile head, airways, lungs; a fine particle goes in through the nose
+    const st = text(s, A.silice, "t-big c-blanc", { maxW: 930 });
+    const vl = cfg.show_vlep ? text(s, T.vlep, "t-body c-blanc", { maxW: 930, style: { fontWeight: 650 } }) : null;
     const art = svg("svg", { width: 870, height: 928, viewBox: "0 0 900 960" }, s); abs(art, 1030, 110);
     art.innerHTML = `<g class="draw" stroke="${BLANC}" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path class="hd" d="M560 330 C580 230 600 80 450 40 C350 15 280 80 290 150 L262 200 L292 214 L300 240 L294 262 L312 272 C304 302 330 326 372 328 L400 360"/>
-        <path class="aw" d="M300 214 C340 214 372 226 392 262 C410 296 420 330 420 380"/></g>
+        <path d="M560 330 C580 230 600 80 450 40 C350 15 280 80 290 150 L262 200 L292 214 L300 240 L294 262 L312 272 C304 302 330 326 372 328 L400 360"/>
+        <path d="M300 214 C340 214 372 226 392 262 C410 296 420 330 420 380"/></g>
       <g transform="translate(100 350)">${lungsSVG({ stroke: BLANC, fill: BLANC, op: 0.08 })}</g>
       <path class="route" d="M60 200 C150 196 230 205 300 214 C340 214 372 226 392 262 C410 296 420 330 420 380 L420 510 L470 570 L500 650 L530 710" fill="none" stroke="none"/>
-      <g class="trail"></g>
       <g class="pt"><circle r="16" fill="${BLANC}" opacity=".25"/><circle r="8" fill="${BLANC}"/></g>
       <g class="bub" transform="translate(720 770)"><circle r="150" fill="${BLANC}"/>
         <g stroke="${BLEU}" stroke-width="7" fill="none"><circle cx="-50" cy="-30" r="44"/><circle cx="34" cy="-48" r="40"/><circle cx="-12" cy="40" r="46"/><circle cx="66" cy="30" r="38"/><path d="M-120 -120 L-70 -64"/></g>
         <circle cx="-12" cy="40" r="11" fill="${ROUGE}"/></g>
       <path class="lead" d="M540 720 L590 740" stroke="${BLANC}" stroke-width="5" stroke-dasharray="10 10"/>`;
     fit(C, s);
+    abs(st, C.PAD, (H - st.offsetHeight) / 2 - (vl ? 80 : 0));
+    if (vl) abs(vl, C.PAD, st.offsetTop + st.offsetHeight + 50);
     const draw = [...art.querySelectorAll(".draw path"), ...art.querySelectorAll("g[transform] path, g[transform] g path")].filter((p) => !p.closest(".bub"));
     const route = art.querySelector(".route"), pt = art.querySelector(".pt"), bub = art.querySelector(".bub"), lead = art.querySelector(".lead");
-
-    linesIn(tl, ttl, t + 0.1);
-    linesIn(tl, st, t + 0.4, { stagger: 0.14 });
-    mt.forEach((o, i) => { pop(tl, o.hb, t + 1.1 + i * 0.15, { from: 0.4 }); linesIn(tl, o.lb, t + 1.2 + i * 0.15); });
-    draw.forEach((p) => { const Lp = p.getTotalLength(); tl.fromTo(p, { strokeDasharray: Lp, strokeDashoffset: Lp }, { strokeDashoffset: 0, duration: 1.1, ease: "power1.inOut" }, t + 0.5); });
-    tl.fromTo(pt, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, t + 1.8);
-    alongPath(tl, pt, route, t + 1.9, 3.0);
-    linesIn(tl, ch, t + 2.6, { stagger: 0.12 });
-    tl.fromTo(lead, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, t + 4.8);
-    tl.fromTo(bub, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.5, ease: "back.out(1.6)" }, t + 4.9);
-    if (vl) fadeUp(tl, vl, t + 1.6, { y: 14 });
-    return t + 7.2;
+    draw.forEach((p) => { const Lp = p.getTotalLength(); tl.fromTo(p, { strokeDasharray: Lp, strokeDashoffset: Lp }, { strokeDashoffset: 0, duration: 1.0, ease: "power1.inOut" }, t + 0.2); });
+    let r = read(tl, st, t + 0.5);                       // the only sentence of the scene
+    if (vl) r = read(tl, vl, r);
+    tl.fromTo(pt, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, t + 1.1);
+    alongPath(tl, pt, route, t + 1.2, 3.2);
+    tl.fromTo(lead, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, t + 4.3);
+    tl.fromTo(bub, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.5, ease: "back.out(1.6)" }, t + 4.4);
+    return Math.max(r, t + 5.4) + PAUSE;
   }
 
-  /* ========== 5. Consequences: lungs filling with red, then the strong message ========== */
+  /* ========== 5. Consequences: three steps, lungs filling with red, then the strong message ========== */
   function S5(C, t) {
     const { W, H, T, tl } = C;
     const s = mkScene(C, "bg-white");
-    const art = svg("svg", { width: 860, height: 806, viewBox: "0 0 640 600" }, s); abs(art, -40, 150);
+    const art = svg("svg", { width: 860, height: 806, viewBox: "0 0 640 600" }, s); abs(art, -20, 150);
     const r = rng(5);
     let spots = "";
     for (let i = 0; i < 18; i++) {
@@ -310,172 +270,149 @@
         <path d="M340 120 C390 110 435 150 460 220 C490 300 510 400 500 480 C490 540 440 560 390 540 C350 524 340 490 340 440 Z"/></clipPath></defs>
       ${lungsSVG({})}<g class="spots" clip-path="url(#lungClip)" opacity=".9">${spots}</g>`;
     const spotEls = [...art.querySelectorAll(".spots circle")];
-    const RX = 860, RW = W - RX - C.PAD;
-    const hd = el("div", "abs", s, { left: RX + "px", top: "60px", display: "flex", alignItems: "center", gap: "28px" });
-    const dg = el("div", "", hd); dg.innerHTML = P.danger(120);
-    const h1 = text(hd, T.poumons_titre, "t-h1 c-fonce", { maxW: RW - 160 });
-    const h2 = text(s, T.grave_titre, "t-h1 c-rouge", { maxW: RW - 160 }); abs(h2, RX + 148, 60);
-    gsap.set(h2.querySelectorAll(".ln"), { yPercent: 115 });
-    const list = el("div", "abs", s, { left: RX + "px", top: "250px", width: RW + "px", display: "flex", flexDirection: "column", gap: "30px" });
-    const bullet = (row) => { const b = el("div", "", row, { flex: "none", marginTop: "10px" }); hexBadge(b, 40, BLEU); return b; };
-    const items = T.poumons.map((p) => {
-      const row = el("div", "", list, { display: "flex", gap: "26px", alignItems: "flex-start" });
-      const b = bullet(row); const tx = text(row, p, "t-body c-fonce", { maxW: RW - 70 });
-      return { row, b, tx };
+    const RX = 840, RW = W - RX - C.PAD;
+    const dg = el("div", "abs", s, { left: RX + "px", top: "150px" }); dg.innerHTML = P.danger(150);
+    const steps = T.etapes.map((e, k) => {
+      const last = k === T.etapes.length - 1;
+      const box = el("div", last ? "band" : "", s, { position: "absolute", left: RX + "px", top: "360px", display: "inline-block" });
+      const tx = text(box, e, "t-big " + (last ? "" : "c-fonce"), { maxW: RW - (last ? 80 : 0) });
+      return { box, tx, last };
     });
-    const list2 = el("div", "abs", s, { left: RX + "px", top: "250px", width: RW + "px", display: "flex", flexDirection: "column", gap: "30px", alignItems: "flex-start" });
-    const g1 = text(list2, T.grave[0], "t-big c-fonce", { maxW: RW });
-    const gb = el("div", "band", list2, { display: "inline-block" });
-    const g2 = text(gb, T.grave[1], "t-big", { maxW: RW - 80 });
-    const g3 = text(list2, T.grave_delai, "t-body c-bleu", { maxW: RW, style: { fontWeight: 800 } });
-    gsap.set(list2, { autoAlpha: 0 });
-    const msgs = el("div", "abs", s, { left: RX + "px", top: "250px", width: RW + "px", display: "flex", flexDirection: "column", gap: "34px" });
-    const mk = (ic, str, blue) => {
-      const row = el("div", "", msgs, { display: "flex", alignItems: "center", gap: "30px", background: blue ? "var(--bleu)" : "var(--blanc)", border: blue ? "none" : "8px solid var(--bleu)", borderRadius: "30px", padding: "24px 30px" });
-      const hb = el("div", "", row, { flex: "none" }); hexBadge(hb, 130, blue ? BLANC : BLEU, P.inHex(ic, 130, blue ? BLEU : BLANC, blue ? ROUGE : BLANC, 0.6));
-      const tx = text(row, str, "t-body " + (blue ? "c-blanc" : "c-fonce"), { maxW: RW - 230 });
-      return { row, hb, tx };
-    };
-    const d1 = mk("dose", T.dose_message, true), d2 = mk("tabac", T.tabac_message, false);
-    gsap.set(msgs, { autoAlpha: 0 });
-    // strong message on a red hexagon
     const big = svg("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}` }, s); abs(big, 0, 0);
     big.innerHTML = `<path d="${hexD(W / 2, H / 2, Math.hypot(W, H) * 0.62)}" fill="${ROUGE}"/>`;
     const mf = text(s, T.message_fort, "t-big c-blanc center", { maxW: W - 2 * C.PAD });
     fit(C, s);
     abs(mf, 0, (H - mf.offsetHeight) / 2, { width: W + "px" });
-    gsap.set(big, { autoAlpha: 0 }); gsap.set(mf.querySelectorAll(".ln"), { yPercent: 115 });
+    gsap.set(big, { autoAlpha: 0 });
+    steps.forEach((o) => { if (o.last) gsap.set(o.box, { scaleX: 0, transformOrigin: "0% 50%" }); });   // after the fit (it measures real widths)
 
-    tl.fromTo(dg, { scale: 0, rotation: -12 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)", transformOrigin: "50% 60%" }, t + 0.05);
-    linesIn(tl, h1, t + 0.15);
-    tl.fromTo(art, { autoAlpha: 0, x: -30 }, { autoAlpha: 1, x: 0, duration: 0.6, ease: EASE }, t + 0.2);
-    spotEls.forEach((c, i) => tl.fromTo(c, { scale: 0, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1, opacity: 1, duration: 0.6, ease: "power2.out" }, t + 0.7 + i * 0.36));
-    items.forEach((o, i) => { pop(tl, o.b, t + 0.6 + i * 0.75, { from: 0.3 }); linesIn(tl, o.tx, t + 0.65 + i * 0.75); });
-    // phase 2: more serious
-    const p2 = t + 4.0;
-    tl.to(list, { autoAlpha: 0, y: -20, duration: 0.35 }, p2);
-    linesOut(tl, h1, p2); linesIn(tl, h2, p2 + 0.25);
-    tl.set(list2, { autoAlpha: 1 }, p2 + 0.35);
-    linesIn(tl, g1, p2 + 0.4);
-    tl.fromTo(gb, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.45, ease: EASE }, p2 + 0.9); linesIn(tl, g2, p2 + 1.05);
-    linesIn(tl, g3, p2 + 1.5);
-    // phase 3: dose and tobacco
-    const p3 = t + 6.4;
-    tl.to([list2, hd, h2], { autoAlpha: 0, duration: 0.3 }, p3);
-    tl.set(msgs, { autoAlpha: 1 }, p3 + 0.3);
-    [d1, d2].forEach((o, i) => { tl.fromTo(o.row, { autoAlpha: 0, x: 40 }, { autoAlpha: 1, x: 0, duration: 0.45, ease: EASE }, p3 + 0.3 + i * 0.55); linesIn(tl, o.tx, p3 + 0.45 + i * 0.55); });
-    // phase 4: strong message
-    const m = t + 8.1;
-    tl.set(big, { autoAlpha: 1 }, m);
-    tl.fromTo(big.firstChild, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.6, ease: "power3.inOut" }, m);
-    linesIn(tl, mf, m + 0.45, { stagger: 0.15 });
-    return m + 1.9;
+    tl.fromTo(art, { autoAlpha: 0, x: -30 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: EASE }, t + 0.1);
+    tl.fromTo(dg, { scale: 0, rotation: -12 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2)", transformOrigin: "50% 60%" }, t + 0.1);
+    let c = t + 0.3;
+    const per = Math.ceil(spotEls.length / steps.length);
+    steps.forEach((o, k) => {
+      if (k) { hide(tl, steps[k - 1].tx, c); if (steps[k - 1].last) tl.to(steps[k - 1].box, { autoAlpha: 0, duration: 0.2 }, c); }
+      const at = c + (k ? 0.25 : 0);
+      if (o.last) tl.to(o.box, { scaleX: 1, duration: 0.25, ease: EASE }, at - 0.05);
+      spotEls.slice(k * per, (k + 1) * per).forEach((sp, i) => tl.fromTo(sp, { scale: 0, opacity: 0, transformOrigin: "50% 50%" }, { scale: 1, opacity: 1, duration: 0.5, ease: "power2.out" }, at + i * 0.25));
+      c = read(tl, o.tx, at, { hold: 3 });              // each step held at least 3 s
+    });
+    // strong message on a red hexagon (the last step leaves first)
+    const lastStep = steps[steps.length - 1];
+    hide(tl, lastStep.tx, c); tl.to(lastStep.box, { autoAlpha: 0, duration: 0.2 }, c + 0.05);
+    tl.set(big, { autoAlpha: 1 }, c);
+    tl.fromTo(big.firstChild, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.5, ease: "power3.inOut" }, c);
+    const rf = read(tl, mf, c + 0.4, { hold: 3 });
+    return rf + PAUSE;
   }
 
-  /* ========== 6. First, reduce the dust at the source ========== */
+  /* ========== 6. First, reduce the dust at the source: three cards, then the band ========== */
   function S6(C, t) {
     const { W, H, T, tl } = C;
     const s = mkScene(C, "bg-dark");
-    const ttl = text(s, T.source_titre, "t-h1 c-blanc", { maxW: W - 2 * C.PAD }); abs(ttl, C.PAD, 24);
-    const Y0 = 236, GAP = 30, cw = (W - 2 * C.PAD - 2 * GAP) / 3, chh = 610;
+    const Y0 = 90, GAP = 30, cw = (W - 2 * C.PAD - 2 * GAP) / 3, chh = 680;
     const cards = T.source_cartes.map((sc, i) => {
-      const c = el("div", "card", s, { left: C.PAD + i * (cw + GAP) + "px", top: Y0 + "px", width: cw + "px", height: chh + "px", borderRadius: "40px", padding: "26px 20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" });
-      const ib = el("div", "", c); hexBadge(ib, 150, BLANC, P.inHex(sc.id, 150, BLEU, BLEU, 0.62));
-      const tt = text(c, sc.titre, "t-big c-blanc center", { maxW: cw - 40, style: { marginTop: "14px" } });
-      const ls = sc.lignes.map((l) => text(c, l, "t-small c-blanc center", { maxW: cw - 40, style: { marginTop: "14px", fontWeight: 650 } }));
-      return { c, ib, tt, ls };
+      const c = el("div", "card", s, { left: C.PAD + i * (cw + GAP) + "px", top: Y0 + "px", width: cw + "px", height: chh + "px", borderRadius: "40px", padding: "40px 24px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" });
+      const ib = el("div", "", c); hexBadge(ib, 250, BLANC, P.inHex(sc.id, 250, BLEU, BLEU, 0.62));
+      const tx = text(c, sc.texte, "t-big c-blanc center", { maxW: cw - 48, style: { marginTop: "30px" } });
+      return { c, ib, tx };
     });
-    const band = el("div", "abs", s, { left: "50%", top: "872px", background: "var(--blanc)", borderRadius: "30px", padding: "14px 60px 20px" });
-    const bt = text(band, T.source_message, "t-body c-bleu center", { maxW: W - 2 * C.PAD - 120, style: { fontWeight: 900 } });
+    const band = el("div", "abs", s, { left: "50%", top: "800px", background: "var(--blanc)", borderRadius: "30px", padding: "14px 60px 22px" });
+    const bt = text(band, T.source_message, "t-big c-bleu center", { maxW: W - 2 * C.PAD - 120 });
     fit(C, s);
-    gsap.set(band, { xPercent: -50 });
+    gsap.set(band, { xPercent: -50, autoAlpha: 0 });
     cards.forEach((o) => { if (o.c.scrollHeight > o.c.clientHeight + 1) L.report("débordement", o.c, `carte : ${o.c.scrollHeight} px > ${o.c.clientHeight} px`); });
 
-    linesIn(tl, ttl, t + 0.1, { stagger: 0.12 });
+    let c = t + 0.2;
     cards.forEach((o, i) => {
-      const at = t + 0.6 + i * 1.3;
-      hexReveal(tl, o.c, cw, chh, at, 0.55);
-      pop(tl, o.ib, at + 0.2, { from: 0.4 });
-      linesIn(tl, o.tt, at + 0.3);
-      o.ls.forEach((l, k) => linesIn(tl, l, at + 0.5 + k * 0.2, { stagger: 0.08 }));
-      // small life in each icon: water drops fall, dust is sucked in, arrows turn
-      if (i === 0) tl.fromTo(o.ib.querySelectorAll("svg > g > g[fill] path"), { y: -6 }, { y: 6, duration: 0.35, yoyo: true, repeat: 13, ease: "sine.inOut", stagger: 0.12 }, at + 0.6);
-      if (i === 1) tl.fromTo(o.ib.querySelectorAll("svg > g > g:last-child path"), { x: 10, opacity: 1 }, { x: -12, opacity: 0.2, duration: 0.5, repeat: 9, ease: "power1.in", stagger: 0.1 }, at + 0.6);
-      if (i === 2) tl.fromTo(o.ib.querySelector("svg > g > g"), { rotation: 0 }, { rotation: 360, transformOrigin: "50% 50%", duration: 1.6, ease: "power2.inOut" }, at + 0.6);
+      const rv = i ? c - 0.35 : c;
+      hexReveal(tl, o.c, cw, chh, rv, 0.4);
+      pop(tl, o.ib, rv + 0.1, { from: 0.4, d: 0.4 });
+      c = read(tl, o.tx, c + (i ? 0.05 : 0.35));
     });
-    tl.fromTo(band, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: EASE }, t + 4.7);
-    linesIn(tl, bt, t + 4.85, { stagger: 0.14 });
-    return t + 7.2;
+    // one idea per screen: the card texts leave (icons stay), then the band
+    cards.forEach((o) => hide(tl, o.tx, c));
+    tl.to(cards.map((o) => o.c), { opacity: 0.55, duration: 0.3 }, c);
+    tl.fromTo(band, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: EASE }, c + 0.15);
+    const rb = read(tl, bt, c + 0.3, { hold: 3 });
+    const end = rb + PAUSE;
+    const amb = (sel, vars) => tl.fromTo(sel, vars[0], { ...vars[1], repeat: Math.max(1, Math.floor((end - PAUSE - t - 1.2) / vars[1].duration) - 1) }, t + 0.8);
+    amb(cards[0].ib.querySelectorAll("svg > g > g[fill] path"), [{ y: -6 }, { y: 6, duration: 0.35, yoyo: true, ease: "sine.inOut", stagger: 0.12 }]);
+    amb(cards[1].ib.querySelectorAll("svg > g > g:last-child path"), [{ x: 10, opacity: 1 }, { x: -12, opacity: 0.2, duration: 0.5, ease: "power1.in", stagger: 0.1 }]);
+    tl.fromTo(cards[2].ib.querySelector("svg > g > g"), { rotation: 0 }, { rotation: 360, transformOrigin: "50% 50%", duration: 1.6, ease: "power2.inOut" }, t + 0.8);
+    return end;
   }
 
-  /* ========== 7. The right mask, worn properly: five cards ========== */
+  /* ========== 7. The right mask, worn properly: five cards, then "À retenir" ========== */
   function S7(C, t) {
-    const { W, H, T, tl, cfg } = C;
+    const { W, H, T, tl } = C;
     const A = T.a_valider || {};
     const s = mkScene(C, "bg-white");
-    const ttl = text(s, T.masque_titre, "t-h1 c-bleu", { maxW: W - 2 * C.PAD }); abs(ttl, C.PAD, 26);
-    const cx = C.PAD, cy = 140, cw = W - 2 * C.PAD, ch = 800;
-    const N = T.masque_cartes.length, DUR = [2.9, 2.8, 2.1, 2.3, 2.8];
-    const prog = el("div", "abs", s, { left: 0, width: W + "px", top: cy + ch + 34 + "px", display: "flex", justifyContent: "center", gap: "22px" });
-    const dots = T.masque_cartes.map(() => { const d = el("div", "", prog); hexBadge(d, 40, BLEU); gsap.set(d, { opacity: 0.25 }); return d; });
+    const cx = C.PAD, cy = 100, cw = W - 2 * C.PAD, ch = 800;
+    const prog = el("div", "abs", s, { left: 0, width: W + "px", top: cy + ch + 40 + "px", display: "flex", justifyContent: "center", gap: "22px" });
+    const N = T.masque_cartes.length;
+    const dots = Array.from({ length: N + 1 }, () => { const d = el("div", "", prog); hexBadge(d, 40, BLEU); gsap.set(d, { opacity: 0.25 }); return d; });
     const BIG = { ajuster: "ajuster", avant: "avant", accessoires: "combinaison", hygiene: "hygiene" };
-    const TX = 600, TW = cw - TX - 60;
+    const TX = 620, TW = cw - TX - 70;
+    const sub = (str) => String(str || "").replace("{a_valider.choix}", A.choix || "").replace(/\{niveau\}/g, level(C, null));
     const cards = T.masque_cartes.map((mc, i) => {
       const c = el("div", "card", s, { left: cx + "px", top: cy + "px", width: cw + "px", height: ch + "px", borderRadius: "44px" });
       const nb = el("div", "num", c, { left: "40px", top: "36px" });
       hexBadge(nb, 96, BLANC, `<text x="48" y="74" text-anchor="middle" font-family="Inter" font-weight="900" font-size="54" fill="${BLEU}">${i + 1}</text>`);
-      const pic = el("div", "abs", c, { left: "110px", top: (ch - 438) / 2 + "px" });
-      const pw = 380;
+      const pic = el("div", "abs", c, { left: "110px", top: (ch - 462) / 2 + "px" });
+      const pw = 400;
       hexBadge(pic, pw, BLANC, mc.id === "choisir" ? `<g transform="translate(${pw * 0.14} ${pw * 0.217}) scale(${pw * 0.0036})">${P.mandatory(200).replace(/^<svg[^>]*>|<\/svg>$/g, "")}</g>`
         : P.inHex(BIG[mc.id], pw, BLEU, ROUGE, 0.58));
       let extra = null;
-      if (mc.id === "accessoires") { extra = el("div", "abs", pic, { right: "-30px", bottom: "0px" }); hexBadge(extra, 170, BLANC, P.inHex("lunettes", 170, BLEU, BLEU, 0.64), BLEU); }
+      if (mc.id === "accessoires") { extra = el("div", "abs", pic, { right: "-30px", bottom: "0px" }); hexBadge(extra, 180, BLANC, P.inHex("lunettes", 180, BLEU, BLEU, 0.64), BLEU); }
       const col = el("div", "abs", c, { left: TX + "px", width: TW + "px", top: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "center" });
-      const tt = text(col, mc.titre, "t-big c-blanc", { maxW: TW, em: null });
-      const o = { c, nb, pic, extra, tt, parts: [], lines: [] };
-      if (mc.types) {
-        const row = el("div", "", col, { display: "flex", gap: "30px", marginTop: "40px" });
-        mc.types.forEach((ty) => {
-          const cell = el("div", "", row, { display: "flex", flexDirection: "column", alignItems: "center", width: (TW - 60) / 3 + "px", gap: "14px" });
-          const hb = el("div", "", cell); hexBadge(hb, 150, BLANC, P.inHex(ty.id, 150, BLEU, BLEU, 0.64));
-          const lb = text(cell, fill(ty.nom, C), "t-small c-blanc center", { maxW: (TW - 60) / 3, style: { fontWeight: 800 } });
-          o.parts.push({ hb, lb });
-        });
-        o.mention = text(col, fill(A.choix_mention, C), "t-small c-blanc", { maxW: TW, style: { marginTop: "40px", fontWeight: 650, opacity: 0.95 } });
-      }
-      (mc.lignes || []).forEach((l, k) => {
-        const row = el("div", "", col, { display: "flex", gap: "22px", alignItems: "flex-start", marginTop: k ? "22px" : "36px" });
-        const b = el("div", "", row, { flex: "none", marginTop: "12px" }); hexBadge(b, 36, BLANC);
-        o.lines.push({ b, tx: text(row, l, "t-body c-blanc", { maxW: TW - 60, style: { fontWeight: 700 } }) });
-      });
+      const g = "m" + i;                                   // title + line are read together (one block)
+      const tt = mc.titre ? text(col, sub(mc.titre), "t-big c-blanc", { maxW: TW, group: g }) : null;
+      const ln = mc.ligne ? text(col, sub(mc.ligne), "t-body c-blanc", { maxW: TW, group: g, style: { marginTop: "36px", fontWeight: 700 } }) : null;
       gsap.set(c, { autoAlpha: 0 });
-      return o;
+      return { c, nb, pic, extra, parts: [tt, ln].filter(Boolean) };
     });
+    // "À retenir": heading + first point read together, then the two other points
+    const rc = el("div", "card", s, { left: cx + "px", top: cy + "px", width: cw + "px", height: ch + "px", borderRadius: "44px", padding: "70px 120px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "40px" });
+    const rh = text(rc, T.retenir_titre, "t-h1 c-blanc", { maxW: cw - 240, group: "ret" });
+    const pts = T.retenir.map((p, k) => {
+      const row = el("div", "", rc, { display: "flex", alignItems: "center", gap: "34px" });
+      const b = el("div", "", row, { flex: "none" }); hexBadge(b, 96, BLANC, P.inHex("check", 96, BLEU, BLEU, 0.7));
+      return { row, b, tx: text(row, p, "t-big c-blanc", { maxW: cw - 240 - 130, group: k ? null : "ret" }) };
+    });
+    gsap.set(rc, { autoAlpha: 0 });
     fit(C, s);
-    cards.forEach((o) => { const col = o.tt.parentNode; if (col.scrollHeight > ch + 1) L.report("débordement", o.c, `carte : ${col.scrollHeight} px > ${ch} px`); });
+    cards.forEach((o) => { const col = o.parts[0].parentNode; if (col.scrollHeight > ch + 1) L.report("débordement", o.c, `carte : ${col.scrollHeight} px > ${ch} px`); });
 
-    linesIn(tl, ttl, t + 0.1);
-    let at = t + 0.3;
+    let c = t + 0.2;
+    const allCards = [...cards.map((o) => o.c), rc];
     cards.forEach((o, i) => {
-      hexReveal(tl, o.c, cw, ch, at, 0.6);
+      if (i) tl.to(cards[i - 1].c, { autoAlpha: 0, duration: 0.25, ease: "power2.in" }, c);
+      const at = c + (i ? 0.1 : 0);
+      hexReveal(tl, o.c, cw, ch, at, 0.45);
       tl.to(dots[i], { opacity: 1, duration: 0.3 }, at);
       if (i) tl.to(dots[i - 1], { opacity: 0.55, duration: 0.3 }, at);
-      pop(tl, o.nb, at + 0.25, { from: 0.4 });
-      pop(tl, o.pic, at + 0.2, { from: 0.7 });
-      if (o.extra) pop(tl, o.extra, at + 0.9, { from: 0.3 });
-      linesIn(tl, o.tt, at + 0.3);
-      o.parts.forEach((p, k) => { pop(tl, p.hb, at + 0.6 + k * 0.2, { from: 0.4 }); linesIn(tl, p.lb, at + 0.7 + k * 0.2); });
-      if (o.mention) linesIn(tl, o.mention, at + 1.3, { stagger: 0.1 });
-      o.lines.forEach((l, k) => { pop(tl, l.b, at + 0.6 + k * 0.3, { from: 0.3 }); linesIn(tl, l.tx, at + 0.62 + k * 0.3, { stagger: 0.08 }); });
-      at += DUR[i];
-      if (i < N - 1) tl.to(o.c, { autoAlpha: 0, scale: 0.97, duration: 0.3, ease: "power2.in" }, at - 0.05);
+      pop(tl, o.nb, at + 0.2, { from: 0.4, d: 0.35 });
+      pop(tl, o.pic, at + 0.15, { from: 0.7, d: 0.4 });
+      if (o.extra) pop(tl, o.extra, at + 0.3, { from: 0.3, d: 0.35 });
+      const fulls = o.parts.map((p) => show(tl, p, at + 0.3));
+      const words = o.parts.map(L.plain).join(" ");
+      c = Math.max(...fulls) + Math.max(4.5, L.need(words));   // 4.5 s per card, more if the text asks for it
     });
-    return at + 0.2;
+    tl.to(cards[N - 1].c, { autoAlpha: 0, duration: 0.25, ease: "power2.in" }, c);
+    hexReveal(tl, rc, cw, ch, c + 0.2, 0.45);
+    tl.to(dots[N], { opacity: 1, duration: 0.3 }, c + 0.2); tl.to(dots[N - 1], { opacity: 0.55, duration: 0.3 }, c + 0.2);
+    pop(tl, pts[0].b, c + 0.55, { from: 0.4, d: 0.3 });
+    const f0 = Math.max(show(tl, rh, c + 0.6), show(tl, pts[0].tx, c + 0.6));
+    c = f0 + Math.max(2.5, L.need(L.plain(rh) + " " + L.plain(pts[0].tx)));
+    pts.slice(1).forEach((p) => { pop(tl, p.b, c - 0.05, { from: 0.4, d: 0.3 }); c = read(tl, p.tx, c, { hold: 2.5 }); });
+    void allCards;
+    return c + PAUSE;
   }
 
   /* ========== 8. Final message + logo ========== */
   function S8(C, t) {
-    const { W, T, tl, cfg } = C;
+    const { W, T, tl } = C;
     const s = mkScene(C, "bg-white");
     const sign = el("div", "abs", s, { left: "130px", top: "170px" }); sign.innerHTML = P.mandatory(340);
     const tx = 600, tw = W - tx - C.PAD;
@@ -489,12 +426,11 @@
     const img = el("img", "", lc); img.src = C.logo.src; img.width = lw; img.height = lh; img.alt = "";
     if (C.logoChantier) { const cc = el("div", "", logos, { padding: pad + "px" }); const i2 = el("img", "", cc); i2.src = C.logoChantier.src; i2.width = C.logoChantier.w; i2.height = C.logoChantier.h; }
     fit(C, s);
-    pop(tl, sign, t + 0.1, { from: 0.3, d: 0.7 });
-    linesIn(tl, f1, t + 0.35);
-    linesIn(tl, f2, t + 1.2);
-    fadeUp(tl, logos, t + 1.9, { y: 24 });
-    tl.to({}, { duration: 0.01 }, t + 4.6);
-    return t + 4.6;
+    pop(tl, sign, t + 0.1, { from: 0.3, d: 0.6 });
+    fadeUp(tl, logos, t + 0.3, { y: 24 });
+    const r1 = read(tl, f1, t + 0.4);
+    const r2 = read(tl, f2, r1);
+    return r2 + PAUSE;
   }
 
   /* ========== 9. Closing: dust particles draw the logo hexagon, then the logo ========== */
@@ -555,10 +491,11 @@
     tl.fromTo(lc, { autoAlpha: 0, y: SL }, { autoAlpha: 1, y: 0, duration: 0.5, ease: EASE }, t + 2.35);
     tl.to(hex, { y: fyc, duration: 0.5, ease: EASE }, t + 2.35);
     tl.to(hex, { opacity: 0, duration: 0.3 }, t + 2.55);
-    linesIn(tl, txt, t + 2.6);
-    if (credit) fadeUp(tl, credit, t + 2.8, { y: 16 });
-    tl.to({}, { duration: 0.01 }, t + 3.2 + 1.0);   // hold the last image 1 s
-    return t + 4.2;
+    const rt = read(tl, txt, t + 2.6);                   // "Protégez vos poumons."
+    if (credit) fadeUp(tl, credit, rt, { y: 16 });
+    const end = (credit ? read(tl, credit.querySelector(".tx"), rt) : rt) + 1.0;   // then hold the last image 1 s
+    tl.to({}, { duration: 0.01 }, end - 0.01);
+    return end;
   }
 
   window.SCENES = { S0, S1, S2, S3, S4, S5, S6, S7, S8, S9 };
