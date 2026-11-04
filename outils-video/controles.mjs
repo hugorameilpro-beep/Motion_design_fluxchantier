@@ -78,6 +78,7 @@ export function anomaliesVideo(mp4, info, o = {}) {
   const inTransition = (t) => sc.some(([, start], i) => i > 0 && t >= sc[i - 1][2] - 1e-6 && t < start + 0.45);
   const sceneAt = (t) => { let s = sc[0]; for (const x of sc) if (t >= x[1]) s = x; return s ? s[0] : ""; };
   const px = (f, i) => { const o3 = (f * N + i) * 3; return [buf[o3], buf[o3 + 1], buf[o3 + 2]]; };
+  const isPurple = (R, G, B) => R > 90 && B > 70 && G < 60 && Math.abs(R - B) < 110;
   const out = [];
   const runs = (flags, minLen, kind, msg) => {      // consecutive flagged frames → one anomaly
     let a = -1;
@@ -98,7 +99,12 @@ export function anomaliesVideo(mp4, info, o = {}) {
     for (let i = 0; i < N; i++) {
       const [R, G, B] = px(f, i);
       if (Math.abs(R - dr) + Math.abs(G - dg) + Math.abs(B - db) > 90) inkN++;
-      if (R > 90 && B > 70 && G < 60 && Math.abs(R - B) < 110) purN++;       // red mixed with blue
+      if (isPurple(R, G, B)) {                                                  // red mixed with blue, over an area (not a 1-px edge)
+        const x = i % Wd, y = (i / Wd) | 0;
+        let nb = 0;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < Wd && yy < Hd && isPurple(...px(f, yy * Wd + xx))) nb++; }
+        if (nb >= 3) purN++;
+      }
       if (f) { const [r0, g0, b0] = px(f - 1, i), d = Math.abs(R - r0) + Math.abs(G - g0) + Math.abs(B - b0); if (d > (o.fort ?? 200)) chg++; if (d > 24) mov++; }   // full-strength change / any visible move
     }
     ink[f] = inkN / N; purple[f] = purN / N; diff[f] = chg / N; move[f] = mov / N;
