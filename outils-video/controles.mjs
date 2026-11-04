@@ -105,7 +105,7 @@ export function anomaliesVideo(mp4, info, o = {}) {
         for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < Wd && yy < Hd && isPurple(...px(f, yy * Wd + xx))) nb++; }
         if (nb >= 3) purN++;
       }
-      if (f) { const [r0, g0, b0] = px(f - 1, i), d = Math.abs(R - r0) + Math.abs(G - g0) + Math.abs(B - b0); if (d > (o.fort ?? 200)) chg++; if (d > 24) mov++; }   // full-strength change / any visible move
+      if (f) { const [r0, g0, b0] = px(f - 1, i), d = Math.abs(R - r0) + Math.abs(G - g0) + Math.abs(B - b0); if (d > (o.fort ?? 200)) chg++; if (d > (o.bouge ?? 45)) mov++; }   // full-strength change / any visible move (x264 noise on a still frame stays under ~30)
     }
     ink[f] = inkN / N; purple[f] = purN / N; diff[f] = chg / N; move[f] = mov / N;
   }
