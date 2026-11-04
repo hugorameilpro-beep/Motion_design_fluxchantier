@@ -1,13 +1,11 @@
 {
   "langue": "fr",
-
   "palette": {
     "bleu": "#004489",
     "bleu_fonce": "#001F3D",
     "rouge": "#FA000C",
     "blanc": "#FFFFFF"
   },
-
   "logos": {
     "entreprise": "assets/logo_dumez.png",
     "chantier": "",
@@ -15,41 +13,81 @@
     "agrandissement_max": 1.3
   },
   "show_synapsis_credit": false,
-
   "show_db_values": true,
   "sources_bruit": [
-    { "id": "marteau_piqueur", "valeur": 110,
-      "source": "ASP Construction (Québec), échelle de décibels (données approximatives)", "fiabilite": "moyenne" },
-    { "id": "pistolet_scellement", "valeur": 130, "impulsionnel": true,
-      "source": "ASP Construction (Québec), échelle de décibels (données approximatives)", "fiabilite": "moyenne" },
-    { "id": "perforateur", "valeur": 105, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
-    { "id": "scie_sol", "valeur": 106, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
-    { "id": "meuleuse", "valeur": 100, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
-    { "id": "disqueuse", "valeur": 94, "source": "Exercice pédagogique de cours", "fiabilite": "faible" },
-    { "id": "brise_roche", "valeur": [94, 100],
+    {
+      "id": "marteau_piqueur",
+      "valeur": 110,
+      "source": "ASP Construction (Québec), échelle de décibels (données approximatives)",
+      "fiabilite": "moyenne"
+    },
+    {
+      "id": "pistolet_scellement",
+      "valeur": 130,
+      "impulsionnel": true,
+      "source": "ASP Construction (Québec), échelle de décibels (données approximatives)",
+      "fiabilite": "moyenne"
+    },
+    {
+      "id": "perforateur",
+      "valeur": 105,
+      "source": "Exercice pédagogique de cours",
+      "fiabilite": "faible"
+    },
+    {
+      "id": "scie_sol",
+      "valeur": 106,
+      "source": "Exercice pédagogique de cours",
+      "fiabilite": "faible"
+    },
+    {
+      "id": "meuleuse",
+      "valeur": 100,
+      "source": "Exercice pédagogique de cours",
+      "fiabilite": "faible"
+    },
+    {
+      "id": "disqueuse",
+      "valeur": 94,
+      "source": "Exercice pédagogique de cours",
+      "fiabilite": "faible"
+    },
+    {
+      "id": "brise_roche",
+      "valeur": [
+        94,
+        100
+      ],
       "detail": "94 dB(A) en moyenne sur 1 h, 100 dB(A) derrière la pelle en burinage",
-      "source": "INRS, fiche « Techniques de réduction du bruit » n°104", "fiabilite": "haute" }
+      "source": "INRS, fiche « Techniques de réduction du bruit » n°104",
+      "fiabilite": "haute"
+    }
   ],
-
   "textes": {
     "fr": {
       "titre": "Casque anti-bruit\nsur chantier",
       "sous_titre": "Les risques à ne pas prendre",
-
       "accroche_1": "Le bruit ne fait\npas mal…",
       "accroche_2": "…tant qu'on ne l'a\npas perdu.",
       "bruyant": "Bruyant",
       "tres_bruyant": "Très bruyant",
-
       "seuils_titre": "Les seuils de bruit",
       "seuils": [
-        { "valeur": "80 dB(A)", "texte": "Protections\nmises à disposition" },
-        { "valeur": "85 dB(A)", "texte": "Port OBLIGATOIRE" },
-        { "valeur": "87 dB(A)", "texte": "Limite à ne JAMAIS\ndépasser, protection\ncomprise" }
+        {
+          "valeur": "80 dB(A)",
+          "texte": "Protections\nmises à disposition"
+        },
+        {
+          "valeur": "85 dB(A)",
+          "texte": "Port OBLIGATOIRE"
+        },
+        {
+          "valeur": "87 dB(A)",
+          "texte": "Limite à ne JAMAIS\ndépasser, protection\ncomprise"
+        }
       ],
       "seuils_duree": "Valeurs sur 8 h de travail",
       "seuils_crete": "En crête : 135 / 137 / 140 dB(C)",
-
       "outils_titre": "Ce qui abîme vos oreilles",
       "outils_message_1": "Pas seulement les gros engins.",
       "outils_message_2": "Le niveau ET\nle temps passé\ncomptent.",
@@ -61,46 +99,273 @@
       "outils_tres_bruyant": "Très bruyant",
       "outils_coup_sec": "Coup sec",
       "outils": [
-        { "id": "disqueuse_meuleuse", "nom": "Disqueuse,\nmeuleuse", "sources": ["disqueuse", "meuleuse"] },
-        { "id": "perforateur", "nom": "Perforateur,\nburineur", "sources": ["perforateur"] },
-        { "id": "scie_sol", "nom": "Scie à sol", "sources": ["scie_sol"] },
-        { "id": "marteau_piqueur", "nom": "Marteau-\npiqueur", "sources": ["marteau_piqueur"] },
-        { "id": "brise_roche", "nom": "Brise-roche\nsur pelle", "sources": ["brise_roche"] },
-        { "id": "pistolet_scellement", "nom": "Pistolet de\nscellement", "sources": ["pistolet_scellement"] },
-        { "id": "compresseur", "nom": "Compresseur,\ngroupe\nélectrogène", "sources": [] },
-        { "id": "aiguille_vibrante", "nom": "Aiguille\nvibrante", "sources": [] }
+        {
+          "id": "disqueuse_meuleuse",
+          "nom": "Disqueuse,\nmeuleuse",
+          "sources": [
+            "disqueuse",
+            "meuleuse"
+          ]
+        },
+        {
+          "id": "perforateur",
+          "nom": "Perforateur,\nburineur",
+          "sources": [
+            "perforateur"
+          ]
+        },
+        {
+          "id": "scie_sol",
+          "nom": "Scie à sol",
+          "sources": [
+            "scie_sol"
+          ]
+        },
+        {
+          "id": "marteau_piqueur",
+          "nom": "Marteau-\npiqueur",
+          "sources": [
+            "marteau_piqueur"
+          ]
+        },
+        {
+          "id": "brise_roche",
+          "nom": "Brise-roche\nsur pelle",
+          "sources": [
+            "brise_roche"
+          ]
+        },
+        {
+          "id": "pistolet_scellement",
+          "nom": "Pistolet de\nscellement",
+          "sources": [
+            "pistolet_scellement"
+          ]
+        },
+        {
+          "id": "compresseur",
+          "nom": "Compresseur,\ngroupe\nélectrogène",
+          "sources": []
+        },
+        {
+          "id": "aiguille_vibrante",
+          "nom": "Aiguille\nvibrante",
+          "sources": []
+        }
       ],
-
       "oreille_titre": "Pour vos oreilles",
       "oreille_courbe": "Votre audition",
       "oreille": [
-        { "texte": "Sifflements,\nbourdonnements", "detail": "(acouphènes)" },
-        { "texte": "Fatigue auditive", "detail": "" },
-        { "texte": "Sons douloureux", "detail": "(hyperacousie)" },
-        { "texte": "Perte d'audition\ndéfinitive", "detail": "" }
+        {
+          "texte": "Sifflements,\nbourdonnements",
+          "detail": "(acouphènes)"
+        },
+        {
+          "texte": "Fatigue auditive",
+          "detail": ""
+        },
+        {
+          "texte": "Sons douloureux",
+          "detail": "(hyperacousie)"
+        },
+        {
+          "texte": "Perte d'audition\ndéfinitive",
+          "detail": ""
+        }
       ],
-
       "corps_titre": "Pour le corps\net la sécurité",
-      "corps": ["Stress", "Fatigue", "Sommeil\nperturbé"],
+      "corps": [
+        "Stress",
+        "Fatigue",
+        "Sommeil\nperturbé"
+      ],
       "danger_texte": "On n'entend plus\nl'alarme, l'engin\nqui recule,\nson collègue.",
       "bonne_orga_titre": "La bonne organisation",
       "bonne_orga_texte": "Protection adaptée\n+ signaux visibles\n= tout le monde se voit,\ntout le monde se comprend",
       "message_fort": "Une oreille abîmée\nne se répare pas.",
-
       "reflexes_titre": "Les bons réflexes",
       "reflexes": [
-        { "titre": "Choisissez le bon\nprotecteur", "lignes": [],
-          "types": ["Bouchons", "Bouchons à\ncordelette", "Coquilles\nsur casque", "Serre-tête"] },
-        { "titre": "Ajustez-le bien", "lignes": ["Bouchon bien inséré", "Coquilles bien étanches", "Rien entre coquille\net oreille"] },
-        { "titre": "Portez-le\nTOUT le temps", "lignes": ["Pendant toute l'exposition,", "pas seulement par moments"] },
-        { "titre": "Gardez-le propre", "lignes": ["Abîmé ? Remplacez-le."] },
-        { "titre": "Respectez les zones\nbruyantes signalées", "lignes": ["et les temps de pause"] }
+        {
+          "titre": "Choisissez le bon\nprotecteur",
+          "lignes": [],
+          "types": [
+            "Bouchons",
+            "Bouchons à\ncordelette",
+            "Coquilles\nsur casque",
+            "Serre-tête"
+          ]
+        },
+        {
+          "titre": "Ajustez-le bien",
+          "lignes": [
+            "Bouchon bien inséré",
+            "Coquilles bien étanches",
+            "Rien entre coquille\net oreille"
+          ]
+        },
+        {
+          "titre": "Portez-le\nTOUT le temps",
+          "lignes": [
+            "Pendant toute l'exposition,",
+            "pas seulement par moments"
+          ]
+        },
+        {
+          "titre": "Gardez-le propre",
+          "lignes": [
+            "Abîmé ? Remplacez-le."
+          ]
+        },
+        {
+          "titre": "Respectez les zones\nbruyantes signalées",
+          "lignes": [
+            "et les temps de pause"
+          ]
+        }
       ],
-
       "final_1": "Dès 85 dB(A) :\nprotection obligatoire.",
       "final_2": "Votre audition\nne se remplace pas.",
       "credit": "Réalisé par Synapsis",
-      "fin_texte": "Protégez votre audition."
+      "fin_texte": "Protégez votre audition.",
+      "h": {
+        "_info": "Textes de la version 16:9, qui suit les règles de lecture (voir README). Les autres clés servent au vertical et à l'affiche.",
+        "titre": "Casque anti-bruit\nsur chantier",
+        "accroche_1": "Le bruit ne fait\npas mal…",
+        "accroche_2": "…tant qu'on ne l'a\npas perdu.",
+        "seuils": [
+          {
+            "valeur": "80 dB(A)",
+            "texte": "Protections\nmises à disposition"
+          },
+          {
+            "valeur": "85 dB(A)",
+            "texte": "Port OBLIGATOIRE"
+          },
+          {
+            "valeur": "87 dB(A)",
+            "texte": "Limite à ne JAMAIS\ndépasser, protection\ncomprise"
+          }
+        ],
+        "outils_titre": "Pas seulement les gros engins.",
+        "outils_mention": "Ordres de grandeur.",
+        "outils": [
+          {
+            "id": "disqueuse_meuleuse",
+            "nom": "Disqueuse,\nmeuleuse",
+            "sources": [
+              "disqueuse",
+              "meuleuse"
+            ]
+          },
+          {
+            "id": "perforateur",
+            "nom": "Perforateur,\nburineur",
+            "sources": [
+              "perforateur"
+            ]
+          },
+          {
+            "id": "scie_sol",
+            "nom": "Scie à sol",
+            "sources": [
+              "scie_sol"
+            ]
+          },
+          {
+            "id": "marteau_piqueur",
+            "nom": "Marteau-\npiqueur",
+            "sources": [
+              "marteau_piqueur"
+            ]
+          },
+          {
+            "id": "brise_roche",
+            "nom": "Brise-roche\nhydraulique",
+            "sources": [
+              "brise_roche"
+            ]
+          },
+          {
+            "id": "pistolet_scellement",
+            "nom": "Pistolet de\nscellement",
+            "sources": [
+              "pistolet_scellement"
+            ]
+          }
+        ],
+        "outils_message_2": "Le niveau ET\nle temps passé\ncomptent.",
+        "outils_voisin": "Le bruit du voisin\ncompte aussi.",
+        "oreille_titre": "Pour vos oreilles",
+        "oreille": [
+          {
+            "texte": "Sifflements,\nbourdonnements",
+            "detail": "(acouphènes)"
+          },
+          {
+            "texte": "Fatigue auditive",
+            "detail": ""
+          },
+          {
+            "texte": "Sons douloureux",
+            "detail": "(hyperacousie)"
+          },
+          {
+            "texte": "Perte d'audition\ndéfinitive",
+            "detail": ""
+          }
+        ],
+        "corps_titre": "Pour le corps\net la sécurité",
+        "corps": [
+          "Stress",
+          "Fatigue",
+          "Sommeil\nperturbé"
+        ],
+        "danger_texte": "On n'entend plus l'alarme,\nl'engin qui recule,\nson collègue.",
+        "bonne_orga_texte": "Protection adaptée\n+ signaux visibles",
+        "zone_sure": "Zone sûre",
+        "message_fort": "Une oreille abîmée\nne se répare pas.",
+        "reflexes_titre": "Les bons réflexes",
+        "reflexes": [
+          {
+            "titre": "Choisissez le bon\nprotecteur",
+            "lignes": [],
+            "types": [
+              "Bouchons",
+              "Bouchons à\ncordelette",
+              "Coquilles\nsur casque",
+              "Serre-tête"
+            ]
+          },
+          {
+            "titre": "Ajustez-le bien",
+            "lignes": [
+              "Bouchon bien inséré",
+              "Coquilles bien étanches"
+            ]
+          },
+          {
+            "titre": "Portez-le\nTOUT le temps",
+            "lignes": [
+              "Pendant toute l'exposition"
+            ]
+          },
+          {
+            "titre": "Gardez-le propre",
+            "lignes": [
+              "Abîmé ? Remplacez-le."
+            ]
+          },
+          {
+            "titre": "Respectez les zones\nbruyantes signalées",
+            "lignes": [
+              "et les temps de pause"
+            ]
+          }
+        ],
+        "final_1": "Dès 85 dB(A) :\nprotection obligatoire.",
+        "final_2": "Votre audition\nne se remplace pas.",
+        "fin_texte": "Protégez votre audition."
+      }
     }
   }
 }
