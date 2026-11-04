@@ -320,7 +320,7 @@
           "Fatigue",
           "Sommeil\nperturbé"
         ],
-        "danger_texte": "On n'entend plus l'alarme,\nl'engin qui recule,\nson collègue.",
+        "danger_texte": "On n'entend plus\nl'alarme, l'engin\nqui recule,\nson collègue.",
         "bonne_orga_texte": "Protection adaptée\n+ signaux visibles",
         "zone_sure": "Zone sûre",
         "message_fort": "Une oreille abîmée\nne se répare pas.",

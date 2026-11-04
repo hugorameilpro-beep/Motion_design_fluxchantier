@@ -255,8 +255,10 @@
       c = c + 0.3 + Math.max(2.5, need(wordsOf(o.parts)));   // each item at least 2.5 s before the next
     });
     const end = c + PAUSE;
-    const zigs = earBox.querySelectorAll("svg > g:last-child path");
-    tl.fromTo(zigs, { scaleX: 0.6, opacity: 0.5, transformOrigin: "0% 50%" }, { scaleX: 1.1, opacity: 1, duration: 0.12, yoyo: true, repeat: (Math.max(1, Math.floor((end - PAUSE - t - 0.6) / 0.12) - 2) | 1), ease: "sine.inOut", stagger: 0.04 }, t + 0.3);
+    // the three zigzags of the ear icon (one group, no stagger: the tween ends exactly before the final pause)
+    const zigs = [...earBox.querySelectorAll("path")].find((p) => /^M70 30 l5/.test(p.getAttribute("d"))).parentNode;
+    const reps = Math.max(1, Math.floor((end - PAUSE - t - 0.3) / 0.12) - 1);
+    tl.fromTo(zigs, { scaleX: 1, opacity: 1, transformOrigin: "0% 50%" }, { scaleX: 0.6, opacity: 0.5, duration: 0.12, yoyo: true, repeat: reps % 2 ? reps : reps - 1, ease: "sine.inOut" }, t + 0.3);
     return end;
   }
 
@@ -296,11 +298,11 @@
     const ok = el("div", "abs", s, { left: ax + 700 * k + "px", top: ay + 120 * k + "px" }); hexBadge(ok, 150, BLEU, inHex("check", 150, BLANC, BLANC, 0.66));
     const tx = 1045, tw = W - tx - C.PAD, ty = 300;
     const bad = el("div", "abs", s, { left: tx + "px", top: ty + "px", width: tw + "px", borderLeft: "14px solid var(--rouge)", paddingLeft: "34px" });
-    const badT = text(bad, T.danger_texte, "t-body c-fonce", { maxW: tw - 48, style: { fontWeight: 800 } });
+    const badT = text(bad, T.danger_texte, "t-big c-fonce", { maxW: tw - 48 });
     const good = el("div", "abs", s, { left: tx + "px", top: ty + "px", width: tw + "px" });
     const goodT = text(good, T.bonne_orga_texte, "t-big c-bleu", { maxW: tw, group: "bon" });
     const zl = text(s, T.zone_sure, "t-small c-bleu center", { maxW: 380 * k, group: "bon", style: { fontWeight: 800 } });
-    abs(zl, ax + 85 * k, ay + 300 * k, { width: 380 * k + "px" });   // centred over the dashed zone (x 150–400)
+    abs(zl, ax + 85 * k, ay + 582 * k, { width: 380 * k + "px" });   // written on the ground, under the dashed zone (x 150–400)
     // strong message: a red hexagon covers the frame in 0.3 s, the text is there as soon as the red is
     const R = (Math.hypot(W, H) / 2) / (Math.sqrt(3) / 2) * 1.06;
     const big = svg("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}` }, s); abs(big, 0, 0);
@@ -352,10 +354,13 @@
     const rr = Math.max(1, Math.floor((rC - g - 0.6) / 0.18) - 1) | 1;
     tl.fromTo(rays, { opacity: 0.15 }, { opacity: 1, duration: 0.18, yoyo: true, repeat: rr, ease: "none" }, g + 0.2);
     tl.to(colArm, { rotation: -150, duration: 0.4, svgOrigin: "0 -225", ease: "power2.out" }, g + 0.5);
-    tl.set(wkL, { visibility: "hidden" }, g + 1.1); tl.set(wkR, { visibility: "visible" }, g + 1.1);   // he turns round…
-    tl.fromTo(wk, { x: 470 }, { x: 275, duration: 1.2, ease: "power2.inOut" }, g + 1.4);            // …and steps into the safe zone
-    tl.fromTo(wkR.querySelector(".legs"), { y: 0 }, { y: -8, duration: 0.12, yoyo: true, repeat: 9, ease: "sine.inOut" }, g + 1.4);
-    pop(tl, ok, g + 2.8, { from: 0.2, d: 0.4 });
+    // he turns round to face the machine, turns back and walks into the safe zone, then faces the machine again
+    const face = (right, at) => { tl.set(wkL, { visibility: right ? "hidden" : "visible" }, at); tl.set(wkR, { visibility: right ? "visible" : "hidden" }, at); };
+    face(true, g + 0.9); face(false, g + 1.6);
+    tl.fromTo(wk, { x: 470 }, { x: 275, duration: 1.2, ease: "power1.inOut" }, g + 1.6);
+    tl.fromTo(wkL.querySelector(".legs"), { y: 0 }, { y: -8, duration: 0.12, yoyo: true, repeat: 9, ease: "sine.inOut" }, g + 1.6);
+    face(true, g + 2.9);
+    pop(tl, ok, g + 3.0, { from: 0.2, d: 0.4 });
     // D. the strong message
     tl.set(big, { autoAlpha: 1 }, rC);
     tl.to(big.querySelector(".bg"), { scale: 1, duration: 0.3, ease: "power2.in" }, rC);
