@@ -2,63 +2,143 @@
 
 Vidéo de sensibilisation sécurité en motion design, sans son. Elle est faite pour l'accueil sécurité, les
 causeries, les écrans de chantier et WhatsApp. Le message passe uniquement par l'image et par des textes
-courts, lisibles par des compagnons peu francophones.
+courts, lisibles par des compagnons peu francophones : **une idée par écran, peu de mots, chaque texte laissé
+le temps d'être lu.**
 
 | Livrable | Format | Fichier |
 |---|---|---|
-| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans son, **74,9 s** | [`output/securite_bruit_horizontal.mp4`](output/securite_bruit_horizontal.mp4) |
+| Vidéo projection | 1920×1080 (16:9), 30 i/s, H.264, sans piste audio, **142,1 s** | [`output/securite_bruit_horizontal.mp4`](output/securite_bruit_horizontal.mp4) |
 | Vidéo téléphone | 1080×1920 (9:16), 30 i/s, H.264, sans son, 57,7 s | [`output/securite_bruit_vertical.mp4`](output/securite_bruit_vertical.mp4) |
 | Affiche | A3 portrait, 3508×4961 px (300 dpi) | [`output/securite_bruit_affiche_A3.png`](output/securite_bruit_affiche_A3.png) |
 
-La version **16:9** contient deux scènes de plus : « Ce qui abîme vos oreilles » et le générique animé du logo. La
-vidéo verticale et l'affiche n'ont pas encore ces ajouts : ce sont les versions validées précédemment. Elles
-n'ont pas été régénérées.
+Seule la version **16:9** suit les règles de lecture ci-dessous. Ses scènes sont dans `src/js/scenes-h.js` et ses
+textes dans `config.json`, sous `textes.fr.h`. La vidéo verticale et l'affiche gardent leur code (`scenes.js`,
+`poster.js`) et leurs textes (le reste de `textes.fr`). Ce sont les versions validées précédemment : elles n'ont
+été ni régénérées ni contrôlées.
 
 <img src="output/securite_bruit_affiche_A3.png" width="320" alt="Affiche A3">
 
-## Déroulé
+## Règles de lecture (16:9)
 
-| # | Durée | Scène |
-|---|---|---|
-| 0 | 2 s | Logo Dumez sur une carte blanche, puis titre « Casque anti-bruit sur chantier ». |
-| 1 | 4 s | Chantier stylisé. Les ondes sonores grossissent et l'image tremble. « Le bruit ne fait pas mal… » puis, sur un bandeau rouge, « …tant qu'on ne l'a pas perdu. » |
-| 2 | 10 s | Jauge verticale à trois paliers. **80 dB(A)** : protections mises à disposition. **85 dB(A)** : port obligatoire, avec le panneau bleu. **87 dB(A)** : limite à ne jamais dépasser, protection comprise. Mentions secondaires : valeurs sur 8 h, crêtes 135 / 137 / 140 dB(C). |
-| 3a | 6 s | Pour vos oreilles. La courbe d'audition descend, l'oreille siffle. Quatre effets : acouphènes, fatigue auditive, hyperacousie, perte définitive. |
-| 3b | 12 s | Pour le corps et la sécurité : stress, fatigue, sommeil. Un engin recule et l'ouvrier ne l'entend pas : alerte rouge. Puis la même scène **organisée** : protecteur adapté bien porté, gyrophare visible, signaleur et gestes convenus. L'ouvrier s'écarte, l'engin s'arrête. Message fort : « Une oreille abîmée ne se répare pas. » |
-| 4 | 14 s | Cinq cartes hexagonales : choisir son protecteur (bouchons, bouchons à cordelette, coquilles sur casque, serre-tête), bien l'ajuster, le porter tout le temps, le garder propre et le remplacer, respecter les zones signalées et les pauses. |
-| 5 | 5 s | « Dès 85 dB(A) : protection obligatoire. » puis « Votre audition ne se remplace pas. » Logos sur fond blanc. |
+Elles sont communes avec [`../securite-poussieres/`](../securite-poussieres/README.md) et vérifiées à chaque rendu.
 
-Les transitions sont des **vagues d'hexagones** bleus : c'est la forme du logo Dumez.
+| Règle | Valeur |
+|---|---|
+| Idées par écran | Une seule. Au plus **3 blocs de texte** visibles en même temps, et au plus **10 mots** pour un message principal. Les étiquettes d'une grille d'icônes (outils, effets sur l'oreille, stress / fatigue / sommeil, types de protecteurs) ne comptent pas dans cette limite. |
+| Temps de lecture minimum | Durée pendant laquelle un texte est entièrement visible et immobile : **max(2,5 s ; 0,5 s par mot + 1 s)**. Une étiquette d'icône reste au moins **2 s**. |
+| Ordre d'apparition | Aucun nouveau texte n'apparaît pendant qu'on lit le précédent. Seul un titre qui reste affiché toute la scène peut avoir des textes après lui. |
+| Fin de scène | **0,5 s de pause fixe** avant la transition. |
+| Taille du texte | **72 px** minimum pour les messages principaux, **56 px** pour les secondaires, 48 px partout ailleurs. |
+| Petites mentions | Aucune, sauf « Ordres de grandeur. » (une ligne, 48 px) dans la scène des outils. |
 
-### Ajouts de la version 16:9
+Les durées ne sont pas fixées à la main. Chaque temps de lecture est **calculé à partir du nombre de mots** du
+texte de `config.json`. Une traduction plus longue rallonge donc la scène automatiquement.
 
-**« Ce qui abîme vos oreilles »** (12,7 s, entre les seuils et les conséquences) :
-- La jauge verticale de dB(A) occupe la gauche, avec la zone rouge au-dessus de 85. Huit cartes hexagonales s'affichent à côté, en grille de 4 × 2, environ une toutes les 0,8 s.
-- Les outils sans valeur sourcée viennent d'abord, marqués « Bruyant ». Les autres suivent du moins bruyant au plus bruyant, et chacun monte à son niveau sur la jauge.
-- Au-dessus de 85 dB(A), la carte reçoit un liseré rouge et le mini panneau bleu d'obligation. Le pistolet de scellement porte en plus le picto d'impulsion et la mention « Coup sec ».
-- « Pas seulement les gros engins. » remplace le titre pendant l'arrivée des outils à main.
-- Viennent ensuite « Le niveau ET le temps passé comptent. » et la carte de coactivité : l'ouvrier au marteau-piqueur est protégé, son voisin subit le bruit. Texte : « Le bruit du voisin compte aussi. »
-- Mention fixe en bas de la scène : « Ordres de grandeur. Varie selon l'outil, le matériau et le lieu. »
+## Déroulé et temps de chaque scène (16:9)
 
-**Générique du logo** (4,1 s, après le message final) :
-- Des ondes se resserrent et tracent l'hexagone du logo, pointe en haut, en bleu. Le bas passe ensuite au rouge, avec l'espace blanc comme dans le logo.
-- L'hexagone se pose sur celui du logo Dumez, qui apparaît en fondu avec un glissement de 24 px. Le logo n'est ni recoloré ni déformé, et reste plafonné à 1,3 fois sa taille avec sa zone de protection.
-- « Protégez votre audition. », puis l'image finale reste 1 s à l'écran.
+Les temps sont affichés à la fin du rendu. Chaque durée inclut la transition vers la scène suivante.
 
-Temps de chaque scène en 16:9, affiché aussi à la fin du rendu (transition comprise) :
+| # | Scène | Début | Durée | À l'écran |
+|---|---|---|---|---|
+| 0 | Ouverture | 0,0 s | 4,6 s | Logo Dumez sur une carte blanche, puis le titre « Casque anti-bruit sur chantier » en fondu : aucune ligne coupée à la première image. |
+| 1 | Accroche | 4,6 s | 9,9 s | Chantier stylisé, ondes sonores, l'image tremble. « Le bruit ne fait pas mal… » puis, sur un bandeau rouge, « …tant qu'on ne l'a pas perdu. » Les ondes et le tremblement s'arrêtent avant la pause. |
+| 2 | Seuils | 14,5 s | 15,2 s | Jauge à trois paliers, lus l'un après l'autre : **80 dB(A)** protections mises à disposition, **85 dB(A)** port obligatoire (panneau bleu), **87 dB(A)** limite à ne jamais dépasser, protection comprise (bandeau rouge). |
+| 2b | Outils | 29,7 s | 29,2 s | « Pas seulement les gros engins. » et « Ordres de grandeur. » dès le début. La première carte arrive à 0,26 s, puis une carte toutes les 2,5 s, **par bruit croissant** : disqueuse / meuleuse, brise-roche hydraulique, perforateur / burineur, scie à sol, marteau-piqueur, pistolet de scellement (impulsionnel, « Coup sec »). Les étiquettes restent jusqu'à la fin. La grille complète reste 4 s. Plus de jauge ni de petites icônes autour : au-dessus de 85 dB(A), la carte porte un liseré rouge et le mini panneau d'obligation. Puis « Le niveau ET le temps passé comptent. » et « Le bruit du voisin compte aussi. » |
+| 3a | Oreilles | 59,0 s | 12,2 s | Le titre « Pour vos oreilles » et le premier effet apparaissent tout de suite, sans écran vide. La courbe d'audition descend. Viennent quatre effets d'au moins 2,5 s chacun : acouphènes, fatigue auditive, hyperacousie, perte définitive (en rouge sur un cartouche blanc). |
+| 3b | Corps et sécurité | 71,2 s | 26,2 s | Stress, fatigue, sommeil : 2,5 s chacun, puis les trois ensemble 3 s. L'engin recule et l'ouvrier ne l'entend pas : « On n'entend plus l'alarme, l'engin qui recule, son collègue. » Puis la scène organisée : « Protection adaptée + signaux visibles » (tenu 4 s), gyrophare, signaleur. **L'ouvrier se retourne vers l'engin, repart et entre dans la « Zone sûre »** (zone en pointillés, nommée au sol), puis fait face à l'engin. Un hexagone rouge couvre l'écran en 0,3 s, et « Une oreille abîmée ne se répare pas. » est là dès que le rouge l'est. Le texte reste 4,5 s, puis l'hexagone de transition prend le relais, sans écran vide. |
+| 4 | Bons réflexes | 97,4 s | 28,6 s | Cinq cartes, dont les deux premières durent au moins 4,5 s : choisir son protecteur (les quatre types arrivent ensemble), bien l'ajuster (2 lignes courtes), le porter tout le temps, le garder propre, respecter les zones et les pauses. Sur la carte 5, le badge « pause » est à gauche de l'image et ne couvre plus le texte. Les points de pagination sortent en fondu avec la dernière carte. |
+| 5 | Message final | 125,9 s | 9,4 s | Composition centrée dans les deux sens : grand panneau (440 px), textes en 100 px, logo Dumez en dessous (1,3x au maximum). « Dès 85 dB(A) : protection obligatoire. » puis « Votre audition ne se remplace pas. » |
+| 6 | Générique | 135,4 s | 6,7 s | Des ondes convergent et tracent l'hexagone du logo à **sa taille et sa position exactes**, mesurées dans le fichier du logo. Viennent ensuite le bleu plein `#004489`, puis le bas rouge plein `#FA000C`. Les couleurs sont révélées par découpe, sans transparence ni mélange, donc jamais violettes. Le logo apparaît dessus sans saut. « Protégez votre audition. », puis 1 s de maintien. |
+| | **Total** | | **142,1 s** | |
 
-| Scène | Début | Durée |
-|---|---|---|
-| Ouverture (logo) | 0,0 s | 2,8 s |
-| Accroche | 2,8 s | 4,8 s |
-| Seuils | 7,5 s | 10,4 s |
-| Ce qui abîme vos oreilles | 17,9 s | 12,7 s |
-| Conséquences : oreille | 30,6 s | 7,2 s |
-| Corps et sécurité | 37,8 s | 13,2 s |
-| Bons réflexes | 50,9 s | 14,5 s |
-| Message final | 65,4 s | 5,4 s |
-| Générique (logo) | 70,8 s | 4,1 s |
-| **Total** | | **74,9 s** |
+**Transitions** : la même partout. Un seul hexagone bleu, pointe en haut, grandit depuis le centre jusqu'à couvrir
+l'écran, puis une ouverture hexagonale révèle la scène suivante (0,8 s). Les textes apparaissent par un fondu
+simple : plus aucune ligne coupée.
+
+**Pourquoi 142 s et pas 100 à 115 s.** Les minimums demandés et les règles de lecture fixent à eux seuls la
+plus grande partie de la durée :
+- outils : 6 cartes × 2,5 s + 4 s de grille, soit 19 s, plus les deux messages qui suivent (9 s) ;
+- corps et sécurité : 3 × 2,5 s + 3 s, puis 5,5 s, 4 s et 4,5 s de lecture ;
+- réflexes : cinq cartes de 4,5 à 6 s.
+
+Comme demandé, les durées suivent les règles et non l'inverse. Pour descendre vers 110–115 s, il faut retirer du
+texte. Ces coupes sont à valider :
+
+| Coupe possible | Gain |
+|---|---|
+| « Le niveau ET le temps passé comptent. » et « Le bruit du voisin compte aussi. » (fin de la scène des outils) | ≈ 10 s |
+| Message final, puisque le générique le suit avec « Protégez votre audition. » | ≈ 9 s |
+| Une seule phrase d'accroche | ≈ 4,5 s |
+| Ouverture avec le logo seul, sans titre | ≈ 3 s |
+| Oreilles : 3 effets au lieu de 4 | ≈ 3 s |
+| Carte 5 réduite à « Respectez les zones signalées » | ≈ 2 s |
+
+## Contrôles automatiques
+
+Les deux contrôles viennent du dossier partagé [`../outils-video/`](../outils-video/) : `lisibilite.js` est
+injecté dans la page, et `controles.mjs` lance les analyses. La vidéo sur les poussières utilise les mêmes.
+
+```bash
+npm run lisibilite   # tableau de lisibilité + temps des scènes + images de lecture + planches de contact
+npm run controle     # contrôle d'anomalies (page + MP4 existant)
+npm run render -- --format horizontal   # les deux, puis le MP4 ; s'arrête si un texte ne respecte pas les règles
+```
+
+**Lisibilité.** Toute la timeline est parcourue à 30 i/s. Pour chaque texte, ou groupe lu ensemble (valeur et
+texte d'un seuil, titre et lignes d'une carte, nom et niveau d'un outil), le contrôle mesure :
+- le nombre de mots ;
+- le temps pendant lequel le texte est entièrement visible et immobile ;
+- la durée minimale requise.
+
+Il signale un texte trop court, un texte qui apparaît pendant la lecture d'un autre, et plus de 3 blocs à la fois.
+Il produit aussi :
+- une image au milieu de chaque lecture, dans `frames/lecture/` ;
+- des planches de contact 4×4, dans `frames/planches/`.
+
+En cas de problème, le rendu s'arrête. L'option `--no-strict` permet de rendre quand même.
+
+**Anomalies.** Le contrôle vérifie dans la page :
+- les textes recouverts par un autre élément ;
+- les lignes tronquées ;
+- les textes hors cadre.
+
+Il vérifie dans le MP4 :
+- les écrans presque vides plus de 0,6 s ;
+- les coupures sèches ;
+- les mélanges violets (rouge et bleu mêlés sur une zone) ;
+- les fins de scène qui bougent pendant la pause de 0,5 s.
+
+Le rapport est enregistré dans `frames/controle/rapport.json`. L'écran presque vide du générique est **attendu** :
+l'hexagone s'y dessine à la taille réelle de celui du logo. Il est signalé à part et n'est pas compté comme anomalie.
+
+Résultat actuel : **lisibilité OK pour les 40 textes, aucune anomalie.** Avant la reprise, on comptait :
+- **71 problèmes de lisibilité**, dont 21 blocs visibles à la fois dans la scène des outils ;
+- **72 anomalies** : 60 lignes tronquées, 5 textes recouverts, 1 texte hors cadre, 4 mélanges violets (dont le bas
+  rouge du générique) et 2 fins de scène qui bougent.
+
+## Textes retirés de la vidéo 16:9
+
+Ces textes ont été retirés pour alléger la lecture. Ils restent dans `config.json` pour la vidéo verticale et
+l'affiche. **À reprendre à l'oral pendant la causerie et sur l'affiche** :
+
+- Ouverture : le sous-titre « Les risques à ne pas prendre ».
+- Accroche : les étiquettes « Bruyant » et « Très bruyant » sur le dessin.
+- Seuils :
+  - le titre « Les seuils de bruit » ;
+  - « Valeurs sur 8 h de travail » ;
+  - « En crête : 135 / 137 / 140 dB(C) ».
+- Outils :
+  - le titre « Ce qui abîme vos oreilles », remplacé par « Pas seulement les gros engins. » ;
+  - la fin de la mention « Varie selon l'outil, le matériau et le lieu. » ;
+  - la jauge et ses repères ;
+  - les cartes **compresseur / groupe électrogène** et **aiguille vibrante**, qui n'ont pas de valeur sourcée.
+- Oreilles : la légende de la courbe, « Votre audition ».
+- Corps et sécurité :
+  - le titre « La bonne organisation » ;
+  - « = tout le monde se voit, tout le monde se comprend ».
+- Réflexes :
+  - carte 2 : « Rien entre coquille et oreille » ;
+  - carte 3 : « pas seulement par moments ».
 
 ## Règles de contenu
 
@@ -93,13 +173,13 @@ La palette a été extraite du logo `assets/logo_dumez.png`, et **aucune autre c
 Le rouge n'accueille que du texte **très gros et gras** : au moins 64 px en vertical, alors que le seuil « grand texte » est de 3:1. Le rouge sur bleu (2,3:1) n'est jamais utilisé pour du texte.
 
 **Typographie** : Inter, embarquée dans `assets/fonts/` (licence OFL). Elle couvre aussi les accents roumains, polonais, etc.
-- Tout texte fait **au moins 64 px en vertical** et 48 px en horizontal.
+- Tout texte fait **au moins 64 px en vertical**. En 16:9, il fait au moins **72 px pour un message principal**, 56 px pour un texte secondaire et 48 px partout ailleurs.
 - Une ligne contient **6 mots au maximum**.
-- Le rendu vérifie ces deux règles et le signale si un texte les enfreint.
+- Le rendu vérifie ces règles et le signale si un texte les enfreint.
 
 ## Modifier les textes ou traduire
 
-Tous les textes sont dans [`config.json`](config.json), sous `textes.fr`. Un `\n` force un retour à la ligne. Les lignes trop longues sont réduites automatiquement, sans descendre sous le minimum.
+Tous les textes sont dans [`config.json`](config.json), sous `textes.fr`. La vidéo 16:9 lit d'abord `textes.fr.h`, puis le reste de `textes.fr` pour les clés absentes. Un `\n` force un retour à la ligne. Les lignes trop longues sont réduites automatiquement, sans descendre sous le minimum.
 
 Pour **ajouter une langue** (anglais, roumain, portugais…) :
 
@@ -157,8 +237,8 @@ Les cartes sont définies dans `textes.fr.outils`, avec leur nom et leurs `sourc
 | Scie à sol | ≈ 106 dB(A) | Exercice pédagogique de cours | faible |
 | Disqueuse, meuleuse | ≈ 94 à 100 dB(A) (disqueuse 94, meuleuse 100) | Exercice pédagogique de cours | faible |
 | Brise-roche hydraulique sur pelle | ≈ 94 à 100 dB(A) : 94 en moyenne sur 1 h, 100 derrière la pelle en burinage | INRS, fiche « Techniques de réduction du bruit » n°104 | haute |
-| Compresseur, groupe électrogène | « Bruyant » (aucune valeur sourcée) | — | — |
-| Aiguille vibrante | « Bruyant » (aucune valeur sourcée) | — | — |
+| Compresseur, groupe électrogène | « Bruyant » (aucune valeur sourcée ; vertical et affiche seulement) | — | — |
+| Aiguille vibrante | « Bruyant » (aucune valeur sourcée ; vertical et affiche seulement) | — | — |
 
 Trois valeurs sur sept ont une fiabilité « faible » (exercice de cours). Remplacez-les par des mesures ou des sources publiées dès que possible, ou passez `show_db_values` à `false` en attendant.
 
@@ -200,6 +280,8 @@ npm run render -- --format vertical     # vidéo 9:16 seule
 npm run render -- --format affiche      # affiche A3 seule
 npm run render                          # tous les formats
 npm run stills -- 12,30.5 --format horizontal --scenes   # images clés + temps de chaque scène
+npm run lisibilite                      # contrôle de lisibilité 16:9 (voir « Contrôles automatiques »)
+npm run controle                        # contrôle d'anomalies 16:9
 ```
 
 Le rendu est **déterministe**, sans enregistrement d'écran :
@@ -216,11 +298,13 @@ Les images temporaires vont dans `frames/`, ignoré par git. Comptez environ 5 m
 | `config.json` | Palette, logos, crédit, sources de bruit et **tous les textes**. |
 | `src/index.html` | Page unique : `?format=vertical`, `horizontal` ou `affiche`, et `&lang=`. |
 | `src/styles.css` | Variables de couleur (remplies depuis `config.json`), échelle typographique par format. |
-| `src/js/lib.js` | Textes masqués multi-lignes, ajustement automatique, motif hexagonal, transitions. |
+| `src/js/lib.js` | Textes multi-lignes, ajustement automatique, temps de lecture (`need`, `read`, `PAUSE`), motif hexagonal, transitions. |
 | `src/js/pictos.js` | Panneau d'obligation (style ISO 7010), panneau de danger, pictogrammes SVG. |
-| `src/js/scenes.js` | Les six scènes et leur animation. |
+| `src/js/scenes.js` | Les scènes de la vidéo verticale (et les dessins partagés : ouvrier, engin, ondes). |
+| `src/js/scenes-h.js` | Les scènes de la vidéo 16:9, construites selon les règles de lecture. |
 | `src/js/poster.js` | Mise en page de l'affiche A3. |
 | `src/js/main.js` | Chargement, timeline unique `window.tl`, contrôles des textes, aperçu. |
-| `scripts/render.mjs` | Rendu image par image, puis MP4 et affiche. |
+| `scripts/render.mjs` | Rendu image par image, puis MP4 et affiche ; contrôles de lisibilité et d'anomalies. |
+| `../outils-video/` | Contrôles partagés avec la vidéo sur les poussières (`lisibilite.js`, `controles.mjs`). |
 | `scripts/dev.mjs` | Serveur de prévisualisation. |
 | `output/` | Fichiers finaux (versionnés). |
