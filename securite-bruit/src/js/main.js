@@ -17,8 +17,33 @@
   /** logo size: native pixels × at most `agrandissement_max`, never distorted */
   function logoSize(img, maxScale, pxRatio, maxW) {
     const s = Math.min(maxScale / pxRatio, maxW / img.naturalWidth);
-    return { src: img.src, w: Math.round(img.naturalWidth * s), h: Math.round(img.naturalHeight * s) };
+    return { src: img.src, w: Math.round(img.naturalWidth * s), h: Math.round(img.naturalHeight * s), scale: s, hex: logoHex(img) };
   }
+  /**
+   * Finds the hexagon of the logo in the image file itself (so a new HD file keeps working): the first blob of
+   * opaque columns from the left, its top and bottom, and the transparent gap between the blue and the red parts.
+   * Values are in the file's pixels. Falls back to the proportions measured on the Dumez logo.
+   */
+  function logoHex(img) {
+    const W = img.naturalWidth, H = img.naturalHeight;
+    const fb = { x0: 0, x1: W * 0.254, y0: 0, y1: H, gap0: H * 0.617, gap1: H * 0.725, measured: false };
+    try {
+      const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+      const cx = cv.getContext("2d"); cx.drawImage(img, 0, 0);
+      const a = cx.getImageData(0, 0, W, H).data, op = (x, y) => a[(y * W + x) * 4 + 3] > 128;
+      const colHas = (x) => { for (let y = 0; y < H; y++) if (op(x, y)) return true; return false; };
+      let x0 = 0; while (x0 < W && !colHas(x0)) x0++;
+      let x1 = x0; while (x1 + 1 < W && colHas(x1 + 1)) x1++;
+      const rowHas = (y) => { for (let x = x0; x <= x1; x++) if (op(x, y)) return true; return false; };
+      let y0 = 0; while (y0 < H && !rowHas(y0)) y0++;
+      let y1 = H - 1; while (y1 > y0 && !rowHas(y1)) y1--;
+      let gap0 = null, gap1 = null;
+      for (let y = y0; y <= y1; y++) if (!rowHas(y)) { if (gap0 == null) gap0 = y; gap1 = y + 1; }
+      if (x1 - x0 < 10 || y1 - y0 < 10) return fb;
+      return { x0, x1: x1 + 1, y0, y1: y1 + 1, gap0: gap0 ?? (y0 + y1) * 0.6, gap1: gap1 ?? (y0 + y1) * 0.7, measured: true };
+    } catch (e) { return fb; }
+  }
+
 
   async function boot() {
     const cfg = await (await fetch("../config.json", { cache: "no-store" })).json();
@@ -54,21 +79,19 @@
 
     const tl = gsap.timeline({ paused: true });
     window.tl = tl; C.tl = tl;
+    L.RULES = FORMAT === "horizontal";
 
     if (FORMAT === "affiche") {
       window.POSTER(C);
     } else {
-      const S = window.SCENES;
-      // 16:9 adds the tools scene (after the thresholds) and the closing logo animation
+      // 16:9 follows the reading rules (scenes-h.js, single-hexagon transition); vertical keeps its scenes
+      const S = V ? window.SCENES : window.SCENES_H;
       const order = V ? [S.S0, S.S1, S.S2, S.S3a, S.S3b, S.S4, S.S5]
         : [S.S0, S.S1, S.S2, S.S2b, S.S3a, S.S3b, S.S4, S.S5, S.S6];
-      const wipe = L.buildHexWipe(stage, W, H);
+      const wipe = V ? L.buildHexWipe(stage, W, H) : L.buildHexWipe1(stage, W, H);
       let t = 0, prev = null;
       order.forEach((build, i) => {
-        // white to white (final message → closing logo): a simple fade instead of the honeycomb wipe
-        const fade = build === S.S6;
-        if (fade) tl.to(prev, { autoAlpha: 0, duration: 0.4, ease: "power1.in" }, t);
-        const start = i === 0 ? 0 : fade ? t + 0.4 : wipe(tl, t, () => {});
+        const start = i === 0 ? 0 : wipe(tl, t, () => {});
         const before = stage.querySelectorAll(".scene").length;
         t = build(C, start);
         window.__marks = (window.__marks || []).concat([[build.name, +start.toFixed(2), +t.toFixed(2)]]);
@@ -88,7 +111,8 @@
   function checkTexts(min) {
     document.querySelectorAll(".tx").forEach((n) => {
       const fs = parseFloat(getComputedStyle(n).fontSize);
-      if (FORMAT !== "affiche" && fs < min - 0.5) L.report("taille", n, `${fs} px < ${min} px`);
+      const floor = L.RULES ? Math.max(min, +(n.dataset.min || 0)) : min;
+      if (FORMAT !== "affiche" && fs < floor - 0.5) L.report("taille", n, `${fs} px < ${floor} px`);
       const lines = n.classList.contains("wrap") ? [] : [...n.querySelectorAll(".ln")].map((l) => l.textContent);
       lines.forEach((l) => {
         const words = l.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;

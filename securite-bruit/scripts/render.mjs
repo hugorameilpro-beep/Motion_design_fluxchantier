@@ -1,4 +1,4 @@
-// `npm run render [-- --format horizontal] [--lang fr] [--stills 3,9.5]`  (formats: vertical, horizontal, affiche; comma list allowed)
+// `npm run render [-- --format horizontal] [--lang fr] [--no-strict] [--stills 3,9.5 [--scenes] [--lisibilite [--images-lecture]] [--controle]]`  (formats: vertical, horizontal, affiche; comma list allowed)
 // Deterministic render: seek the GSAP timeline frame by frame at 30 fps, screenshot each frame as PNG,
 // then assemble with ffmpeg (H.264, no audio). The A3 poster is a high-resolution screenshot of its own layout.
 import { chromium } from "playwright";
@@ -6,6 +6,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { serve, ROOT } from "./serve.mjs";
+import { lisibilite, imagesLecture, planches, controle } from "../../outils-video/controles.mjs";   // shared with securite-poussieres
 
 const FPS = 30;
 const A3 = { w: 3508, h: 4961, css: 1240 };            // 297 × 420 mm at 300 dpi
@@ -23,6 +24,18 @@ if (bad.length) { console.error(`Format inconnu : ${bad.join(", ")} (formats pos
 const todo = kinds.length ? [...new Set(kinds)] : FORMATS;
 const LABELS = { S0: "Ouverture (logo)", S1: "Accroche", S2: "Seuils", S2b: "Ce qui abîme vos oreilles", S3a: "Conséquences : oreille",
   S3b: "Corps et sécurité", S4: "Bons réflexes", S5: "Message final", S6: "Générique (logo)" };
+const LIS = { S0: "Ouverture", S1: "Accroche", S2: "Seuils", S2b: "Outils", S3a: "Oreilles", S3b: "Corps", S4: "Réflexes", S5: "Final", S6: "Générique" };
+// anomalies accepted on purpose (shown as "attendu" in the report, not counted)
+const ATTENDU = [{ kind: "écran presque vide", scene: "S6", why: "l'hexagone se dessine à la taille réelle de celui du logo" }];
+const mp4Of = (format) => path.join(ROOT, "output", `securite_bruit_${format}${suffix}.mp4`);
+async function readability(page) {
+  const r = await lisibilite(page, { labels: LIS });
+  if (args.includes("--images-lecture")) {       // one frame in the middle of the reading time of each text + contact sheets
+    await imagesLecture(page, r.rows, path.join(ROOT, "frames", "lecture"), shoot);
+    planches(path.join(ROOT, "frames", "lecture"), path.join(ROOT, "frames", "planches"));
+  }
+  return r.bad;
+}
 /** time of each scene: from its start to the start of the next one (transition included) */
 function printScenes(info) {
   const sc = info.scenes || [];
@@ -92,9 +105,11 @@ for (const format of todo) {
     const { page, info } = await openPage(format, 1, vp);
     printReport(info);
     for (const t of stills) await shoot(page, t, path.join(dir, `${format}_${t.toFixed(2)}.png`));
-    await page.close();
     console.log(`${format} : ${stills.length} image(s) dans frames/stills/ (durée ${info.duration.toFixed(2)} s)`);
     if (args.includes("--scenes")) printScenes(info);
+    if (args.includes("--lisibilite")) await readability(page);
+    if (args.includes("--controle")) await controle(page, { mp4: mp4Of(format), info, labels: LIS, attendu: ATTENDU, outDir: path.join(ROOT, "frames", "controle") });
+    await page.close();
     continue;
   }
   const dir = path.join(ROOT, "frames", format);
@@ -102,6 +117,14 @@ for (const format of todo) {
   fs.mkdirSync(dir, { recursive: true });
   const probe = await openPage(format, 1, vp);
   printReport(probe.info);
+  if (format === "horizontal") {                  // reading rules: the 16:9 video follows them
+    printScenes(probe.info);
+    const bad = await readability(probe.page);
+    if (bad && !args.includes("--no-strict")) {
+      console.error("\nRendu interrompu : corrigez les textes signalés (ou relancez avec --no-strict pour rendre quand même).");
+      process.exit(2);
+    }
+  }
   const total = Math.ceil(probe.info.duration * FPS);
   await probe.page.close();
   console.log(`${format} : ${probe.info.duration.toFixed(2)} s → ${total} images`);
@@ -121,6 +144,11 @@ for (const format of todo) {
     "-pix_fmt", "yuv420p", "-profile:v", "high", "-movflags", "+faststart", "-an", out]);
   console.log(`  → output/${path.basename(out)} (${(fs.statSync(out).size / 1e6).toFixed(2)} Mo)`);
   printScenes(probe.info);
+  if (format === "horizontal") {                  // anomalies of the new video (page + pixels)
+    const { page } = await openPage(format, 1, vp);
+    await controle(page, { mp4: out, info: probe.info, labels: LIS, attendu: ATTENDU, outDir: path.join(ROOT, "frames", "controle") });
+    await page.close();
+  }
 }
 await browser.close();
 server.close();

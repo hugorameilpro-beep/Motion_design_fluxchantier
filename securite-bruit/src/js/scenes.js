@@ -709,5 +709,5 @@
     return t + 4.1;
   }
 
-  window.SCENES = { S0, S1, S2, S2b, S3a, S3b, S4, S5, S6, person, machine };
+  window.SCENES = { S0, S1, S2, S2b, S3a, S3b, S4, S5, S6, person, machine, rings, beeps, toolLevel };
 })();

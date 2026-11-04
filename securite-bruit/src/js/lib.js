@@ -44,6 +44,11 @@
     }).join("");
     if (opts.maxW) n.dataset.maxw = opts.maxW;
     if (opts.min) n.dataset.min = opts.min;
+    // 16:9 reading rules (L.RULES): size floors 72 px for main messages, 56 px secondary, 48 px anywhere
+    else if (L.RULES) n.dataset.min = /\bt-(h1|big)\b/.test(cls) ? 72 : /\bt-(body|small)\b/.test(cls) ? 56 : 48;
+    if (opts.label) n.dataset.kind = "label";        // icon label: shown at least 2 s
+    if (opts.title) n.dataset.kind = "title";        // heading kept for the whole scene
+    if (opts.group) n.dataset.group = opts.group;    // texts read together as one block
     if (opts.style) Object.assign(n.style, opts.style);
     return n;
   }
@@ -147,11 +152,59 @@
     };
   }
 
+  /* ---------- reading rules (16:9) ---------- */
+  const plain = (n) => { const ls = [...n.querySelectorAll(".ln")]; return (ls.length ? ls.map((l) => l.textContent).join(" ") : n.textContent).replace(/\s+/g, " ").trim(); };
+  const words = (str) => String(str || "").split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+  /** minimum time a text stays fully visible and still: max(2.5 s ; 0.5 s per word + 1 s); icon labels 2 s */
+  const need = (str, label) => (label ? 2 : Math.max(2.5, 0.5 * words(str) + 1));
+  const PAUSE = 0.5;   // fixed pause at the end of every scene
+  /** plain fade-in of a block (no line is ever seen cut by its mask); returns the time it is fully visible */
+  function show(tl, n, t, o = {}) {
+    const ls = n.querySelectorAll(".ln"), d = o.d || 0.3, st = o.stagger ?? 0.06;
+    tl.fromTo(ls, { opacity: 0 }, { opacity: 1, duration: d, ease: "power1.out", stagger: st }, t);
+    return t + d + (ls.length - 1) * st;
+  }
+  function hide(tl, n, t, d = 0.3) { tl.to(n.querySelectorAll(".ln"), { opacity: 0, duration: d, ease: "power1.in" }, t); }
+  /** show a block and keep it for its reading time (at least o.hold); returns the end of the reading */
+  function read(tl, n, t, o = {}) { const full = show(tl, n, t, o); return full + Math.max(o.hold || 0, need(o.text != null ? o.text : plain(n), n.dataset.kind === "label")); }
+
+  /**
+   * 16:9 transition: one blue hexagon (point up) grows from the centre until it covers the whole frame, the scenes
+   * swap underneath, then a hexagonal opening reveals the next scene. Same interface as buildHexWipe.
+   */
+  function buildHexWipe1(stage, W, H) {
+    const layer = el("div", "", stage); layer.id = "hexwipe";
+    const s = svg("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}` }, layer);
+    const R = (Math.hypot(W, H) / 2) / (Math.sqrt(3) / 2) * 1.06;
+    let n = 0;
+    return function wipe(tl, t, swap) {
+      const IN = 0.36, OUT = 0.42, k = n++;
+      s.insertAdjacentHTML("beforeend", `<g class="wc${k}" transform="translate(${W / 2} ${H / 2})"><g class="ws"><path d="${hexD(0, 0, R, 0.04)}" fill="var(--bleu)"/></g></g>
+        <mask id="wm${k}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fff"/>
+          <g transform="translate(${W / 2} ${H / 2})"><g class="wh"><path d="${hexD(0, 0, R, 0.04)}" fill="#000"/></g></g></mask>
+        <rect class="wr${k}" width="${W}" height="${H}" fill="var(--bleu)" mask="url(#wm${k})"/>`);
+      const cover = s.querySelector(`.wc${k}`), grow = cover.querySelector(".ws");
+      const rest = s.querySelector(`.wr${k}`), hole = s.querySelector(`#wm${k} .wh`);
+      gsap.set([cover, rest], { autoAlpha: 0 });
+      gsap.set([grow, hole], { scale: 0, transformOrigin: "50% 50%" });
+      tl.set(cover, { autoAlpha: 1 }, t);
+      tl.fromTo(grow, { scale: 0 }, { scale: 1, duration: IN, ease: "power2.in" }, t);
+      const mid = t + IN;
+      tl.set(cover, { autoAlpha: 0 }, mid); tl.set(rest, { autoAlpha: 1 }, mid);
+      tl.fromTo(hole, { scale: 0 }, { scale: 1, duration: OUT, ease: "power2.out" }, mid + 0.02);
+      tl.set(rest, { autoAlpha: 0 }, mid + 0.02 + OUT);
+      swap(mid);
+      return mid;
+    };
+  }
+
   /** gentle infinite-looking pulse, built from a finite repeat so the timeline stays seekable */
   function pulse(tl, n, t, until, o = {}) {
     const d = o.d || 0.5, reps = Math.max(0, Math.floor((until - t) / (2 * d)) - 1);
     tl.fromTo(n, { scale: 1 }, { scale: o.s || 1.06, duration: d, ease: "sine.inOut", yoyo: true, repeat: reps * 2 + 1, transformOrigin: o.origin || "50% 50%" }, t);
   }
 
-  window.L = { el, svg, box, esc, text, fitAll, report, hexPoints, roundedPath, hexD, hexBadge, linesIn, linesOut, pop, fadeUp, buildHexWipe, pulse, EASE, EASE_IO };
+  const L = { el, svg, box, esc, text, fitAll, report, hexPoints, roundedPath, hexD, hexBadge, linesIn, linesOut, pop, fadeUp, buildHexWipe, pulse, EASE, EASE_IO,
+    plain, words, need, show, hide, read, PAUSE, buildHexWipe1, RULES: false };
+  window.L = L;
 })();

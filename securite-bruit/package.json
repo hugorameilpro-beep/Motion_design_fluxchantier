@@ -10,7 +10,9 @@
     "render:horizontal": "node scripts/render.mjs horizontal",
     "render:affiche": "node scripts/render.mjs affiche",
     "stills": "node scripts/render.mjs --stills",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "lisibilite": "node scripts/render.mjs --format horizontal --stills 0 --scenes --lisibilite --images-lecture",
+    "controle": "node scripts/render.mjs --format horizontal --stills 0 --controle"
   },
   "dependencies": {
     "gsap": "^3.15.0"
