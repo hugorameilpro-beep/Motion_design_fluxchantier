@@ -10,6 +10,7 @@ Scénario, script, principes de mouvement et sound design : voir [`SCENARIO.md`]
 > **Autre vidéo du dépôt :** [VigiChantier](vigichantier/README.md) (même palette Synapsis), dans le dossier `vigichantier/`.
 >
 > **Tutoriels d'installation PWA (Android et iPhone, format vertical) :** voir [`tuto-pwa/`](tuto-pwa/README.md).
+> La même chose pour FluxChantier : [`tuto-pwa-fluxchantier/`](tuto-pwa-fluxchantier/README.md).
 >
 > **Sensibilisation sécurité « Casque anti-bruit sur chantier » (Dumez, vertical + horizontal + affiche A3) :** voir [`securite-bruit/`](securite-bruit/README.md).
 >

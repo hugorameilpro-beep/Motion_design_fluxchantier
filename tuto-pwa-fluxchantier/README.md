@@ -1,14 +1,27 @@
-# Tutoriels « Installer l'application » (PWA) : Android et iPhone
+# Tutoriels « Installer l'application » (PWA) : FluxChantier, Android et iPhone
 
 Deux vidéos verticales en motion design, aux couleurs de **Synapsis**. Elles montrent pas à pas à un client
-non technique comment installer une application web (PWA) sur son téléphone.
+non technique comment installer l'application web (PWA) **FluxChantier** sur son téléphone.
+
+Ce dossier est une **déclinaison de [`../tuto-pwa/`](../tuto-pwa/README.md)**, qui reste
+inchangé. Les scènes, l'animation, la palette, le rythme, les textes des étapes, l'ouverture et la fin sont
+identiques. Seuls changent le nom de l'app, l'adresse affichée et l'icône. Les durées sont les mêmes au
+centième de seconde.
+
+> **À confirmer :**
+> - **Adresse (`url_app`)** : `fluxchantier.web.app` est une **valeur provisoire**. C'est l'adresse publique
+>   utilisée par le motion design FluxChantier du dépôt. Corrigez-la dans `config.json` si l'application
+>   installable est servie ailleurs.
+> - **Logo (`assets/logo_fluxchantier.png`)** : aucun fichier n'a été fourni. Celui-ci est le logo camion du
+>   site FluxChantier, repris de `../src/img/truck-synapsis.png` (720×301 px). Remplacez le fichier par le
+>   logo officiel, sous le même nom, puis relancez `npm run render`.
 
 | Vidéo | Durée | Fichiers |
 |---|---|---|
-| Android / Chrome | 27,6 s | [`output/tuto_android_chrome.mp4`](output/tuto_android_chrome.mp4) · [GIF](output/tuto_android_chrome.gif) · [vignette](output/tuto_android_chrome.png) |
-| iPhone / Safari | 29,3 s | [`output/tuto_iphone_safari.mp4`](output/tuto_iphone_safari.mp4) · [GIF](output/tuto_iphone_safari.gif) · [vignette](output/tuto_iphone_safari.png) |
+| Android / Chrome | 27,6 s | [`output/tuto_android_chrome.mp4`](output/tuto_android_chrome.mp4) · [vignette](output/tuto_android_chrome.png) |
+| iPhone / Safari | 29,3 s | [`output/tuto_iphone_safari.mp4`](output/tuto_iphone_safari.mp4) · [vignette](output/tuto_iphone_safari.png) |
 
-Format : 1080×1920, 30 i/s, H.264, sans son. Les GIF font 320 px de large à 10 i/s, environ 2,5 Mo.
+Format : 1080×1920, 30 i/s, H.264, sans son. Pas de GIF, sauf si vous ajoutez l'option `--gif` au rendu.
 
 <p>
   <img src="output/tuto_android_chrome.png" width="270" alt="Vignette Android">
@@ -63,9 +76,9 @@ Il suffit de modifier [`config.json`](config.json) :
 
 ```json
 {
-  "appName": "VigiChantier",
-  "url": "vigichantier.web.app",
-  "icon": "assets/app-icon.png",
+  "appName": "FluxChantier",
+  "url_app": "fluxchantier.web.app",
+  "icon": "assets/logo_fluxchantier.png",
   "outroText": "Une question ? Contactez-nous",
   "contact": "synapsis-btp.fr"
 }
@@ -73,9 +86,9 @@ Il suffit de modifier [`config.json`](config.json) :
 
 | Clé | Effet |
 |---|---|
-| `appName` | Nom affiché dans l'intro, les fenêtres d'installation et sous l'icône. |
-| `url` | Adresse tapée dans la barre du navigateur. |
-| `icon` | Icône de l'app, carrée, de 512×512 conseillé. Placez le fichier dans `assets/`. |
+| `appName` | Nom affiché dans l'intro (ligne sous le titre), l'en-tête et la carte de la page, les fenêtres d'installation et sous l'icône. |
+| `url_app` | Adresse tapée et affichée dans la barre du navigateur et dans les fenêtres d'installation. |
+| `icon` | Logo de l'app, PNG transparent, dans `assets/`. Il est affiché **entier**, sans déformation ni recoloration, centré sur fond blanc dans l'icône aux coins arrondis, avec une marge de 9 % pour rester lisible en petit. Il apparaît dans l'en-tête de la page, les fenêtres d'installation, l'écran d'accueil et l'écran de lancement. Un logo carré ou large convient. |
 | `outroText` | Texte de fin. La partie après « ? » passe en dégradé, sur une deuxième ligne. |
 | `contact` | Ligne de contact sous le texte de fin. Laissez `""` pour la masquer. |
 
@@ -86,7 +99,7 @@ Ensuite, relancez `npm run render`.
 Il faut **Node.js 18 ou plus récent** et **ffmpeg**.
 
 ```bash
-cd tuto-pwa
+cd tuto-pwa-fluxchantier
 npm install                       # installe GSAP et Playwright
 npx playwright install chromium   # navigateur utilisé pour le rendu (une seule fois)
 ```
@@ -121,8 +134,8 @@ npm run stills -- 3,9.5  # quelques images clés dans frames/stills/ (vérificat
 
 Le rendu prend environ 2 à 3 minutes par vidéo. Il crée, dans `output/` :
 - la vidéo `.mp4` ;
-- un GIF léger `.gif` (option `--no-gif` pour le sauter) ;
-- une vignette `.png`.
+- une vignette `.png` ;
+- un GIF léger `.gif`, seulement avec l'option `--gif` (`npm run render -- --gif`).
 
 Le rendu est **déterministe**. Playwright ouvre la page en 1080×1920, avance la timeline GSAP image par
 image (30 i/s) et enregistre chaque image en PNG. ffmpeg assemble ensuite ces images. Ce n'est pas une
@@ -142,9 +155,9 @@ machine puissante, utilisez la variable `WORKERS` (4 par défaut) : `WORKERS=8 n
 | `src/js/android.js` | Écrans Chrome et déroulé Android. |
 | `src/js/ios.js` | Écrans Safari et déroulé iPhone. |
 | `src/js/main.js` | Intro, outro, transitions. Construit **une seule timeline GSAP**, en pause, exposée en `window.tl`. |
-| `scripts/render.mjs` | Rendu image par image, puis MP4, GIF et vignette. |
+| `scripts/render.mjs` | Rendu image par image, puis MP4 et vignette (GIF avec `--gif`). |
 | `scripts/dev.mjs` | Serveur de prévisualisation. |
-| `assets/` | Logo, icône de l'app, police Inter. |
+| `assets/` | Logo Synapsis (intro et fin), logo FluxChantier (`logo_fluxchantier.png`), police Inter. |
 | `output/` | Vidéos finales (versionnées). |
 
 ### Modifier un texte ou le rythme
