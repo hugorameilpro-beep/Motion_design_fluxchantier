@@ -1,7 +1,7 @@
 {
-  "appName": "VigiChantier",
-  "url": "vigichantier.web.app",
-  "icon": "assets/app-icon.png",
+  "appName": "FluxChantier",
+  "url_app": "fluxchantier.web.app",
+  "icon": "assets/logo_fluxchantier.png",
   "outroText": "Une question ? Contactez-nous",
   "contact": "synapsis-btp.fr"
 }

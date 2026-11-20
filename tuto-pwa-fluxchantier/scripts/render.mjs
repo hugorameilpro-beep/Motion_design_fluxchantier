@@ -1,6 +1,6 @@
-// `npm run render [android|ios] [--stills 3,9.5] [--no-gif]`
+// `npm run render [android|ios] [--stills 3,9.5] [--gif]`
 // Deterministic render: seek the GSAP timeline frame by frame at 30 fps, screenshot each frame,
-// then assemble with ffmpeg (H.264 MP4, light GIF, PNG thumbnail). No screen recording.
+// then assemble with ffmpeg (H.264 MP4, PNG thumbnail, light GIF only with --gif). No screen recording.
 import { chromium } from "playwright";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -84,7 +84,7 @@ for (const kind of todo) {
     "-pix_fmt", "yuv420p", "-profile:v", "high", "-movflags", "+faststart", "-an", o("mp4")]);
   const ti = Math.round(total * thumb);
   ff(["-i", path.join(dir, `f_${String(ti).padStart(5, "0")}.png`), "-vf", "scale=540:-1", o("png")]);
-  if (!args.includes("--no-gif")) {
+  if (args.includes("--gif")) {                            // no GIF by default
     ff(["-i", o("mp4"), "-vf", "fps=10,scale=320:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle",
       "-loop", "0", o("gif")]);
   }

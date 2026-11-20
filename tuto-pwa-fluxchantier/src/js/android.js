@@ -17,7 +17,7 @@
       <div class="c-bar">
         ${ICON.home(36)}
         <div class="c-addr" id="a-addr"><span id="a-glyph">${ICON.search(30, "#5B6E6A")}</span><span id="a-lock" style="position:absolute;left:22px;top:19px">${ICON.lock(28, "#2E403C")}</span>
-          <span class="ph" id="a-ph">Rechercher ou saisir l'URL</span><span id="a-url" style="position:absolute;left:66px">${esc(cfg.url)}</span></div>
+          <span class="ph" id="a-ph">Rechercher ou saisir l'URL</span><span id="a-url" style="position:absolute;left:66px">${esc(cfg.url_app)}</span></div>
         <div class="c-tabs">1</div>
         <div class="c-dots" id="a-dots"><i></i><i></i><i></i></div>
       </div>
@@ -44,7 +44,7 @@
       <div class="scrim" id="a-scrim"></div>
       <div class="dialog" id="a-dialog">
         <h4>Installer l'application ?</h4>
-        <div class="appline">${icon(96)}<div><b>${esc(cfg.appName)}</b><span>${esc(cfg.url)}</span></div></div>
+        <div class="appline">${icon(96)}<div><b>${esc(cfg.appName)}</b><span>${esc(cfg.url_app)}</span></div></div>
         <div class="acts"><span>Annuler</span><span class="fill" id="a-ok"><span class="press" id="a-press2"></span>Installer</span></div>
       </div>`;
     return chrome;
@@ -89,7 +89,7 @@
     halo(tl, F, t + 0.8, R.addr, t + 1.85, { round: 40, pad: 10 });
     tap(tl, F, t + 1.85, R.addr.x + 230, R.addr.cy + 10);
     tl.to($("a-ph"), { autoAlpha: 0, duration: 0.15 }, t + 2.0);
-    const nChars = cfg.url.length;
+    const nChars = cfg.url_app.length;
     tl.to($("a-url"), { clipPath: "inset(0 0% 0 0)", duration: Math.min(1.4, nChars * 0.06), ease: `steps(${nChars})` }, t + 2.1);
     fingerTo(tl, F, t + 2.3, R.addr.x + 330, R.addr.cy + 260, 0.8);
     const loadAt = t + 2.1 + Math.min(1.4, nChars * 0.06) + 0.25;

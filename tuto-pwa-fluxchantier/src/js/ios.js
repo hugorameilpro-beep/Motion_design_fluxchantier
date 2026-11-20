@@ -29,7 +29,7 @@
       </div>
       <div class="s-bottom">
         <div class="s-addr" id="i-addr"><span class="aa">aA</span><span class="ph" id="i-ph">Recherche ou adresse</span>
-          <span id="i-url" style="position:absolute;left:0;right:0;text-align:center">${ICON.lock(24, "#2E403C").replace('class="glyph"', 'class="glyph" style="display:inline;vertical-align:-3px;margin-right:8px"')}${esc(cfg.url)}</span>
+          <span id="i-url" style="position:absolute;left:0;right:0;text-align:center">${ICON.lock(24, "#2E403C").replace('class="glyph"', 'class="glyph" style="display:inline;vertical-align:-3px;margin-right:8px"')}${esc(cfg.url_app)}</span>
           <span class="re">${ICON.refresh(28, "#2E403C")}</span></div>
         <div class="s-tools">
           <span class="tb">${ICON.back(40, "#149776")}</span><span class="tb">${ICON.next(40, "#B5C3C0")}</span>
@@ -37,7 +37,7 @@
         </div>
       </div>
       <div class="sheet" id="i-sheet" style="top:300px">
-        <div class="sh-head">${icon(64)}<div><b>${esc(cfg.appName)}</b><span>${esc(cfg.url)}</span></div><span class="x">✕</span></div>
+        <div class="sh-head">${icon(64)}<div><b>${esc(cfg.appName)}</b><span>${esc(cfg.url_app)}</span></div><span class="x">✕</span></div>
         <div class="grab"></div>
         <div class="sh-body" id="i-body">
           <div class="apps">
@@ -59,7 +59,7 @@
       </div>
       <div class="addsheet" id="i-add">
         <div class="nav"><span class="cancel">Annuler</span><b>Sur l'écran d'accueil</b><span class="add" id="i-ok"><span class="press" id="i-press2"></span>Ajouter</span></div>
-        <div class="card">${icon(120)}<div style="flex:1;min-width:0"><b>${esc(cfg.appName)}</b><span>${esc(cfg.url)}</span></div></div>
+        <div class="card">${icon(120)}<div style="flex:1;min-width:0"><b>${esc(cfg.appName)}</b><span>${esc(cfg.url_app)}</span></div></div>
         <p>Une icône sera ajoutée à votre écran d'accueil pour accéder rapidement à ce site.</p>
       </div>`;
     return safari;
@@ -102,7 +102,7 @@
     halo(tl, F, t + 1.2, R.addr, t + 2.4, { round: 26, pad: 10 });
     tap(tl, F, t + 2.4, R.addr.cx + 40, R.addr.cy + 4);
     tl.to($("i-ph"), { autoAlpha: 0, duration: 0.15 }, t + 2.55);
-    const n = cfg.url.length + 2;
+    const n = cfg.url_app.length + 2;
     const typeD = Math.min(1.4, n * 0.06);
     tl.to($("i-url"), { clipPath: "inset(0 0% 0 0)", duration: typeD, ease: `steps(${n})` }, t + 2.65);
     fingerTo(tl, F, t + 2.8, R.addr.cx + 220, R.addr.cy - 360, 0.8);
