@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutoriel installation PWA — Synapsis</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="stage">
+  <!-- decorative background: soft blobs and drifting logo ribbons -->
+  <div class="blob" id="blobA"></div>
+  <div class="blob" id="blobB"></div>
+  <svg id="ribbons" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+
+  <!-- scenes are injected by main.js -->
+  <div id="intro" class="scene"></div>
+  <div id="steps" class="scene"></div>
+  <div id="outro" class="scene"></div>
+
+  <!-- logo-wave transition (4 bands in the logo colours) -->
+  <svg id="waves" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+</div>
+
+<div id="devbar" hidden>
+  <button id="play" type="button">▶</button>
+  <input id="scrub" type="range" min="0" max="1" step="0.001" value="0">
+  <span id="clock">0.00 s</span>
+  <a href="?tuto=android">Android</a>
+  <a href="?tuto=ios">iPhone</a>
+</div>
+
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/android.js"></script>
+<script src="js/ios.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
